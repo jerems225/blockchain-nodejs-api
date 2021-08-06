@@ -1,0 +1,660 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "",
+    "version": "0.0.1",
+    "title": "GIT Blockchain Api"
+  },
+  "host": "127.0.0.1:5500",
+  "basePath": "/",
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "paths": {
+    "/btc/createwallet": {
+      "post": {
+        "tags": [
+          "Bitcoin"
+        ],
+        "summary": "Create a new bitcoin wallet",
+        "description": "",
+        "operationId": "createbtcWallet",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/createwallets"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/btc/accountbalance/{uuid}": {
+      "get": {
+        "tags": [
+          "Bitcoin"
+        ],
+        "summary": "Get a current bitcoin balance for a specific user",
+        "description": "",
+        "operationId": "getbtcBalance",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/accountbalance"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/btc/sendtransaction": {
+      "post": {
+        "tags": [
+          "Bitcoin"
+        ],
+        "summary": "send a transaction from a user to another user out or in the platform",
+        "description": "For this endpoint you need to give the bitcoin address of recipient",
+        "operationId": "sendbtcTransaction1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "user wallet address",
+            "required": true,
+            "type": "string",
+            "example": "0x.."
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "amount of transaction",
+            "required": true,
+            "type": "double"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/sendtransaction"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/eth/createwallet": {
+      "post": {
+        "tags": [
+          "Ethereum"
+        ],
+        "summary": "Create a new ethereum wallet",
+        "description": "",
+        "operationId": "createethWallet",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/createwallets"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/eth/accountbalance/{uuid}": {
+      "get": {
+        "tags": [
+          "Ethereum"
+        ],
+        "summary": "Get a current ethereum balance for a specific user",
+        "description": "",
+        "operationId": "getethBalance",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/accountbalance"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/eth/sendtransaction": {
+      "post": {
+        "tags": [
+          "Ethereum"
+        ],
+        "summary": "send a transaction from a user to another user out or in the platform",
+        "description": "For this endpoint you need to give the ethereum address of recipient",
+        "operationId": "sendethTransaction1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "user wallet address",
+            "required": true,
+            "type": "string",
+            "example": "0x.."
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "amount of transaction",
+            "required": true,
+            "type": "double"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/sendtransaction"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/smb/createwallet": {
+      "post": {
+        "tags": [
+          "Simbcoin"
+        ],
+        "summary": "Create a new simbcoin wallet",
+        "description": "",
+        "operationId": "createsmbWallet",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/createwallets"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/smb/accountbalance/{uuid}": {
+      "get": {
+        "tags": [
+          "Simbcoin"
+        ],
+        "summary": "Get a current simbcoin balance for a specific user",
+        "description": "",
+        "operationId": "getsmbBalance",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/accountbalance"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/smb/sendtransaction": {
+      "post": {
+        "tags": [
+          "Simbcoin"
+        ],
+        "summary": "send a transaction from a user to another user out or in the platform",
+        "description": "For this endpoint you need to give the simbcoin address of recipient",
+        "operationId": "sendbtcTransaction1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "user wallet address",
+            "required": true,
+            "type": "string",
+            "example": "0x.."
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "amount of transaction",
+            "required": true,
+            "type": "double"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/sendtransaction"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/usdt/createwallet": {
+      "post": {
+        "tags": [
+          "Tether"
+        ],
+        "summary": "Create a new tether wallet",
+        "description": "",
+        "operationId": "createusdtWallet",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/createwallets"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/usdt/accountbalance/{uuid}": {
+      "get": {
+        "tags": [
+          "Tether"
+        ],
+        "summary": "Get a current tether balance for a specific user",
+        "description": "",
+        "operationId": "getusdtBalance",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/accountbalance"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/usdt/sendtransaction": {
+      "post": {
+        "tags": [
+          "Tether"
+        ],
+        "summary": "send a transaction from a user to another user out or in the platform",
+        "description": "For this endpoint you need to give the tether address of recipient",
+        "operationId": "sendusdtTransaction1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "user wallet address",
+            "required": true,
+            "type": "string",
+            "example": "0x.."
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "amount of transaction",
+            "required": true,
+            "type": "double"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/sendtransaction"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "createwallets": {
+      "type": "object",
+      "properties": {
+        "status" : 
+        {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type":"string",
+          "example": "successfully"
+        },
+        "wallet" :
+        {
+          "type": "object",
+          "example": 
+          {
+            "id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "crypto_name": {
+              "type": "string",
+              "example": "bitcoin"
+            },
+            "pubkey": {
+              "type": "string",
+              "example" : "0x.."
+            },
+            "privkey": {
+              "type": "string",
+              "example" : "0x.."
+            },
+            "mnemonic": {
+              "type": "string",
+              "example" : "my me too"
+            },
+            "updatedAt": {
+              "type": "datetime",
+              "example" : "2021-08-05T18:21:33.296Z"
+            },
+            "createdAt": {
+              "type": "datetime",
+              "example" : "2021-08-05T18:21:33.296Z"
+            }
+          }
+         
+        }
+      }
+    },
+    "accountbalance": {
+      "type": "object",
+      "properties": {
+        "balance" : {
+          "type": "double",
+          "example": 10
+        }
+      }
+    },
+    "sendtransaction": {
+      "type": "object",
+      "properties": {
+        "status" : 
+        {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type":"string",
+          "example": "successfully"
+        },
+        "datas" :
+        {
+          "type": "object",
+          "example": 
+          {
+            "id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "crypto_name": {
+              "type": "string",
+              "example": "bitcoin"
+            },
+            "hash": {
+              "type": "string",
+              "example" : "0x.."
+            },
+            "from": {
+              "type": "string",
+              "example" : "0x.."
+            },
+            "to": {
+              "type": "string",
+              "example" : "0x.."
+            },
+            "amount": {
+              "type": "double",
+              "example" : 0.0001
+            },
+            "confirmation": {
+              "type": "boolean",
+              "example" : false
+            },
+            "user_uuid": {
+              "type": "string",
+              "example" : "uuid"
+            },
+            "updatedAt": {
+              "type": "datetime",
+              "example" : "2021-08-05T18:21:33.296Z"
+            },
+            "createdAt": {
+              "type": "datetime",
+              "example" : "2021-08-05T18:21:33.296Z"
+            }
+          }
+         
+        }
+      }
+    }
+    
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}

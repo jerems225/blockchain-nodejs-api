@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 
-const urlAccount = "http://127.0.0.1:5500/ETH/createAccount";
+const user_uuid = "0xc697486fjhgb96e4f13ba4754b9d5cba5c9";
+const urlAccount = "http://127.0.0.1:5500/ETH/createAccount?uuid="+user_uuid;
 
 
 const from= "0xB70cF43CBe4c06B5c6B89660172F4B77081147b9";
@@ -18,13 +19,13 @@ async function createAccount()
 
     var res = await response.json();
 
-    console.log(res.result);
+    console.log(res);
     
 }
 
-async function getBalance(user_address)
+async function getBalance(user_uuid)
 {
-    const urlBalance = `http://127.0.0.1:5500/ETH/accountBalance/${user_address}`;
+    const urlBalance = `http://127.0.0.1:5500/ETH/accountBalance/${user_uuid}`;
     var response = await fetch(urlBalance,{
         method:"GET",
         
@@ -50,5 +51,5 @@ async function sendTransaction()
 }
 
 // createAccount();
-getBalance('0xfcd68c0381de08ed897b50ac8d3da8e921604b59');
+getBalance(user_uuid);
 // sendTransaction();

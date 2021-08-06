@@ -9,7 +9,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     email: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: false
     },
     emailConfirmed: {
       type: DataTypes.BOOLEAN,
@@ -61,11 +61,22 @@ module.exports = function(sequelize, DataTypes) {
     },
     roles: {
       type: DataTypes.JSON,
-      allowNull: true
+      allowNull: false
     },
     userprofile_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      references: {
+        model: 'userprofile',
+        key: 'id'
+      },
+      unique: "FK_8D93D64981863E41"
+    },
+    uuid: {
+      type: DataTypes.BLOB,
+      allowNull: false,
+      comment: "(DC2Type:uuid)",
+      unique: "UNIQ_8D93D649D17F50A6"
     }
   }, {
     sequelize,
@@ -78,6 +89,22 @@ module.exports = function(sequelize, DataTypes) {
         using: "BTREE",
         fields: [
           { name: "id" },
+        ]
+      },
+      {
+        name: "UNIQ_8D93D64981863E41",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "userprofile_id" },
+        ]
+      },
+      {
+        name: "UNIQ_8D93D649D17F50A6",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "uuid" },
         ]
       },
       {

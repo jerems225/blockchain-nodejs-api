@@ -2,6 +2,6 @@ const express = require('express');
 const router = express.Router();
 const TransactionController = require('../../controllers/bitcoin/transactionController');
 
-router.get("/BTC/sendTransaction", TransactionController.sendTransaction);
+router.post("/btc/sendtransaction", TransactionController.sendTransaction);
 
 module.exports =  router;

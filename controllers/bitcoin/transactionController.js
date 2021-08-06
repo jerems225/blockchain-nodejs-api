@@ -3,98 +3,145 @@ const fetch = require('node-fetch');
 const axios = require('axios');
 const { URL_UTOX_BTC,API_KEY, PRIVATE_KEY_BTC} = process.env;
 const bitcore = require('bitcore-lib');
+const models = require('../../models');
+const crypto_name = "bitcoin";
 
 
 async function sendTransaction(req,res){
 
-    const sender_address = req.query.from;
-    const spender_address = req.query.to;
-    const value = req.query.value; //need to be multiply by 100,000,000 of satoshi
-    const sochain_network = "BTCTEST";
+      const sender_uuid = req.query.uuid;
 
-
-//call function for company fees : getFee()
-
-  const satoshiToSend = value * 100000000;
-  let fee = 300; 
-  let inputCount = 0;
-  let outputCount = 2;
-  const utxos = await axios.get(
-    `https://sochain.com/api/v2/get_tx_unspent/${sochain_network}/${sender_address}`
-  );
-
-
-  const transaction = new bitcore.Transaction();
-  let totalAmountAvailable = 0;
-
-  let inputs = [];
-  utxos.data.data.txs.forEach(async (element) => {
-    let utxo = {};
-    utxo.satoshis = Math.floor(Number(element.value) * 100000000);
-    utxo.script = element.script_hex;
-    utxo.address = utxos.data.data.address;
-    utxo.txId = element.txid;
-    utxo.outputIndex = element.output_no;
-    totalAmountAvailable += utxo.satoshis;
-    inputCount += 1;
-    inputs.push(utxo);
-  });
-
-  transactionSize = inputCount * 146 + outputCount * 34 + 10 - inputCount;
-  // Check if we have enough funds to cover the transaction and the fees assuming we want to pay 20 satoshis per byte
-
-  fee = transactionSize * 20
-  if (totalAmountAvailable - satoshiToSend - fee  < 0) {
-
-    var balance = 0;
-
-    if(totalAmountAvailable != 0)
+    //get pubkey and privkey by uuid from database
+    const result = await models.Wallet.findOne({ where : 
     {
-        balance = totalAmountAvailable/100000000;
-    }
+      user_uuid : sender_uuid,
+      crypto_name : crypto_name
+    }})
 
-    res.send({
-        'result':
-         {
-            'errmsg' : "Your balance is too low for this transaction",
-            'balance': balance
+    if(result)
+    {
+          const sender_address = result.dataValues.pubkey;
+          const sender_privkey = result.dataValues.privkey;
+          const spender_address = req.query.to;
+          const value = req.query.value; //need to be multiply by 100,000,000 of satoshi
+          const sochain_network = "BTCTEST";
+
+
+      //call function for company fees : getFee()
+
+        const satoshiToSend = value * 100000000;
+        let fee = 300; 
+        let inputCount = 0;
+        let outputCount = 2;
+        const utxos = await axios.get(
+          `https://sochain.com/api/v2/get_tx_unspent/${sochain_network}/${sender_address}`
+        );
+
+
+        const transaction = new bitcore.Transaction();
+        let totalAmountAvailable = 0;
+
+        let inputs = [];
+        utxos.data.data.txs.forEach(async (element) => {
+          let utxo = {};
+          utxo.satoshis = Math.floor(Number(element.value) * 100000000);
+          utxo.script = element.script_hex;
+          utxo.address = utxos.data.data.address;
+          utxo.txId = element.txid;
+          utxo.outputIndex = element.output_no;
+          totalAmountAvailable += utxo.satoshis;
+          inputCount += 1;
+          inputs.push(utxo);
+        });
+
+        transactionSize = inputCount * 146 + outputCount * 34 + 10 - inputCount;
+        // Check if we have enough funds to cover the transaction and the fees assuming we want to pay 20 satoshis per byte
+
+        fee = transactionSize
+        if (totalAmountAvailable - satoshiToSend - fee  < 0) {
+
+          var balance = 0;
+
+          if(totalAmountAvailable != 0)
+          {
+              balance = totalAmountAvailable/100000000;
+          }
+
+          res.send({
+              'result':
+              {
+                  'errmsg' : "Your balance is too low for this transaction",
+                  'balance': balance
+              }
+          })
         }
-    })
-  }
-  else
-  {
-        //Set transaction input
-    transaction.from(inputs);
+        else
+        {
+              //Set transaction input
+          transaction.from(inputs);
 
-    // set the recieving address and the amount to send
-    transaction.to(spender_address, satoshiToSend);
+          // set the recieving address and the amount to send
+          transaction.to(spender_address, satoshiToSend);
 
-    // Set change address - Address to receive the left over funds after transfer
-    transaction.change(sender_address);
+          // Set change address - Address to receive the left over funds after transfer
+          transaction.change(sender_address);
 
-    //manually set transaction fees: 20 satoshis per byte
-    transaction.fee(fee * 20);
+          //manually set transaction fees: 20 satoshis per byte
+          transaction.fee(fee * 20);
 
-    // Sign transaction with your private key
-    transaction.sign(PRIVATE_KEY_BTC);
+          // Sign transaction with your private key
+          transaction.sign(sender_privkey);
 
-    // serialize Transactions
-    const serializedTX = transaction.serialize();
-    // Send transaction
-    const result = await axios({
-                method: "POST",
-                url: `https://sochain.com/api/v2/send_tx/${sochain_network}`,
-                data: {
-                tx_hex: serializedTX,
-                },
-            });
+          // serialize Transactions
+          const serializedTX = transaction.serialize();
+          // Send transaction
+          const result = await axios({
+                      method: "POST",
+                      url: `https://sochain.com/api/v2/send_tx/${sochain_network}`,
+                      data: {
+                      tx_hex: serializedTX,
+                      },
+                  });
 
-    res.send({
-        'result' : result.data.data
-    })
+                  var datas  = result.data;
 
-    //save the transaction information with date and by user on the database
- }
+                  const txObj = {
+                    crypto_name: crypto_name,
+                    hash :  datas.data.txid,
+                    amount : value,
+                    from : sender_address,
+                    to : spender_address,
+                    confirmation: false,
+                    user_uuid : sender_uuid
+                }
+                
+                    //save in the database
+                models.Transaction.create(txObj).then(result => {
+                    res.status(200).json({
+                        status: 200,
+                        message: "Transaction created successfully",
+                        datas: result
+                    });
+                    
+                }).catch(error => {
+                    res.status(500).json({
+                        status : 500,
+                        message: "Something went wrong",
+                        error : error
+                    });
+                });
+          
+
+          //save the transaction information with date and by user on the database
+      }
+
+    }
+    else{
+      res.status(401).json({
+        status : 401,
+        message: `Unknown User`
+    });
+    }
 
 }
 

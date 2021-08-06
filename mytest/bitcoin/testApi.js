@@ -5,11 +5,13 @@ const sochain_network = "BTCTEST";
 const privateKey = "";
 const sourceAddress = "mtVE8anM63kQcgKUC6oQQD9K6xiV4wsr7q";
 
+const user_uuid = "0xc697486fjhgb96e4f13ba4754b9d5cba5c9";
 
-async function sendTransaction(from,to,value)
+
+async function sendTransaction(user_uuid,to,value)
 {
 
-    const url = `http://127.0.0.1:5500/BTC/sendTransaction?from=${from}&to=${to}&value=${value}`;
+    const url = `http://127.0.0.1:5500/BTC/sendTransaction?uuid=${user_uuid}&to=${to}&value=${value}`;
 
     var response = await fetch(url,{
       method: "GET"
@@ -21,9 +23,9 @@ async function sendTransaction(from,to,value)
 };
 
 
-async function getBalance(user_address)
+async function getBalance(user_uuid)
 {
-  const url = "http://127.0.0.1:5500/BTC/accountBalance/"+user_address
+  const url = "http://127.0.0.1:5500/BTC/accountBalance/"+user_uuid
   var response = await fetch(url,{
     method: "GET"
   });
@@ -36,7 +38,7 @@ async function getBalance(user_address)
 
 async function createAccount()
 {
-  const urlAccount = "http://127.0.0.1:5500/BTC/createAccount"
+  const urlAccount = "http://127.0.0.1:5500/BTC/createAccount?uuid="+user_uuid;
   var response = await fetch(urlAccount)
 
   var res = await response.json();
@@ -45,7 +47,7 @@ async function createAccount()
 }
 
 // sendBitcoin('tb1qeyyya7ljghrsf9vhpu5ku6s8gxtze9kqsuhr49',0.01)
-// getBalance('tb1qyk9zqyt5r4acqj9su7wcwuexqffnnh59cwe09l')
+// getBalance(user_uuid)
 // createAccount()
 
-sendTransaction("mtVE8anM63kQcgKUC6oQQD9K6xiV4wsr7q","tb1qeyyya7ljghrsf9vhpu5ku6s8gxtze9kqsuhr49",9)
+// sendTransaction(user_uuid,"tb1qyk9zqyt5r4acqj9su7wcwuexqffnnh59cwe09l",0.0001)

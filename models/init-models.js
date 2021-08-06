@@ -1,14 +1,11 @@
 var DataTypes = require("sequelize").DataTypes;
-var _userauthstatus = require("./userauthstatus");
+var _user = require("./user");
 
 function initModels(sequelize) {
-  var userauthstatus = _userauthstatus(sequelize, DataTypes);
-
-  userauthstatus.belongsTo(user, { as: "user", foreignKey: "users_id"});
-  user.hasMany(userauthstatus, { as: "userauthstatuses", foreignKey: "users_id"});
+  var user = _user(sequelize, DataTypes);
 
   return {
-    userauthstatus,
+    user,
   };
 }
 module.exports = initModels;

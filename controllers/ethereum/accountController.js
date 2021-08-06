@@ -2,16 +2,57 @@ require('dotenv').config();
 const { API_URL_ETH} = process.env;
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 const web3 = createAlchemyWeb3(API_URL_ETH);
+const models = require('../../models');
+const crypto_name = "ethereum" ;
 
 async function create_Eth_Account(req,res)
 {
-  var user_eth_account = await web3.eth.accounts.create();
-  
-  res.send({
-      "wallet": user_eth_account
-  });
+  const owner_uuid = req.query.uuid;
 
-  //save the new account in database by user uuid present in the request
+
+  //verification if uuid is exist and valid before run code
+ const result = await models.Wallet.findOne({ where : 
+  {
+    user_uuid : owner_uuid,
+    crypto_name : crypto_name
+  }})
+
+  if(result)
+  {
+    res.status(401).json({
+      status : 401,
+      message: `This user already have a ${crypto_name} account`
+  });
+  }
+  else
+  {
+    //create eth account
+    var user_eth_account = await web3.eth.accounts.create();
+
+    const walletObject = {
+        crypto_name : crypto_name,
+        pubkey : user_eth_account.address,
+        privkey : user_eth_account.privateKey,
+        mnemonic : "N/A",
+        user_uuid : owner_uuid
+    }
+  
+    //save in the database
+    models.Wallet.create(walletObject).then(result => {
+      res.status(200).json({
+          status: 200,
+          message: "Wallet created successfully",
+          wallet : result
+      });
+      
+    }).catch(error => {
+      res.status(500).json({
+          status : 500,
+          message: "Something went wrong",
+          error : error
+      });
+    });
+  }
   
 }
 
@@ -19,19 +60,33 @@ async function get_Eth_Balance(req, res)
 {
     //get user eth account address from database
     
-    var address = req.params.address;
-    
-    var response = await web3.eth.getBalance(address);
-    var balance = await web3.utils.fromWei(response,'ether');
+    const owner_uuid = req.params.uuid;
+    let address;
 
-    res.send({
-       "balance" :  Number(balance)
-    }) 
+      const result = await models.Wallet.findOne({ where : 
+      {
+        user_uuid : owner_uuid,
+        crypto_name : crypto_name
+      }});
+
+      if(!result)
+      {
+        res.status(401).json({
+          status : 401,
+          message: `Unknown ${crypto_name} account for this user`
+        });
+      }
+      else
+      {
+        address = result.dataValues.pubkey;
+        var response = await web3.eth.getBalance(address);
+      var balance = await web3.utils.fromWei(response,'ether');
+
+      res.send({
+        "balance" :  Number(balance)
+      }) ;
+      }
 }
-
-
-
-
 
 
 

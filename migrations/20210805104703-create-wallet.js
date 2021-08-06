@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Transactions', {
+    await queryInterface.createTable('Wallets', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -11,20 +11,14 @@ module.exports = {
       crypto_name: {
         type: Sequelize.STRING
       },
-      hash: {
+      pubkey: {
         type: Sequelize.STRING
       },
-      from: {
+      privkey: {
         type: Sequelize.STRING
       },
-      to: {
+      mnemonic: {
         type: Sequelize.STRING
-      },
-      amount: {
-        type: Sequelize.STRING
-      },
-      confirmation: {
-        type: Sequelize.BOOLEAN
       },
       user_uuid: {
         type: Sequelize.STRING
@@ -40,6 +34,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Transactions');
+    await queryInterface.dropTable('Wallets');
   }
 };

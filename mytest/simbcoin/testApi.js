@@ -5,6 +5,7 @@ const { API_URL_ETH} = process.env;
 // const web3 = createAlchemyWeb3(API_URL_ETH);
 var Web3 = require('web3');
 var web3 = new Web3(new Web3.providers.HttpProvider(API_URL_ETH));
+const user_uuid = "0xc697486fjhgb96e4f13ba4754b9d5cba5c9";
 
 // ETHERSCAN_APIKEY = "WNYG4RMJYXC3WNC3ZX75B388SEGWPZIK9B"
 // SIMBCOIN_CONTRACT_ADDRESS = "0x53Bd789F2cDb846b227d8ffc7B46eD4263231FDf"
@@ -18,9 +19,9 @@ var web3 = new Web3(new Web3.providers.HttpProvider(API_URL_ETH));
 
 //0x2df87B9d31C811358B7e7f0735fa391398038BBc  spender
 
-async function createTokenAccount()
+async function createTokenAccount(user_uuid)
 {
-   const url = "http://127.0.0.1:5500/SMB/createAccount";
+   const url = "http://127.0.0.1:5500/SMB/createAccount?uuid="+user_uuid;
 
    var response = await fetch(url,{
        method : "GET"
@@ -30,9 +31,9 @@ async function createTokenAccount()
    console.log(account)
 }
 
-async function getBalance(user_address)
+async function getBalance(user_uuid)
 {
-    const url = "http://127.0.0.1:5500/SMB/accountBalance/"+user_address;
+    const url = "http://127.0.0.1:5500/SMB/accountBalance/"+user_uuid;
 
     var response = await fetch(url,{
         method : "GET"
@@ -55,6 +56,6 @@ async function sendTransaction(from,to,value)
 }
 
 
-// createTokenAccount()
-getBalance("0xf730bd9afe9433528f584a3fdaec97839ea3b6f1")
+// createTokenAccount(user_uuid)
+getBalance(user_uuid)
 // sendTransaction("0xfcd68c0381de08ed897b50ac8d3da8e921604b59","0xf5d94a146639d376802adfedaef5dfe993f0f6e9","6")
