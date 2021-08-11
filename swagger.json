@@ -88,6 +88,44 @@
         }
       }
     },
+    "/btc/wallet/getaddress": {
+      "get": {
+        "tags": [
+          "Bitcoin"
+        ],
+        "summary": "Get a current bitcoin address for a specific user",
+        "description": "",
+        "operationId": "getbtcAddress",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/walletaddress"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
     "/btc/sendtransaction": {
       "post": {
         "tags": [
@@ -208,6 +246,44 @@
             "schema": {
               "items": {
                 "$ref": "#/definitions/accountbalance"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/eth/wallet/getaddress": {
+      "get": {
+        "tags": [
+          "Ethereum"
+        ],
+        "summary": "Get a current ethereum address for a specific user",
+        "description": "",
+        "operationId": "getethAddress",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/walletaddress"
               }
             }
           },
@@ -346,6 +422,44 @@
         }
       }
     },
+    "/smb/wallet/getaddress": {
+      "get": {
+        "tags": [
+          "Simbcoin"
+        ],
+        "summary": "Get a current simbcoin address for a specific user",
+        "description": "",
+        "operationId": "getsmbAddress",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/walletaddress"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
     "/smb/sendtransaction": {
       "post": {
         "tags": [
@@ -475,6 +589,44 @@
         }
       }
     },
+    "/usdt/wallet/getaddress": {
+      "get": {
+        "tags": [
+          "Tether"
+        ],
+        "summary": "Get a current tether address for a specific user",
+        "description": "",
+        "operationId": "getbtcAddress",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/walletaddress"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
     "/usdt/sendtransaction": {
       "post": {
         "tags": [
@@ -580,12 +732,25 @@
         }
       }
     },
+    "walletaddress": {
+      "type": "object",
+      "properties": {
+        "status" : {
+          "type": "integer",
+          "example": "200"
+        },
+        "address" : {
+          "type": "string",
+          "example": "0x.."
+        }
+      }
+    },
     "accountbalance": {
       "type": "object",
       "properties": {
         "balance" : {
           "type": "double",
-          "example": 10
+          "example": "0.004"
         }
       }
     },

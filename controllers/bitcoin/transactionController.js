@@ -3,6 +3,7 @@ const fetch = require('node-fetch');
 const axios = require('axios');
 const { URL_UTOX_BTC,API_KEY, PRIVATE_KEY_BTC} = process.env;
 const bitcore = require('bitcore-lib');
+const bitcoin = require('bitcoinjs-lib');
 const models = require('../../models');
 const crypto_name = "bitcoin";
 
@@ -20,7 +21,13 @@ async function sendTransaction(req,res){
 
     if(result)
     {
-          const sender_address = result.dataValues.pubkey;
+          
+          //generate address
+          const sender_pubkey = result.dataValues.pubkey;
+          const buffer = Buffer.from(sender_pubkey,'hex');
+          const { sender_address } = bitcoin.payments.p2pkh({pubkey: buffer})
+
+          
           const sender_privkey = result.dataValues.privkey;
           const spender_address = req.query.to;
           const value = req.query.value; //need to be multiply by 100,000,000 of satoshi

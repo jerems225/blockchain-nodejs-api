@@ -46,6 +46,8 @@ async function createAccount()
   console.log(res);
 }
 
+async function createAddress()
+
 // sendBitcoin('tb1qeyyya7ljghrsf9vhpu5ku6s8gxtze9kqsuhr49',0.01)
 // getBalance(user_uuid)
 // createAccount()

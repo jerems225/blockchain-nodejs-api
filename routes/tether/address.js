@@ -2,6 +2,6 @@ const express = require('express');
 const router = express.Router();
 const AccountController = require('../../controllers/tether/accountController');
 
-router.post("/usdt/createwallet", AccountController.createTokenAccount);
+router.get("/usdt/wallet/getAddress", AccountController.get_usdt_Address);
 
 module.exports =  router;

@@ -60,6 +60,35 @@ async function createTokenAccount(req,res)
     //save account in the database
 }
 
+async function get_simbcoin_Address(req,res)
+{
+    const owner_uuid = req.query.uuid;
+    //verification if uuid is exist and valid before run code
+  const result = await models.Wallet.findOne({ where : 
+    {
+      user_uuid : owner_uuid,
+      crypto_name : crypto_name
+    }})
+
+    if(!result)
+    {
+      res.status(401).json({
+        status : 401,
+        message: `Unknown User`
+    });
+    }
+    else
+    {
+    
+      //save in the database
+     
+        res.status(200).json({
+            status: 200,
+            address : result.dataValues.pubkey
+        });
+      }
+}
+
 async function get_simbcoin_balance(req,res)
 {
     const owner_uuid = req.params.uuid;
@@ -112,5 +141,6 @@ async function get_simbcoin_balance(req,res)
 
 module.exports = {
     createTokenAccount : createTokenAccount,
-    get_simbcoin_balance : get_simbcoin_balance
+    get_simbcoin_balance : get_simbcoin_balance,
+    get_simbcoin_Address : get_simbcoin_Address
 }

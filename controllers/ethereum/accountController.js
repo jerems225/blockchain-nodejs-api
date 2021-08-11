@@ -56,6 +56,35 @@ async function create_Eth_Account(req,res)
   
 }
 
+async function get_Eth_Address(req,res)
+{
+    const owner_uuid = req.query.uuid;
+    //verification if uuid is exist and valid before run code
+  const result = await models.Wallet.findOne({ where : 
+    {
+      user_uuid : owner_uuid,
+      crypto_name : crypto_name
+    }})
+
+    if(!result)
+    {
+      res.status(401).json({
+        status : 401,
+        message: `Unknown User`
+    });
+    }
+    else
+    {
+    
+      //save in the database
+     
+        res.status(200).json({
+            status: 200,
+            address : result.dataValues.pubkey
+        });
+      }
+}
+
 async function get_Eth_Balance(req, res)
 {
     //get user eth account address from database
@@ -92,5 +121,6 @@ async function get_Eth_Balance(req, res)
 
 module.exports = {
     create_Eth_Account : create_Eth_Account,
-    get_Eth_Balance : get_Eth_Balance
+    get_Eth_Balance : get_Eth_Balance,
+    get_Eth_Address : get_Eth_Address,
 }
