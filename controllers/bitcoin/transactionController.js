@@ -31,7 +31,7 @@ async function sendTransaction(req,res){
           const sender_privkey = result.dataValues.privkey;
           const spender_address = req.query.to;
           const value = req.query.value; //need to be multiply by 100,000,000 of satoshi
-          const sochain_network = "BTCTEST";
+          const sochain_network = "BTC";
 
 
       //call function for company fees : getFee()

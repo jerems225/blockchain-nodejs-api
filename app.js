@@ -59,5 +59,5 @@ app.use("/", balanceUsdt);
 app.use("/", transactionUsdt);
 
 
-app.listen(5500,'3.125.240.171');
+app.listen(5500);
 console.log('Server started: 5500')
