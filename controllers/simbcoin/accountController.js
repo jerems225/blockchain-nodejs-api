@@ -124,11 +124,17 @@ async function get_simbcoin_balance(req,res)
         {
             balance = balance/(10**decimals);
         }
+        else
+        {
+          balance = 0;
+        }
 
-        res.send({
-            'balance' : balance,
-            'symbol' : symbol
-        })
+        res.status(200).json({
+          status : 200,
+          message: `${crypto_name} account balance for this user`,
+          balance : Number.parseFloat(balance).toPrecision(),
+          symbol: symbol
+        });
       }
 
 

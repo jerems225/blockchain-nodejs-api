@@ -7,7 +7,8 @@ const models = require('../../models');
 const crypto_name = "tether";
 const abi = require('../abis/abis');
 
-const USDT_CONTRACT_ADDRESS = "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+// const USDT_CONTRACT_ADDRESS = "0xdAC17F958D2ee523a2206206994597C13D831ec7"  //prod mainet
+const USDT_CONTRACT_ADDRESS = "0xa1cba00d6e99f52b8cb5f867a6f2db0f3ad62276" //dev testnet rinkeby
 
 async function createTokenAccount(req,res)
 {
@@ -124,11 +125,19 @@ async function get_usdt_balance(req,res)
         {
             balance = balance/(10**decimals);
         }
+        else
+        {
+          balance = 0;
+        }
 
-        res.send({
-            'balance' : balance,
-            'symbol' : symbol
-        })
+        res.status(200).json({
+          status : 200,
+          message: `${crypto_name} account balance for this user`,
+          balance : Number.parseFloat(balance).toPrecision(),
+          symbol: symbol
+        });
+
+        
       }
 
 

@@ -109,11 +109,19 @@ async function get_Eth_Balance(req, res)
       {
         address = result.dataValues.pubkey;
         var response = await web3.eth.getBalance(address);
-      var balance = await web3.utils.fromWei(response,'ether');
+      var bal = await web3.utils.fromWei(response,'ether');
+      var balance = "0.0";
 
-      res.send({
-        "balance" :  Number(balance)
-      }) ;
+        if(bal != 0)
+        {
+          balance = bal
+        }
+
+      res.status(200).json({
+        status : 200,
+        message: `${crypto_name} account balance for this user`,
+        balance : Number.parseFloat(balance).toPrecision()
+      });
       }
 }
 

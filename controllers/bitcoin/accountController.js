@@ -134,7 +134,7 @@ async function get_Btc_Balance(req,res)
             );
             const utxos = await response.json()
             let totalAmountAvailable = 0;
-            let balance = 0;
+            let balance = 0.0;
             utxos.data.txs.forEach(async (element) => {
                 let utxo = {};
                 utxo.satoshis = Number(element.value);
@@ -144,9 +144,11 @@ async function get_Btc_Balance(req,res)
                     balance = totalAmountAvailable
                 }
             });
-            res.send({
-                "balance" :  balance
-            })
+            res.status(200).json({
+              status : 200,
+              message: `${crypto_name} account balance for this user`,
+              balance : Number.parseFloat(balance).toPrecision()
+            });
         }
 }
 
