@@ -1,4 +1,4 @@
-const alchemy_node = "https://eth-mainnet.alchemyapi.io/v2/3MnmvJUyt4yXV0UDUFdrGlw2V11KJths";
+require('dotenv').config();
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 const web3 = createAlchemyWeb3(alchemy_node);
 const models = require('../../models');

@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     from: DataTypes.STRING,
     to: DataTypes.STRING,
     amount: DataTypes.STRING,
+    fees: DataTypes.STRING,
     confirmation: DataTypes.BOOLEAN,
     user_uuid: DataTypes.STRING,
   }, {

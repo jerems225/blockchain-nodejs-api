@@ -23,6 +23,9 @@ module.exports = {
       amount: {
         type: Sequelize.STRING
       },
+      fees: {
+        type: Sequelize.STRING
+      },
       confirmation: {
         type: Sequelize.BOOLEAN
       },

@@ -7,15 +7,15 @@
     "dialect": "mysql"
   },
   "test": {
-    "username": "root",
-    "password": null,
+    "username": "phpmyadmin",
+    "password": "@utic1234",
     "database": "api_storage",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "production": {
     "username": "phpmyadmin",
-    "password": "utic@1234",
+    "password": "@utic1234",
     "database": "api_storage",
     "host": "127.0.0.1",
     "dialect": "mysql"

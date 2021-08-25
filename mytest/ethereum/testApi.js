@@ -1,5 +1,10 @@
 const fetch = require('node-fetch');
 
+
+require('dotenv').config();
+var API_URL_ETH = "wss://eth-mainnet.alchemyapi.io/v2/3MnmvJUyt4yXV0UDUFdrGlw2V11KJths";
+var Web3 = require("web3");
+
 const user_uuid = "0xc697486fjhgb96e4f13ba4754b9d5cba5c9";
 const urlAccount = "http://127.0.0.1:5500/ETH/createAccount?uuid="+user_uuid;
 
@@ -50,6 +55,13 @@ async function sendTransaction()
     console.log(res);
 }
 
+
+
+
+
+
+get_eth_tx_confirmation()
+
 // createAccount();
-getBalance(user_uuid);
+// getBalance(user_uuid);
 // sendTransaction();

@@ -8,8 +8,8 @@
   "host": "127.0.0.1:5500",
   "basePath": "/",
   "schemes": [
-    "https",
-    "http"
+    "http",
+    "https"
   ],
   "paths": {
     "/btc/createwallet": {
@@ -149,7 +149,7 @@
             }
           },
           {
-            "name": "from",
+            "name": "to",
             "in": "query",
             "description": "user wallet address",
             "required": true,
@@ -157,7 +157,7 @@
             "example": "0x.."
           },
           {
-            "name": "to",
+            "name": "value",
             "in": "query",
             "description": "amount of transaction",
             "required": true,
@@ -316,7 +316,7 @@
             }
           },
           {
-            "name": "from",
+            "name": "to",
             "in": "query",
             "description": "user wallet address",
             "required": true,
@@ -324,11 +324,49 @@
             "example": "0x.."
           },
           {
-            "name": "to",
+            "name": "value",
             "in": "query",
             "description": "amount of transaction",
             "required": true,
-            "type": "double"
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/sendtransaction"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/eth/tx/getconfirmations": {
+      "get": {
+        "tags": [
+          "Ethereum"
+        ],
+        "summary": "Get a current ethereum transaction status for a specific user",
+        "description": "",
+        "operationId": "getethtxconfirmation",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -483,7 +521,7 @@
             }
           },
           {
-            "name": "from",
+            "name": "to",
             "in": "query",
             "description": "user wallet address",
             "required": true,
@@ -491,11 +529,49 @@
             "example": "0x.."
           },
           {
-            "name": "to",
+            "name": "value",
             "in": "query",
             "description": "amount of transaction",
             "required": true,
             "type": "double"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/sendtransaction"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/smb/tx/getconfirmations": {
+      "get": {
+        "tags": [
+          "Simbcoin"
+        ],
+        "summary": "Get a current simbcoin transaction status for a specific user",
+        "description": "",
+        "operationId": "getsmbtxconfirmation",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -650,7 +726,7 @@
             }
           },
           {
-            "name": "from",
+            "name": "to",
             "in": "query",
             "description": "user wallet address",
             "required": true,
@@ -658,11 +734,49 @@
             "example": "0x.."
           },
           {
-            "name": "to",
+            "name": "value",
             "in": "query",
             "description": "amount of transaction",
             "required": true,
             "type": "double"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/sendtransaction"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/usdt/tx/getconfirmations": {
+      "get": {
+        "tags": [
+          "Tether"
+        ],
+        "summary": "Get a current tether transaction status for a specific user",
+        "description": "",
+        "operationId": "getusdttxconfirmation",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -792,9 +906,14 @@
               "example" : "0x.."
             },
             "amount": {
-              "type": "double",
-              "example" : 0.0001
+              "type": "string",
+              "example" : "0.0001"
             },
+              "fees": {
+                "type": "string",
+                "example" : "0.0001"
+              }
+            ,
             "confirmation": {
               "type": "boolean",
               "example" : false
