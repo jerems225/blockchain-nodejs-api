@@ -3,6 +3,8 @@ const app = express();
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 
+
+
 app.use('/gitblockchain/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //ETH
@@ -11,6 +13,7 @@ const addressEth = require('./routes/ethereum/address');
 const balanceEth = require('./routes/ethereum/balance');
 const transactionEth = require('./routes/ethereum/transaction');
 const txconfirmationEth = require('./routes/ethereum/txconfirmation');
+const alltransactionController = require('./controllers/ethereum/newtransactionController');
 
 //BTC
 const accountBtc = require('./routes/bitcoin/account');
@@ -32,6 +35,10 @@ const balanceUsdt = require('./routes/tether/balance');
 const transactionUsdt = require('./routes/tether/transaction');
 const txconfirmationUsdt = require('./routes/tether/txconfirmation');
 
+
+//Universal Endpoint
+const alltx = require('./routes/alltransactions');
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -43,6 +50,9 @@ app.use("/", addressEth);
 app.use("/", balanceEth);
 app.use("/", transactionEth);
 app.use("/", txconfirmationEth);
+
+//websocket listener for ethereum new transaction
+alltransactionController.get_eth_tx_new()
 
 //BTC
 app.use("/", accountBtc);
@@ -63,6 +73,9 @@ app.use("/", addressUsdt);
 app.use("/", balanceUsdt);
 app.use("/", transactionUsdt);
 app.use("/", txconfirmationUsdt);
+
+//Universall call route
+app.use("/", alltx);
 
 
 app.listen(5500);

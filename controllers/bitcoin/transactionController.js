@@ -1,7 +1,7 @@
 require('dotenv').config();
 const fetch = require('node-fetch');
 const axios = require('axios');
-const { URL_UTOX_BTC,API_KEY, PRIVATE_KEY_BTC} = process.env;
+const { BTC_NODE_NETWORK } = process.env;
 const bitcore = require('bitcore-lib');
 const bitcoin = require('bitcoinjs-lib');
 const models = require('../../models');
@@ -11,6 +11,7 @@ const crypto_name = "bitcoin";
 async function sendTransaction(req,res){
 
       const sender_uuid = req.query.uuid;
+      const transaction_type = req.params.txtype;
 
     //get pubkey and privkey by uuid from database
     const result = await models.Wallet.findOne({ where : 
@@ -31,7 +32,6 @@ async function sendTransaction(req,res){
           const sender_privkey = result.dataValues.privkey;
           const spender_address = req.query.to;
           const value = req.query.value; //need to be multiply by 100,000,000 of satoshi
-          const sochain_network = "BTC";
 
 
       //call function for company fees : getFee()
@@ -41,7 +41,7 @@ async function sendTransaction(req,res){
         let inputCount = 0;
         let outputCount = 2;
         const utxos = await axios.get(
-          `https://sochain.com/api/v2/get_tx_unspent/${sochain_network}/${sender_address}`
+          `https://sochain.com/api/v2/get_tx_unspent/${BTC_NODE_NETWORK}/${sender_address}`
         );
 
 
@@ -73,14 +73,11 @@ async function sendTransaction(req,res){
           {
               balance = totalAmountAvailable/100000000;
           }
-
-          res.send({
-              'result':
-              {
-                  'errmsg' : "Your balance is too low for this transaction",
-                  'balance': balance
-              }
-          })
+          res.status(401).json({
+            status : 401,
+            message: "Your balance is too low for this transaction",
+            balance : balance
+        });
         }
         else
         {
@@ -104,7 +101,7 @@ async function sendTransaction(req,res){
           // Send transaction
           const result = await axios({
                       method: "POST",
-                      url: `https://sochain.com/api/v2/send_tx/${sochain_network}`,
+                      url: `https://sochain.com/api/v2/send_tx/${BTC_NODE_NETWORK}`,
                       data: {
                       tx_hex: serializedTX,
                       },
@@ -114,6 +111,7 @@ async function sendTransaction(req,res){
 
                   const txObj = {
                     crypto_name: crypto_name,
+                    transaction_type: transaction_type,
                     hash :  datas.data.txid,
                     amount : value,
                     from : sender_address,

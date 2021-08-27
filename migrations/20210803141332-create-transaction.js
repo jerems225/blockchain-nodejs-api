@@ -11,6 +11,9 @@ module.exports = {
       crypto_name: {
         type: Sequelize.STRING
       },
+      transaction_type: {
+        type: Sequelize.STRING
+      },
       hash: {
         type: Sequelize.STRING
       },

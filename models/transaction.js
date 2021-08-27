@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   };
   Transaction.init({
     crypto_name: DataTypes.STRING,
+    transaction_type: DataTypes.STRING,
     hash: DataTypes.STRING,
     from: DataTypes.STRING,
     to: DataTypes.STRING,

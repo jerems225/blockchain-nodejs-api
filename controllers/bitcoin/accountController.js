@@ -1,6 +1,6 @@
 require('dotenv').config();
 const fetch = require('node-fetch');
-// const { URL_UTOX_BTC,API_KEY, PRIVATE_KEY_BTC} = process.env;
+const { BTC_NODE_NETWORK } = process.env;
 const bip32 = require('bip32')
 const bip39 = require('bip39')
 const bitcoin = require('bitcoinjs-lib')
@@ -107,7 +107,6 @@ async function get_Btc_Address(req,res)
 async function get_Btc_Balance(req,res)
 {
     const owner_uuid = req.params.uuid;
-    const sochain_network = "BTC";
 
     const result = await models.Wallet.findOne({ where : 
         {
@@ -127,7 +126,7 @@ async function get_Btc_Balance(req,res)
             let pubkey = result.dataValues.pubkey;
             var buffer = Buffer.from(pubkey,'hex');
             const { address } = bitcoin.payments.p2pkh({ pubkey: buffer });
-            const url = "https://sochain.com/api/v2/get_tx_unspent/"+sochain_network+"/"+ address
+            const url = "https://sochain.com/api/v2/get_tx_unspent/"+BTC_NODE_NETWORK+"/"+ address
             const response = await fetch(url,{
                     method : "GET"
                 }

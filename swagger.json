@@ -126,7 +126,7 @@
         }
       }
     },
-    "/btc/sendtransaction": {
+    "/btc/sendtransaction/{txtype}": {
       "post": {
         "tags": [
           "Bitcoin"
@@ -147,6 +147,14 @@
             "items": {
               "type": "string"
             }
+          },
+          {
+            "name": "txtype",
+            "in": "path",
+            "description": "The transaction Type",
+            "required": true,
+            "type": "string",
+            "example": "3 possible values:'received','send','withdraw'"
           },
           {
             "name": "to",
@@ -293,7 +301,7 @@
         }
       }
     },
-    "/eth/sendtransaction": {
+    "/eth/sendtransaction/{txtype}": {
       "post": {
         "tags": [
           "Ethereum"
@@ -314,6 +322,14 @@
             "items": {
               "type": "string"
             }
+          },
+          {
+            "name": "txtype",
+            "in": "path",
+            "description": "The transaction Type",
+            "required": true,
+            "type": "string",
+            "example": "3 possible values:'received','send','withdraw'"
           },
           {
             "name": "to",
@@ -384,6 +400,7 @@
         }
       }
     },
+    
     "/smb/createwallet": {
       "post": {
         "tags": [
@@ -498,7 +515,7 @@
         }
       }
     },
-    "/smb/sendtransaction": {
+    "/smb/sendtransaction/{txtype}": {
       "post": {
         "tags": [
           "Simbcoin"
@@ -519,6 +536,14 @@
             "items": {
               "type": "string"
             }
+          },
+          {
+            "name": "txtype",
+            "in": "path",
+            "description": "The transaction Type",
+            "required": true,
+            "type": "string",
+            "example": "3 possible values:'received','send','withdraw'"
           },
           {
             "name": "to",
@@ -703,7 +728,7 @@
         }
       }
     },
-    "/usdt/sendtransaction": {
+    "/usdt/sendtransaction/{txtype}": {
       "post": {
         "tags": [
           "Tether"
@@ -724,6 +749,14 @@
             "items": {
               "type": "string"
             }
+          },
+          {
+            "name": "txtype",
+            "in": "path",
+            "description": "The transaction Type",
+            "required": true,
+            "type": "string",
+            "example": "3 possible values:'received','send','withdraw'"
           },
           {
             "name": "to",
@@ -785,6 +818,44 @@
             "schema": {
               "items": {
                 "$ref": "#/definitions/sendtransaction"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/tx/getalltransaction": {
+      "get": {
+        "tags": [
+          "Universal Endpoint"
+        ],
+        "summary": "Get all transaction for a specific user",
+        "description": "",
+        "operationId": "gettxall",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/alltransaction"
               }
             }
           },
@@ -879,12 +950,27 @@
         "message": {
           "type":"string",
           "example": "successfully"
+        }
+       
+      }
+    },
+    "alltransaction": {
+      "type": "object",
+      "properties": {
+        "status" : 
+        {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type":"string",
+          "example": "successfully"
         },
         "datas" :
         {
-          "type": "object",
+          "type": "array",
           "example": 
-          {
+          [{
             "id": {
               "type": "integer",
               "format": "int64"
@@ -892,6 +978,10 @@
             "crypto_name": {
               "type": "string",
               "example": "bitcoin"
+            },
+            "transaction_type": {
+              "type": "string",
+              "example": "received"
             },
             "hash": {
               "type": "string",
@@ -930,8 +1020,7 @@
               "type": "datetime",
               "example" : "2021-08-05T18:21:33.296Z"
             }
-          }
-         
+          }]
         }
       }
     }

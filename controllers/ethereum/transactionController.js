@@ -3,6 +3,7 @@ const { API_URL_ETH, PRIVATE_KEY_ETH } = process.env;
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 const web3 = createAlchemyWeb3(API_URL_ETH);
 const models = require('../../models');
+const txconfirmationController = require('./txconfirmationController');
 const crypto_name = "ethereum" ;
 
 // const Web3 = require('web3');
@@ -13,6 +14,7 @@ const crypto_name = "ethereum" ;
 async function sendTransaction(req,res) {
   
     const sender_uuid = req.query.uuid;
+    const transaction_type = req.params.txtype;
 
     //get pubkey and privkey by uuid from database
     const result = await models.Wallet.findOne({ where : 
@@ -53,7 +55,7 @@ async function sendTransaction(req,res) {
 
             //check if the balance is enough
 
-            const gas = gwei_value + 21000 * 21;
+            const gas = 1;
 
             if(gwei_user_balance > gas)
             {
@@ -78,6 +80,7 @@ async function sendTransaction(req,res) {
 
                 const txObj = {
                     crypto_name: crypto_name,
+                    transaction_type: transaction_type,
                     hash :  hash,
                     amount : value,
                     from : sender_address,
@@ -88,17 +91,22 @@ async function sendTransaction(req,res) {
                 
                     //save in the database
                 models.Transaction.create(txObj).then(result => {
+
+                    txconfirmationController.get_eth_tx_confirmation(sender_uuid);
+
                     res.status(200).json({
-                        status: 200,
-                        message: "Transaction created successfully",
-                        datas: result
+                        status : 200,
+                        message: `Transaction created successfully`,
+                        data : result
                     });
                     
                 }).catch(error => {
                     res.status(500).json({
                         status : 500,
                         message: "Something went wrong",
-                        error : error
+                        data: {
+                            error : error
+                        } 
                     });
                 });
                  //call function for send company fees :  getFees()
@@ -106,11 +114,12 @@ async function sendTransaction(req,res) {
 
             } 
             else {
-                res.send({
-
-                    "errorsmg": "Transaction Not Send yet! Please Try Again",
-                    "err": error
-
+                res.status(500).json({
+                    status : 500,
+                    message: "Transaction Not Send yet! Please Try Again",
+                    data : {
+                        error: error
+                    }
                 });
             }
 
@@ -118,23 +127,24 @@ async function sendTransaction(req,res) {
             }
 
             else{
-                res.send({
-
-                    "Errormsg" : "Your Balance is not enough for this transaction",
-                    "Balance" : ether_user_balance
-                
+                res.status(401).json({
+                    status : 401,
+                    message: "Your Balance is not enough for this transaction",
+                    data : {
+                        Balance: ether_user_balance
+                    }
                 });
             }
 
-            
         }
         else
         {
-            res.send({
-                
-                    "ErrorMinAmount" : "You Need to provide More Ether Value: value >= 0.001 Eth",
-                    "value_provide" : value
-            
+            res.status(401).json({
+                status : 401,
+                message: "You Need to provide More Ether Value: value >= 0.001 Eth",
+                data : {
+                    amount: value
+                }
             });
         }
     }

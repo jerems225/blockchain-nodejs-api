@@ -137,12 +137,7 @@ async function get_usdt_balance(req,res)
           symbol: symbol
         });
 
-        
       }
-
-
-
-    
 }
 
 

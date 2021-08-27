@@ -15,7 +15,8 @@ const USDT_CONTRACT_ADDRESS = "0xdAC17F958D2ee523a2206206994597C13D831ec7"
 async function sendTransaction(req,res) {
   
 
-    const sender_uuid = req.query.uuid;
+    const sender_uuid = req.params.uuid;
+    const transaction_type = req.query.txtype;
 
     //get pubkey and privkey by uuid from database
     const result = await models.Wallet.findOne({ where : 
@@ -80,6 +81,7 @@ async function sendTransaction(req,res) {
 
                 const txObj = {
                     crypto_name: crypto_name,
+                    transaction_type: transaction_type,
                     hash :  hash,
                     amount : value,
                     from : sender_address,
@@ -110,11 +112,12 @@ async function sendTransaction(req,res) {
 
             } 
             else {
-                res.send({
-
-                    "errorsmg": "Transaction Not Send yet! Please Try Again",
-                    "err": error
-
+                res.status(500).json({
+                    status : 500,
+                    message: "Transaction Not Send yet! Please Try Again",
+                    data : {
+                        error: error
+                    }
                 });
             }
 
@@ -122,21 +125,24 @@ async function sendTransaction(req,res) {
             }
 
             else{
-                res.send({
-
-                    "ErrorBalance" : `Your ${crypto_name} Balance is not enough for this transaction`,
-                    "Balance_token" : balance_token,
-                    "ErrorGas" : "You need to provide more ETH for transaction Gas",
-
+                res.status(401).json({
+                    status : 401,
+                    message: `Your ${crypto_name} Balance is not enough for this transaction`,
+                    data : {
+                        gasError:  "You need to provide more Ether for transaction Gas",
+                        balance: balance_token
+                    }
                 });
             }
-
         }
         else
         {
-            res.send({
-                    "ErrorMinAmount" : "You Need to provide More SIMBSWAP Value: value >= 5 SIMBSWAP",
-                    "value_provide" : value
+            res.status(500).json({
+                status : 500,
+                message: `You Need to provide More ${symbol} Value: value >= 5 ${symbol}`,
+                data : {
+                   amount : value
+                }
             });
         }
     }
