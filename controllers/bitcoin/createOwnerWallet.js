@@ -5,15 +5,14 @@ const bip39 = require('bip39')
 const bitcoin = require('bitcoinjs-lib')
 const models = require('../../models');
 const { Address, PublicKey } = require('bitcore-lib');
+const nodeConfig = require('../nodeConfig');
 const crypto_name = "bitcoin";
 
 //Define the network
-const network = bitcoin.networks.bitcoin 
-// const network = bitcoin.networks.testnet //for testnet
+const network = nodeConfig.BTC_NODE_NETWORK_CORE;
 
 // Derivation path
-const path = `m/49'/0'/0'/0` 
-// const path = `m/49'/1'/0'/0`   //for testnet
+const path = nodeConfig.BTC_NODE_PATH
 
 async function create_Btc_Account(){
 

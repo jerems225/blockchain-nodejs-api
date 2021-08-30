@@ -1,22 +1,25 @@
 require('dotenv').config();
-const { API_URL_ETH, PRIVATE_KEY_ETH } = process.env;
+const { ETH_NODE_URL } = require('../nodeConfig');
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
-const web3 = createAlchemyWeb3(API_URL_ETH);
+const web3 = createAlchemyWeb3(ETH_NODE_URL);
 const models = require('../../models');
 const crypto_name = "tether";
 const abi = require('../abis/abis');
+const txconfirmationController = require('./txconfirmationController');
 
-// const Web3 = require('web3');
-// const providers = new Web3.providers.HttpProvider(API_URL);
-// const web3 = new Web3(providers);
+const tokenaddress = require('../abis/tokenaddress');
 
-const USDT_CONTRACT_ADDRESS = "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+// const USDT_CONTRACT_ADDRESS = tokenaddress.usdtAbi;  // get env address
+
+const USDT_CONTRACT_ADDRESS = "0xFab46E002BbF0b4509813474841E0716E6730136"  //faucet token address
+
+
 
 async function sendTransaction(req,res) {
   
 
-    const sender_uuid = req.params.uuid;
-    const transaction_type = req.query.txtype;
+    const sender_uuid = req.query.uuid;
+    const transaction_type = req.params.txtype;
 
     //get pubkey and privkey by uuid from database
     const result = await models.Wallet.findOne({ where : 
@@ -30,13 +33,13 @@ async function sendTransaction(req,res) {
         const  sender_address = result.dataValues.pubkey;
         const  sender_pivkey = result.dataValues.privkey;
         const spender_address = req.query.to;
-        const value = req.query.value; //token value
+        var value = req.query.value; //token value
 
 
         if(value >= 5)
         {
             //instance the ERC20  TOKEN CONTRACT
-            var myContract = new web3.eth.Contract(abi.usdtAbi, USDT_CONTRACT_ADDRESS, {
+            var myContract = new web3.eth.Contract(abi.fauAbi, USDT_CONTRACT_ADDRESS, {
                 // from: SIMBCOIN_OWNER_ADDRESS, // default from address
                 // gasPrice: '20000000000' // default gas price in wei, 20 gwei in this case
             });
@@ -64,13 +67,18 @@ async function sendTransaction(req,res) {
             if(balance > gas)
             {
                 const nonce = await web3.eth.getTransactionCount(sender_address, 'latest'); // nonce starts counting from 0
+
+                value = ""+value*10**decimals;
+
                 const transaction = {
-                'to': spender_address, // user ethereum address
-                'value': '0x', // value in eth
-                'gas': 30000, 
-                'nonce': nonce,
-                'data' : myContract.methods.transfer( spender_address, web3.utils.toHex(web3.utils.toWei(value, "ether"))).encodeABI()
-            };
+                    "from":sender_address,
+                     "gasPrice": web3.utils.toHex(2 * 1e9),
+                     "gasLimit": web3.utils.toHex(210000),
+                     "to":USDT_CONTRACT_ADDRESS,
+                     "value":"0x0",
+                     "data":myContract.methods.transfer(spender_address, value).encodeABI(),
+                     "nonce":web3.utils.toHex(nonce)
+                 };
 
             
             const signedTx = await web3.eth.accounts.signTransaction(transaction, sender_pivkey);
@@ -78,12 +86,13 @@ async function sendTransaction(req,res) {
             web3.eth.sendSignedTransaction(signedTx.rawTransaction, function(error, hash) {
 
             if (!error) {
-
+        
                 const txObj = {
                     crypto_name: crypto_name,
                     transaction_type: transaction_type,
                     hash :  hash,
                     amount : value,
+                    fees: 21000,
                     from : sender_address,
                     to : spender_address,
                     confirmation: false,
@@ -92,6 +101,8 @@ async function sendTransaction(req,res) {
                 
                     //save in the database
                 models.Transaction.create(txObj).then(result => {
+
+                    txconfirmationController.get_usdt_tx_confirmation(sender_uuid);
                     res.status(201).json({
                         status: 201,
                         message: "Transaction created successfully",

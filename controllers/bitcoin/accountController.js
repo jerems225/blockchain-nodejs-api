@@ -3,24 +3,23 @@ const fetch = require('node-fetch');
 const { BTC_NODE_NETWORK } = process.env;
 const bip32 = require('bip32')
 const bip39 = require('bip39')
-const bitcoin = require('bitcoinjs-lib')
 const models = require('../../models');
+const bitcoin = require('bitcoinjs-lib')
 const { Address, PublicKey } = require('bitcore-lib');
+const { BTC_NODE_NETWORK_CORE, BTC_NODE_PATH }= require('../nodeConfig');
 const crypto_name = "bitcoin";
 
 //Define the network
-const network = bitcoin.networks.bitcoin 
-// const network = bitcoin.networks.testnet //for testnet
+const network = BTC_NODE_NETWORK_CORE;
 
 // Derivation path
-const path = `m/49'/0'/0'/0` 
-// const path = `m/49'/1'/0'/0`   //for testnet
+const path = BTC_NODE_PATH
 
 async function create_Btc_Account(req,res){
 
  const owner_uuid = req.query.uuid;
 
-//verification if uuid is exist and valid before run code
+//verification if uuid is exist and valid before run code 
  const result = await models.Wallet.findOne({ where : 
     {
       user_uuid : owner_uuid,
@@ -45,10 +44,6 @@ async function create_Btc_Account(req,res){
         let node = account.derive(0).derive(0)
 
         var publicKey = node.publicKey.toString('hex');
-        // let pubkey = bitcoin.payments.p2pkh({
-        //   pubkey: node.publicKey,
-        //   network: network,
-        //   }).address;
         const walletObject = {
               crypto_name : crypto_name,
               pubkey : publicKey,

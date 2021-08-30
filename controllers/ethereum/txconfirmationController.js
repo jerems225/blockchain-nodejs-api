@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { WS_URL_ETH } = process.env;
+const { ETH_NODE_WS } = require('../nodeConfig');
 const models = require('../../models');
 var Web3 = require('web3');
 const crypto_name = "ethereum" ;
@@ -33,7 +33,7 @@ async function get_eth_tx_confirmation(uuid,res)
 
   if(result.length == 0)
   {
-      res.status(401).json({
+      console.log({
         status : 401,
         message: `No transaction for this user`
     });
@@ -41,7 +41,7 @@ async function get_eth_tx_confirmation(uuid,res)
   else
   {
 
-      var web3 = new Web3(new Web3.providers.WebsocketProvider(WS_URL_ETH, options));
+      var web3 = new Web3(new Web3.providers.WebsocketProvider(ETH_NODE_WS, options));
       
     const subscription = web3.eth.subscribe("pendingTransactions", (err, res) => {
       if (err) console.error(err);

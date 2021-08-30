@@ -1,7 +1,7 @@
 require('dotenv').config();
-const { API_URL_ETH } = process.env;
+const { ETH_NODE_URL } = require('../nodeConfig');
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
-const web3 = createAlchemyWeb3(API_URL_ETH);
+const web3 = createAlchemyWeb3(ETH_NODE_URL);
 const models = require('../../models');
 const crypto_name = "ethereum" ;
 

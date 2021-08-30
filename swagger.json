@@ -362,45 +362,6 @@
         }
       }
     },
-    "/eth/tx/getconfirmations": {
-      "get": {
-        "tags": [
-          "Ethereum"
-        ],
-        "summary": "Get a current ethereum transaction status for a specific user",
-        "description": "",
-        "operationId": "getethtxconfirmation",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "uuid",
-            "in": "query",
-            "description": "user uuid need to be add in the url request",
-            "required": true,
-            "type": "string",
-            "items": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "items": {
-                "$ref": "#/definitions/sendtransaction"
-              }
-            }
-          },
-          "401": {
-            "description": "Invalid status value"
-          }
-        }
-      }
-    },
-    
     "/smb/createwallet": {
       "post": {
         "tags": [
@@ -558,45 +519,7 @@
             "in": "query",
             "description": "amount of transaction",
             "required": true,
-            "type": "double"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "items": {
-                "$ref": "#/definitions/sendtransaction"
-              }
-            }
-          },
-          "401": {
-            "description": "Invalid status value"
-          }
-        }
-      }
-    },
-    "/smb/tx/getconfirmations": {
-      "get": {
-        "tags": [
-          "Simbcoin"
-        ],
-        "summary": "Get a current simbcoin transaction status for a specific user",
-        "description": "",
-        "operationId": "getsmbtxconfirmation",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "uuid",
-            "in": "query",
-            "description": "user uuid need to be add in the url request",
-            "required": true,
-            "type": "string",
-            "items": {
-              "type": "string"
-            }
+            "type": "string"
           }
         ],
         "responses": {
@@ -751,14 +674,6 @@
             }
           },
           {
-            "name": "txtype",
-            "in": "path",
-            "description": "The transaction Type",
-            "required": true,
-            "type": "string",
-            "example": "3 possible values:'received','send','withdraw'"
-          },
-          {
             "name": "to",
             "in": "query",
             "description": "user wallet address",
@@ -771,45 +686,15 @@
             "in": "query",
             "description": "amount of transaction",
             "required": true,
-            "type": "double"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "items": {
-                "$ref": "#/definitions/sendtransaction"
-              }
-            }
+            "type": "string"
           },
-          "401": {
-            "description": "Invalid status value"
-          }
-        }
-      }
-    },
-    "/usdt/tx/getconfirmations": {
-      "get": {
-        "tags": [
-          "Tether"
-        ],
-        "summary": "Get a current tether transaction status for a specific user",
-        "description": "",
-        "operationId": "getusdttxconfirmation",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
           {
-            "name": "uuid",
-            "in": "query",
-            "description": "user uuid need to be add in the url request",
+            "name": "txtype",
+            "in": "path",
+            "description": "The transaction Type",
             "required": true,
             "type": "string",
-            "items": {
-              "type": "string"
-            }
+            "example": "3 possible values:'received','send','withdraw'"
           }
         ],
         "responses": {

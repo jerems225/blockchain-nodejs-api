@@ -1,10 +1,11 @@
 require('dotenv').config();
 const fetch = require('node-fetch');
 const axios = require('axios');
-const { BTC_NODE_NETWORK } = process.env;
+const nodeConfig = require('../nodeConfig');
 const bitcore = require('bitcore-lib');
 const bitcoin = require('bitcoinjs-lib');
 const models = require('../../models');
+const { BTC_NODE_NETWORK } = require('../nodeConfig');
 const crypto_name = "bitcoin";
 
 

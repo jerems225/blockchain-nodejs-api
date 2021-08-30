@@ -1,15 +1,10 @@
 require('dotenv').config();
-const { API_URL_ETH, PRIVATE_KEY_ETH } = process.env;
+const { ETH_NODE_URL } = require('../nodeConfig');
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
-const web3 = createAlchemyWeb3(API_URL_ETH);
+const web3 = createAlchemyWeb3(ETH_NODE_URL);
 const models = require('../../models');
 const txconfirmationController = require('./txconfirmationController');
 const crypto_name = "ethereum" ;
-
-// const Web3 = require('web3');
-// const providers = new Web3.providers.HttpProvider(API_URL);
-// const web3 = new Web3(providers);
-   
 
 async function sendTransaction(req,res) {
   
@@ -83,6 +78,7 @@ async function sendTransaction(req,res) {
                     transaction_type: transaction_type,
                     hash :  hash,
                     amount : value,
+                    fees: 200,
                     from : sender_address,
                     to : spender_address,
                     confirmation: false,
@@ -109,8 +105,6 @@ async function sendTransaction(req,res) {
                         } 
                     });
                 });
-                 //call function for send company fees :  getFees()
-                //  console.log("🎉 Check The Mempool: https://dashboard.alchemyapi.io/mempool/eth-rinkeby/tx/"+hash );
 
             } 
             else {

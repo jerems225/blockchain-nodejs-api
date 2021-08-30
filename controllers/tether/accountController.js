@@ -1,14 +1,22 @@
  require('dotenv').config();
 const fetch = require('node-fetch');
-const { API_URL_ETH,SIMBCOIN_OWNER_PRIVATE_KEY} = process.env;
+const { ETH_NODE_URL } = require('../nodeConfig');
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
-const web3 = createAlchemyWeb3(API_URL_ETH);
+const web3 = createAlchemyWeb3(ETH_NODE_URL);
 const models = require('../../models');
 const crypto_name = "tether";
 const abi = require('../abis/abis');
+const tokenaddress = require('../abis/tokenaddress');
 
-// const USDT_CONTRACT_ADDRESS = "0xdAC17F958D2ee523a2206206994597C13D831ec7"  //prod mainet
-const USDT_CONTRACT_ADDRESS = "0xa1cba00d6e99f52b8cb5f867a6f2db0f3ad62276" //dev testnet rinkeby
+// const USDT_CONTRACT_ADDRESS = tokenaddress.usdtAbi;  // get env address
+
+
+const USDT_CONTRACT_ADDRESS = "0xFab46E002BbF0b4509813474841E0716E6730136" //dev testnet rinkeby faucet'
+
+
+
+
+
 
 async function createTokenAccount(req,res)
 {
@@ -111,7 +119,7 @@ async function get_usdt_balance(req,res)
       else
       {
         address = result.dataValues.pubkey;
-        var myContract = new web3.eth.Contract(abi.usdtAbi, USDT_CONTRACT_ADDRESS);
+        var myContract = new web3.eth.Contract(abi.fauAbi, USDT_CONTRACT_ADDRESS);
     
         // Call balanceOf function
         var balance = await myContract.methods.balanceOf(address).call();

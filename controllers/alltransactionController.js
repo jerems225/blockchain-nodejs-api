@@ -11,26 +11,34 @@ async function get_tx_all(req,res)
     uuid : owner_uuid,
   }});
 
-  if(!result)
+  if(result)
   {
-       datas = await models.Transaction.findAll({ where :
+       var datas = await models.Transaction.findAll({ where :
       {
         user_uuid : owner_uuid,
       }});
 
-      
-    res.status(200).json({
-      status: 200,
-      message: `All transaction for this user`,
-      data : datas
-    });
+      if(datas.length != 0)
+      {
+        res.status(200).json({
+          status: 200,
+          message: `All transaction for this user`,
+          data : datas
+        });
+      }
+      else{
+        res.status(401).json({
+          status: 401,
+          message: `This user doesn't have any transaction`,
+        });
+      }
+
   }
   else
   {
     res.status(401).json({
       status: 401,
-      message: `This user doesn't have any transaction`,
-      data : datas
+      message: `This user doesn't exist`,
     });
   }
 }
