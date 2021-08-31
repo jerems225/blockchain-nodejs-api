@@ -8,10 +8,10 @@ let BTC_NODE_NETWORK;
 let BTC_NODE_PATH;
 let BTC_NODE_NETWORK_CORE;
 
-if(NODE_ENV == 'development')
+if(NODE_ENV == 'test')
 {
-    ETH_NODE_URL = 'https://eth-rinkeby.alchemyapi.io/v2/M9lOf3E8QFH_XhcjR3_6VSsYBSFiqE5R'
-    ETH_NODE_WS = 'wss://eth-rinkeby.alchemyapi.io/v2/M9lOf3E8QFH_XhcjR3_6VSsYBSFiqE5R'
+    ETH_NODE_URL = 'https://eth-ropsten.alchemyapi.io/v2/DtisPs5RMmTFGdGJAD2ExehMc_amW-8R'
+    ETH_NODE_WS = 'wss://eth-ropsten.alchemyapi.io/v2/DtisPs5RMmTFGdGJAD2ExehMc_amW-8R'
     BTC_NODE_NETWORK = 'BTCTEST'
     BTC_NODE_PATH = `m/49'/1'/0'/0`
     BTC_NODE_NETWORK_CORE = bitcoin.networks.testnet

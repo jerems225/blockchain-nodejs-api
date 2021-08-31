@@ -5,7 +5,7 @@ let simbAddress;
 let usdtAddress;
 let fauAddress;
 
-if(NODE_ENV == 'development')
+if(NODE_ENV == 'test')
 {
     simbAddress = '0x9277CfD32739F926bB7C56dBfEC6a88acac2EA25'
     usdtAddress = '0x512a34a032116ecde07bfe47e731b2d16b77a5fb'

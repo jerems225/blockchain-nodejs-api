@@ -9,11 +9,9 @@ const txconfirmationController = require('./txconfirmationController');
 
 const tokenaddress = require('../abis/tokenaddress');
 
-// const USDT_CONTRACT_ADDRESS = tokenaddress.usdtAbi;  // get env address
+const USDT_CONTRACT_ADDRESS = tokenaddress.usdtAbi;  // get env address
 
-const USDT_CONTRACT_ADDRESS = "0xFab46E002BbF0b4509813474841E0716E6730136"  //faucet token address
-
-
+// const USDT_CONTRACT_ADDRESS = "0xFab46E002BbF0b4509813474841E0716E6730136"  //faucet token address
 
 async function sendTransaction(req,res) {
   
