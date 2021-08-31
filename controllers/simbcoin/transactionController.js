@@ -7,7 +7,8 @@ const crypto_name = "simbcoin";
 const abi = require('../abis/abis');
 const txconfirmationController = require('./txconfirmationController');
 const tokenaddress = require('../abis/tokenaddress');
-const SMB_CONTRACT_ADDRESS = tokenaddress.simbAbi;
+
+const SIMBCOIN_CONTRACT_ADDRESS = tokenaddress.simbAddress;
 
 async function sendTransaction(req,res) {
   
@@ -33,7 +34,7 @@ async function sendTransaction(req,res) {
         if(value >= 5)
         {
             //instance the ERC20  TOKEN CONTRACT
-            var myContract = new web3.eth.Contract(abi.fauAbi, SMB_CONTRACT_ADDRESS, {
+            var myContract = new web3.eth.Contract(abi.fauAbi, SIMBCOIN_CONTRACT_ADDRESS, {
                 // from: SIMBCOIN_OWNER_ADDRESS, // default from address
                 // gasPrice: '20000000000' // default gas price in wei, 20 gwei in this case
             });
@@ -68,7 +69,7 @@ async function sendTransaction(req,res) {
                     "from":sender_address,
                      "gasPrice": web3.utils.toHex(2 * 1e9),
                      "gasLimit": web3.utils.toHex(210000),
-                     "to":SMB_CONTRACT_ADDRESS,
+                     "to":SIMBCOIN_CONTRACT_ADDRESS,
                      "value":"0x0",
                      "data":myContract.methods.transfer(spender_address, value).encodeABI(),
                      "nonce":web3.utils.toHex(nonce)
