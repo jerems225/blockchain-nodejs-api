@@ -11,48 +11,64 @@ async function create_Eth_Account(req,res)
 
 
   //verification if uuid is exist and valid before run code
+  const user = await models.user.findOne({ where : 
+    {
+      uuid : owner_uuid,
+    }})
  const result = await models.Wallet.findOne({ where : 
   {
     user_uuid : owner_uuid,
     crypto_name : crypto_name
   }})
 
-  if(result)
+  if(user)
   {
-    res.status(401).json({
-      status : 401,
-      message: `This user already have a ${crypto_name} account`
-  });
+      if(result)
+      {
+        res.status(401).json({
+          status : 401,
+          message: `This user already have a ${crypto_name} account`
+      });
+      }
+      else
+      {
+        //create eth account
+        var user_eth_account = await web3.eth.accounts.create();
+
+        const walletObject = {
+            crypto_name : crypto_name,
+            pubkey : user_eth_account.address,
+            privkey : user_eth_account.privateKey,
+            mnemonic : "N/A",
+            user_uuid : owner_uuid
+        }
+      
+        //save in the database
+        models.Wallet.create(walletObject).then(result => {
+          res.status(200).json({
+              status: 200,
+              message: "Wallet created successfully",
+              wallet : result
+          });
+          
+        }).catch(error => {
+          res.status(500).json({
+              status : 500,
+              message: "Something went wrong",
+              error : error
+          });
+        });
+      }
   }
   else
   {
-    //create eth account
-    var user_eth_account = await web3.eth.accounts.create();
-
-    const walletObject = {
-        crypto_name : crypto_name,
-        pubkey : user_eth_account.address,
-        privkey : user_eth_account.privateKey,
-        mnemonic : "N/A",
-        user_uuid : owner_uuid
-    }
-  
-    //save in the database
-    models.Wallet.create(walletObject).then(result => {
-      res.status(200).json({
-          status: 200,
-          message: "Wallet created successfully",
-          wallet : result
-      });
-      
-    }).catch(error => {
-      res.status(500).json({
-          status : 500,
-          message: "Something went wrong",
-          error : error
-      });
+      res.status(401).json({
+        status : 401,
+        message: `Unknown User`
     });
   }
+
+  
   
 }
 

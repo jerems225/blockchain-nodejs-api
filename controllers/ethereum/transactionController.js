@@ -5,6 +5,7 @@ const web3 = createAlchemyWeb3(ETH_NODE_URL);
 const models = require('../../models');
 const txconfirmationController = require('./txconfirmationController');
 const crypto_name = "ethereum" ;
+const amount_min = 0.001;
 
 async function sendTransaction(req,res) {
   
@@ -37,7 +38,7 @@ async function sendTransaction(req,res) {
         const ether_user_balance = await web3.utils.fromWei(user_balance,'ether'); //balance in ether
         
 
-        if(value >= 0.001)
+        if(value >= amount_min)
         {
 
             //calculate gas price :   web3.eth.getGasPrice()
@@ -135,7 +136,7 @@ async function sendTransaction(req,res) {
         {
             res.status(401).json({
                 status : 401,
-                message: "You Need to provide More Ether Value: value >= 0.001 Eth",
+                message: `You Need to provide More ${crypto_name} Value: value >= ${amount_min} ${crypto_name}`,
                 data : {
                     amount: value
                 }

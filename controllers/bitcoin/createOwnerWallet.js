@@ -1,4 +1,5 @@
 require('dotenv').config();
+const { NODE_ENV} = process.env;
 const fetch = require('node-fetch');
 const bip32 = require('bip32')
 const bip39 = require('bip39')
@@ -8,8 +9,19 @@ const { Address, PublicKey } = require('bitcore-lib');
 const nodeConfig = require('../nodeConfig');
 const crypto_name = "bitcoin";
 
-//Define the network
-const network = nodeConfig.BTC_NODE_NETWORK_CORE;
+// Network
+if(NODE_ENV == 'test' ||'development')
+{
+  var network =  bitcoin.networks.testnet
+}
+else if(NODE_ENV == 'devprod')
+{
+  var network =  bitcoin.networks.bitcoin
+}
+else if(NODE_ENV == 'production')
+{
+  var network =  bitcoin.networks.bitcoin
+}
 
 // Derivation path
 const path = nodeConfig.BTC_NODE_PATH

@@ -1,16 +1,13 @@
 require('dotenv').config();
+const { NODE_ENV} = process.env;
 const fetch = require('node-fetch');
-const { BTC_NODE_NETWORK } = process.env;
 const bip32 = require('bip32')
 const bip39 = require('bip39')
 const models = require('../../models');
 const bitcoin = require('bitcoinjs-lib')
 const { Address, PublicKey } = require('bitcore-lib');
-const { BTC_NODE_NETWORK_CORE, BTC_NODE_PATH }= require('../nodeConfig');
+const {BTC_NODE_NETWORK, BTC_NODE_NETWORK_CORE, BTC_NODE_PATH }= require('../nodeConfig');
 const crypto_name = "bitcoin";
-
-//Define the network
-const network = BTC_NODE_NETWORK_CORE;
 
 // Derivation path
 const path = BTC_NODE_PATH
@@ -20,52 +17,78 @@ async function create_Btc_Account(req,res){
  const owner_uuid = req.query.uuid;
 
 //verification if uuid is exist and valid before run code 
+  const user = await models.user.findOne({ where : 
+  {
+    uuid : owner_uuid,
+  }})
  const result = await models.Wallet.findOne({ where : 
     {
       user_uuid : owner_uuid,
       crypto_name : crypto_name
     }})
-  
-    if(result)
+
+
+    if(user)
     {
-      res.status(401).json({
-        status : 401,
-        message: `This user already have a ${crypto_name} account`
-    });
+        if(result)
+        {
+          res.status(401).json({
+            status : 401,
+            message: `This user already have a ${crypto_name} account`
+        });
+        }
+        else
+        {
+            //create btc account
+            let mnemonic = bip39.generateMnemonic()
+            const seed = bip39.mnemonicToSeedSync(mnemonic)
+
+            let root;
+            if(NODE_ENV == 'test' || 'development')
+            {
+              root = bip32.fromSeed(seed,bitcoin.networks.testnet)
+            }
+            else if(NODE_ENV == 'devprod' || 'production')
+            {
+              root = bip32.fromSeed(seed,bitcoin.networks.bitcoin)
+            }
+          
+
+            let account = root.derivePath(path)
+            let node = account.derive(0).derive(0)
+
+            var publicKey = node.publicKey.toString('hex');
+            const walletObject = {
+                  crypto_name : crypto_name,
+                  pubkey : publicKey,
+                  privkey : node.toWIF(),
+                  mnemonic : mnemonic,
+                  user_uuid : owner_uuid
+              }
+          //save in the database
+          models.Wallet.create(walletObject).then(result => {
+            res.status(200).json({
+                status: 200,
+                message: "Wallet created successfully",
+                wallet : result
+            });
+          }).catch(error => {
+            res.status(500).json({
+                status : 500,
+                message: "Something went wrong",
+                error : error
+            });
+          });
+        }
     }
     else
     {
-        //create btc account
-        let mnemonic = bip39.generateMnemonic()
-        const seed = bip39.mnemonicToSeedSync(mnemonic)
-        let root = bip32.fromSeed(seed, network)
-
-        let account = root.derivePath(path)
-        let node = account.derive(0).derive(0)
-
-        var publicKey = node.publicKey.toString('hex');
-        const walletObject = {
-              crypto_name : crypto_name,
-              pubkey : publicKey,
-              privkey : node.toWIF(),
-              mnemonic : mnemonic,
-              user_uuid : owner_uuid
-          }
-      //save in the database
-      models.Wallet.create(walletObject).then(result => {
-        res.status(200).json({
-            status: 200,
-            message: "Wallet created successfully",
-            wallet : result
-        });
-      }).catch(error => {
-        res.status(500).json({
-            status : 500,
-            message: "Something went wrong",
-            error : error
-        });
-      });
+      res.status(401).json({
+        status : 401,
+        message: "Unknown User",
+    });
     }
+    
     
 }
 
@@ -90,10 +113,22 @@ async function get_Btc_Address(req,res)
     else
     { 
       var buffer = Buffer.from(result.dataValues.pubkey,'hex');
-      const { address } = bitcoin.payments.p2pkh({ pubkey: buffer });
+      var u_address;
+      if(NODE_ENV == 'test' || 'development')
+      {
+        const { address } = bitcoin.payments.p2pkh({ pubkey: buffer, network: bitcoin.networks.testnet });
+        u_address = address;
+      }
+      else if(NODE_ENV == 'devprod' || 'production')
+      {
+        const { address } = bitcoin.payments.p2pkh({ pubkey: buffer, network: bitcoin.networks.bitcoin });
+        u_address = address;
+      }
+     
+      
       res.status(200).json({
         status : 200,
-        address: address
+        address: u_address
     });
     }
 }
@@ -120,13 +155,15 @@ async function get_Btc_Balance(req,res)
         {
             let pubkey = result.dataValues.pubkey;
             var buffer = Buffer.from(pubkey,'hex');
-            const { address } = bitcoin.payments.p2pkh({ pubkey: buffer });
-            const url = "https://sochain.com/api/v2/get_tx_unspent/"+BTC_NODE_NETWORK+"/"+ address
+            const { address } = bitcoin.payments.p2pkh({ pubkey: buffer, network: BTC_NODE_NETWORK_CORE});
+            const url = "https://sochain.com/api/v2/get_tx_unspent/"+BTC_NODE_NETWORK+"/"+address
             const response = await fetch(url,{
                     method : "GET"
                 }
             );
             const utxos = await response.json()
+
+            console.log(utxos)
             let totalAmountAvailable = 0;
             let balance = 0.0;
             utxos.data.txs.forEach(async (element) => {

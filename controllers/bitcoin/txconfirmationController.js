@@ -1,15 +1,10 @@
 require('dotenv').config();
+const fetch = require('node-fetch');
 const models = require('../../models');
-const bitcoin = require('bitcoinjs-lib');
-const zmq = require('zeromq');
 const crypto_name = "bitcoin" ;
+const {GETBLOCK_NETWORK, GETBLOCK_APIKEY} = require('../nodeConfig');
 
-const sock = zmq.socket('sub');
-const addr = 'tcp://127.0.0.1:3000';
-
-
-
-async function get_btc_tx_confirmation(uuid)
+async function get_btc_tx_confirmation(uuid,hash)
 {
     const owner_uuid = uuid;
 
@@ -21,7 +16,7 @@ async function get_btc_tx_confirmation(uuid)
     crypto_name : crypto_name
   }});
 
-  if(result.length != 0)
+  if(result.length == 0)
   {
       console.log({
         status : 401,
@@ -30,24 +25,49 @@ async function get_btc_tx_confirmation(uuid)
   }
   else
   {
-    sock.connect(addr);
-    sock.subscribe('rawtx');
-    console.log('sock:', sock);
-    sock.on('message', function(topic, message) {
-      console.log('topic:', topic.toString());
-        if (topic.toString() === 'rawtx') {
-            var rawTx = message.toString('hex');
-            var tx = bitcoin.Transaction.fromHex(rawTx);
-            var txid = tx.getId();
-            console.log('received transaction', txid, tx);
+    var txn = 0;
+    do{
+      
+          var txurl = `https://btc.getblock.io/${GETBLOCK_NETWORK}/`
+          let options = {
+            method: "post",
+            headers:
+            { 
+              "x-api-key" : GETBLOCK_APIKEY,
+              "content-type": "application/json"
+            },
+            body: JSON.stringify({"jsonrpc": "1.0", "id": "getblock.io", "method": "getrawtransaction", "params": [hash, 1]})
+        };
+
+        const respTx = await fetch(txurl, options);
+        const rawTx = await respTx.json();
+        console.log(rawTx)
+        txn = rawTx.result.confirmations;
+        if(txn >= 12)
+        {
+          models.Transaction.update({confirmation: true}, {
+            where: { user_uuid: uuid }
+          }).then(element => {
+            console.log(`Transaction ${result.length} confirmed`)
+            
+          }).catch(error => {
+            console.log({
+                status : 500,
+                message: "Something went wrong",
+            });
+          });
         }
-    });
+        else
+        {
+          console.log(`Confirmation number does not reach 12, n=${txn}`)
+        }
+        
+    } while(txn < 12);
   }
-    
+ 
 }
 
-get_btc_tx_confirmation('1d654d02-d2c8-4fba-89e7-2cea31e90451')
-
-// module.exports = {
-//     get_btc_tx_confirmation : get_btc_tx_confirmation
-// }
+get_btc_tx_confirmation('1d654d02-d2c8-4fba-89e7-2cea31e90451','7b0ca5f735ad583ec509b783aca8d0462c0c6e74b3f044dd34ff84da5da3f686')
+module.exports = {
+    get_btc_tx_confirmation : get_btc_tx_confirmation
+}

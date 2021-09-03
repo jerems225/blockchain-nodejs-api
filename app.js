@@ -2,9 +2,6 @@ const express = require('express');
 const app = express();
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
-
-
-
 app.use('/gitblockchain/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //ETH
@@ -35,9 +32,14 @@ const balanceUsdt = require('./routes/tether/balance');
 const transactionUsdt = require('./routes/tether/transaction');
 const txconfirmationUsdt = require('./routes/tether/txconfirmation');
 
-
 //Universal Endpoint
 const alltx = require('./routes/alltransactions');
+
+//TWILIO ENDPOINT
+const request = require('./routes/twilio/request');
+const verify = require('./routes/twilio/verify');
+const reset = require('./routes/twilio/reset');
+const config = require('./routes/twilio/config');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -76,6 +78,12 @@ app.use("/", txconfirmationUsdt);
 
 //Universall call route
 app.use("/", alltx);
+
+//TWILIO ENDPOINT
+app.use("/",request);
+app.use("/",verify);
+app.use("/",reset);
+app.use("/",config);
 
 
 app.listen(5500);

@@ -169,7 +169,7 @@
             "in": "query",
             "description": "amount of transaction",
             "required": true,
-            "type": "double"
+            "type": "string"
           }
         ],
         "responses": {
@@ -715,7 +715,7 @@
     "/tx/getalltransaction": {
       "get": {
         "tags": [
-          "Universal Endpoint"
+          "Universal Transactions Endpoint"
         ],
         "summary": "Get all transaction for a specific user",
         "description": "",
@@ -746,6 +746,197 @@
           },
           "401": {
             "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/twilio/request": {
+      "post": {
+        "tags": [
+          "Twilio Endpoint"
+        ],
+        "summary": "Request for verify number",
+        "description": "",
+        "operationId": " twiliorequest",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Body you have to pass on post method",
+            "required": true,
+            "schema":  {
+              "type": "object",
+              "required": [
+                "client_secret",
+                "phone"
+              ],
+              "properties": {
+                "client_secret": {
+                  "type": "string"
+                },
+                "phone": {
+                  "type": "string"
+                }
+              }
+            }
+                
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/twilio1"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/twilio/reset": {
+      "post": {
+        "tags": [
+          "Twilio Endpoint"
+        ],
+        "summary": "Reset verify code for user",
+        "description": "",
+        "operationId": " twilioreset",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Body you have to pass on post method",
+            "required": true,
+            "schema":  {
+              "type": "object",
+              "required": [
+                "client_secret",
+                "phone"
+              ],
+              "properties": {
+                "client_secret": {
+                  "type": "string"
+                },
+                "phone": {
+                  "type": "string"
+                }
+              }
+            }
+                
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/twilio2"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/twilioeror1"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/twilio/config": {
+      "get": {
+        "tags": [
+          "Twilio Endpoint"
+        ],
+        "summary": "Body you have to pass on post method",
+        "description": "",
+        "operationId": " twilioconfig",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": ""
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/twilio/verify": {
+      "post": {
+        "tags": [
+          "Twilio Endpoint"
+        ],
+        "summary": "Request for verify number",
+        "description": "",
+        "operationId": " twilioverify",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Body you have to pass on post method",
+            "required": true,
+            "schema":  {
+              "type": "object",
+              "required": [
+                "client_secret",
+                "phone",
+                "sms_message"
+              ],
+              "properties": {
+                "client_secret": {
+                  "type": "string"
+                },
+                "phone": {
+                  "type": "string"
+                },
+                "sms_message": {
+                  "type": "string"
+                }
+              }
+            }
+                
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/twilio2"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/twilioeror1"
+              }
+            }
           }
         }
       }
@@ -906,6 +1097,41 @@
               "example" : "2021-08-05T18:21:33.296Z"
             }
           }]
+        }
+      }
+    },
+    "twilio1": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example": true
+        }
+      }
+    },
+    "twilio2": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example": true
+        },
+        "phone": {
+          "type": "string",
+          "example": "+23300000000"
+        }
+      }
+    },
+    "twilioeror1": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type":"boolean",
+          "example": false
+        },
+        "msg": {
+          "type": "string",
+          "example": "Unable to validate code for this phone number"
         }
       }
     }

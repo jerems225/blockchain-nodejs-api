@@ -15,50 +15,65 @@ const tokenaddress = require('../abis/tokenaddress');
 
 async function createTokenAccount(req,res)
 {
-        const owner_uuid = req.query.uuid;
-        //verification if uuid is exist and valid before run code
-        const result = await models.Wallet.findOne({ where : 
-        {
-            user_uuid : owner_uuid,
-            crypto_name : crypto_name
-        }})
+  const owner_uuid = req.query.uuid;
+  //verification if uuid is exist and valid before run code
+  //verification if uuid is exist and valid before run code
+  const user = await models.user.findOne({ where : 
+    {
+      uuid : owner_uuid,
+    }})
+  const result = await models.Wallet.findOne({ where : 
+    {
+      user_uuid : owner_uuid,
+      crypto_name : crypto_name
+    }})
 
+    if(user)
+    {
         if(result)
         {
-            res.status(401).json({
+          res.status(401).json({
             status : 401,
             message: `This user already have a ${crypto_name} account`
         });
         }
         else
         {
-            //create eth account
-            var user_eth_account = await web3.eth.accounts.create();
+          //create eth account
+          var user_eth_account = await web3.eth.accounts.create();
 
-            const walletObject = {
-                crypto_name : crypto_name,
-                pubkey : user_eth_account.address,
-                privkey : user_eth_account.privateKey,
-                mnemonic : "N/A",
-                user_uuid : owner_uuid
-            }
+          const walletObject = {
+              crypto_name : crypto_name,
+              pubkey : user_eth_account.address,
+              privkey : user_eth_account.privateKey,
+              mnemonic : "N/A",
+              user_uuid : owner_uuid
+          }
         
-            //save in the database
-            models.Wallet.create(walletObject).then(result => {
-            res.status(201).json({
-                status: 201,
+          //save in the database
+          models.Wallet.create(walletObject).then(result => {
+            res.status(200).json({
+                status: 200,
                 message: "Wallet created successfully",
                 wallet : result
             });
             
-            }).catch(error => {
+          }).catch(error => {
             res.status(500).json({
                 status : 500,
                 message: "Something went wrong",
                 error : error
             });
-            });
+          });
         }
+    }
+    else
+    {
+        res.status(401).json({
+          status : 401,
+          message: `Unknown User`
+      });
+    }
   
 
     //save account in the database
