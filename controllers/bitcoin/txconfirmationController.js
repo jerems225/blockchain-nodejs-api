@@ -26,48 +26,51 @@ async function get_btc_tx_confirmation(uuid,hash)
   else
   {
     var txn = 0;
-    do{
+    setInterval(async function(){ 
       
-          var txurl = `https://btc.getblock.io/${GETBLOCK_NETWORK}/`
-          let options = {
-            method: "post",
-            headers:
-            { 
-              "x-api-key" : GETBLOCK_APIKEY,
-              "content-type": "application/json"
-            },
-            body: JSON.stringify({"jsonrpc": "1.0", "id": "getblock.io", "method": "getrawtransaction", "params": [hash, 1]})
-        };
+      //instruction
+      var txurl = `https://btc.getblock.io/${GETBLOCK_NETWORK}/`
+      let options = {
+        method: "post",
+        headers:
+        { 
+          "x-api-key" : GETBLOCK_APIKEY,
+          "content-type": "application/json"
+        },
+        body: JSON.stringify({"jsonrpc": "1.0", "id": "getblock.io", "method": "getrawtransaction", "params": [hash, 1]})
+    };
 
-        const respTx = await fetch(txurl, options);
-        const rawTx = await respTx.json();
-        console.log(rawTx)
-        txn = rawTx.result.confirmations;
-        if(txn >= 12)
-        {
-          models.Transaction.update({confirmation: true}, {
-            where: { user_uuid: uuid }
-          }).then(element => {
-            console.log(`Transaction ${result.length} confirmed`)
-            
-          }).catch(error => {
-            console.log({
-                status : 500,
-                message: "Something went wrong",
-            });
-          });
-        }
-        else
-        {
-          console.log(`Confirmation number does not reach 12, n=${txn}`)
-        }
+    const respTx = await fetch(txurl, options);
+    const rawTx = await respTx.json();
+    console.log(rawTx)
+    txn = rawTx.result.confirmations;
+    if(txn >= 12)
+    {
+      models.Transaction.update({confirmation: true}, {
+        where: { user_uuid: uuid }
+      }).then(element => {
+        console.log(`Transaction ${result.length} confirmed`)
+        process.exit();
         
-    } while(txn < 12);
+      }).catch(error => {
+        console.log({
+            status : 500,
+            message: "Something went wrong",
+        });
+      });
+    }
+    else
+    {
+      console.log(`Confirmation number does not reach 12, n=${txn}`)
+    }
+    
+    
+    }, 500);
   }
  
 }
 
-get_btc_tx_confirmation('1d654d02-d2c8-4fba-89e7-2cea31e90451','7b0ca5f735ad583ec509b783aca8d0462c0c6e74b3f044dd34ff84da5da3f686')
+// get_btc_tx_confirmation('1d654d02-d2c8-4fba-89e7-2cea31e90451','7b0ca5f735ad583ec509b783aca8d0462c0c6e74b3f044dd34ff84da5da3f686')
 module.exports = {
     get_btc_tx_confirmation : get_btc_tx_confirmation
 }

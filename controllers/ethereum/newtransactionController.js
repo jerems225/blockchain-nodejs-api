@@ -1,4 +1,5 @@
 require('dotenv').config();
+const { Op } = require("sequelize");
 const { ETH_NODE_WS } = require('../nodeConfig');
 const models = require('../../models');
 var Web3 = require('web3');
@@ -25,22 +26,25 @@ async function get_eth_tx_new()
 
   const result = await models.Wallet.findAll({ where :
       {
-        crypto_name : 'ethereum'
+        [Op.or]: [
+          { crypto_name : 'ethereum' },
+          { crypto_name : 'tether' },
+          { crypto_name : 'simbcoin' },
+        ]
       }});
 
 
   if(result.length != 0)
   {
     var web3 = new Web3(new Web3.providers.WebsocketProvider(ETH_NODE_WS, options));
-      
     const subscription = web3.eth.subscribe("pendingTransactions", (err, res) => {
       if (err) console.error(err);
     });
 
     subscription.on("data", () => {
-        
       result.map((currentValue) => {
-        var user_address = currentValue.dataValues.pubkey; // user eth address 
+        var user_address = currentValue.dataValues.pubkey; // user eth or erc20 token address 
+        var currentCrypto_name = currentValue.dataValues.crypto_name;
         web3.eth.getBlock('latest',function(error, block)
         {
           if(block && block.transactions)
@@ -50,7 +54,7 @@ async function get_eth_tx_new()
                     web3.eth.getTransaction(txHash,function(error, tx)
                     {
                       //save in the database
-                      
+                      console.log("Websocket New Tx Ethereum and ERC20 Token Running...")
                         var exist= 0;
                         if(tx)
                         {
@@ -58,9 +62,8 @@ async function get_eth_tx_new()
                             {
                               user_uuid : currentValue.dataValues.user_uuid,
                               hash : tx.hash,
-                              crypto_name : 'ethereum',
+                              crypto_name : currentCrypto_name,
                               transaction_type: 'received'
-    
                             }}).then(rs => {
                             rs.map((item) => {
                                   if(item.length != 0)
@@ -68,13 +71,11 @@ async function get_eth_tx_new()
                                     exist = 1;
                                   }
                               });
-    
-                             
                               if(exist == 0 && user_address == tx.to)
                                 {
                                   txObj = {
                                       transaction_type: "received",
-                                      crypto_name: crypto_name,
+                                      crypto_name: currentCrypto_name,
                                       hash: tx.hash,
                                       from: tx.from,
                                       to: tx.to,
@@ -83,15 +84,13 @@ async function get_eth_tx_new()
                                       amount: web3.utils.fromWei(tx.value, 'ether'),
                                       user_uuid : currentValue.dataValues.user_uuid
                                   };
-          
                                   // save the receive transaction in the database
                                   models.Transaction.create(txObj).then(result => {
                                     console.log({
                                       status:201,
-                                      message:  `your received a new ${crypto_name} transaction`,
+                                      message:  `your received a new ${currentCrypto_name} transaction`,
                                       data: result
                                     })
-                                     
                                   }).catch(error => {
                                       console(error)
                                    });
@@ -103,7 +102,6 @@ async function get_eth_tx_new()
                         }
 
                       })
-                
                 }
             }
         });
@@ -114,6 +112,8 @@ async function get_eth_tx_new()
 
   }
 }
+
+get_eth_tx_new()
 
 
 

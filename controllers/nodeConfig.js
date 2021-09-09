@@ -12,23 +12,23 @@ let GETBLOCK_NETWORK;
 
 if(NODE_ENV == 'test' || 'development')
 {
-    ETH_NODE_URL = 'https://eth-ropsten.alchemyapi.io/v2/DtisPs5RMmTFGdGJAD2ExehMc_amW-8R'
-    ETH_NODE_WS = 'wss://eth-ropsten.alchemyapi.io/v2/DtisPs5RMmTFGdGJAD2ExehMc_amW-8R'
     BTC_NODE_NETWORK = 'BTCTEST'
     BTC_NODE_PATH = `m/49'/1'/0'/0`
     BTC_NODE_NETWORK_CORE = bitcoin.networks.testnet
-    GETBLOCK_APIKEY = '96c23333-21a1-4d38-9617-4d5153b3316b'
+    GETBLOCK_APIKEY = 'a63d8fa7-c230-4f1d-af13-82d5de21d9fe'
     GETBLOCK_NETWORK = 'testnet'
+    ETH_NODE_URL = `https://eth.getblock.io/${GETBLOCK_NETWORK}/?api_key=${GETBLOCK_APIKEY}`
+    ETH_NODE_WS = `https://eth.getblock.io/${GETBLOCK_NETWORK}/?api_key=${GETBLOCK_APIKEY}`
 }
 else if(NODE_ENV == 'devprod' || 'production')
 {
-    ETH_NODE_URL = 'https://eth-mainnet.alchemyapi.io/v2/3MnmvJUyt4yXV0UDUFdrGlw2V11KJths'
-    ETH_NODE_WS = 'wss://eth-mainnet.alchemyapi.io/v2/3MnmvJUyt4yXV0UDUFdrGlw2V11KJths'
     BTC_NODE_NETWORK = 'BTC'
     BTC_NODE_PATH = `m/49'/0/0'/0`
     BTC_NODE_NETWORK_CORE = bitcoin.networks.bitcoin
-    GETBLOCK_APIKEY = '96c23333-21a1-4d38-9617-4d5153b3316b'
+    GETBLOCK_APIKEY = 'a63d8fa7-c230-4f1d-af13-82d5de21d9fe'
     GETBLOCK_NETWORK = 'mainet'
+    ETH_NODE_URL = `https://eth.getblock.io/${GETBLOCK_NETWORK}/?api_key=${GETBLOCK_APIKEY}`
+    ETH_NODE_WS = `https://eth.getblock.io/${GETBLOCK_NETWORK}/?api_key=${GETBLOCK_APIKEY}`
 }
 
 module.exports = {

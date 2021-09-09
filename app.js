@@ -10,13 +10,14 @@ const addressEth = require('./routes/ethereum/address');
 const balanceEth = require('./routes/ethereum/balance');
 const transactionEth = require('./routes/ethereum/transaction');
 const txconfirmationEth = require('./routes/ethereum/txconfirmation');
-const alltransactionController = require('./controllers/ethereum/newtransactionController');
+const newtxETH = require('./controllers/ethereum/newtransactionController');
 
 //BTC
 const accountBtc = require('./routes/bitcoin/account');
 const addressBtc = require('./routes/bitcoin/address');
 const balanceBtc = require('./routes/bitcoin/balance');
 const transactionBtc = require('./routes/bitcoin/transaction');
+const newtxBTC = require('./controllers/bitcoin/newtransactionController');
 
 //SMB
 const accountSmb = require('./routes/simbcoin/account');
@@ -54,13 +55,16 @@ app.use("/", transactionEth);
 app.use("/", txconfirmationEth);
 
 //websocket listener for ethereum new transaction
-alltransactionController.get_eth_tx_new()
+newtxETH.get_eth_tx_new()
 
 //BTC
 app.use("/", accountBtc);
 app.use("/", addressBtc);
 app.use("/", balanceBtc);
 app.use("/", transactionBtc);
+
+//websocket listener for bitcoin new transaction
+newtxBTC.get_btc_tx_new()
 
 //SMB
 app.use("/", accountSmb);

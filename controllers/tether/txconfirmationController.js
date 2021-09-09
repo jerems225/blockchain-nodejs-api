@@ -67,12 +67,14 @@ async function get_usdt_tx_confirmation(uuid,res)
                                 where: { user_uuid: item.user_uuid }
                               }).then(element => {
                                 console.log(`Transaction ${result.length} confirmed`)
+                                process.exit();
                                 
                               }).catch(error => {
                                 console.log({
                                     status : 500,
                                     message: "Something went wrong",
                                 });
+                               
                               });
                         }
                         })
