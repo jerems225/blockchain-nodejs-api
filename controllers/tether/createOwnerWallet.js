@@ -1,6 +1,7 @@
 require('dotenv').config();
-const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
-const web3 = createAlchemyWeb3(alchemy_node);
+const Web3 = require('web3');
+const provider = new Web3.providers.HttpProvider(ETH_NODE_URL);
+const web3 = new Web3(provider);
 const models = require('../../models');
 const crypto_name = "tehter" ;
 
