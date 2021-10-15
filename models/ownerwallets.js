@@ -22,10 +22,6 @@ module.exports = function(sequelize, DataTypes) {
     mnemonic: {
       type: DataTypes.STRING(255),
       allowNull: true
-    },
-    user_uuid: {
-      type: DataTypes.STRING(255),
-      allowNull: true
     }
   }, {
     sequelize,

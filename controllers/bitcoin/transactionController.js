@@ -23,8 +23,68 @@ else if(NODE_ENV == 'production')
   var network =  bitcoin.networks.bitcoin
 }
 
-async function sendTransaction(req,res){
 
+
+async function estimatefees()
+{
+  // const sender_uuid = req.query.uuid;
+  //   //get pubkey and privkey by uuid from database
+  //   const result = await models.Wallet.findOne({ where : 
+  //   {
+  //       user_uuid : sender_uuid,
+  //       crypto_name : crypto_name
+  //   }})
+
+  //   if(result)
+  //   {
+      let options = {
+        method: "post",
+        headers:
+        { 
+          "x-api-key" : GETBLOCK_APIKEY,
+          "content-type": "application/json"
+        },
+        body: JSON.stringify({
+          "jsonrpc": "2.0",
+          "method": "estimatesmartfee",
+          "params": [
+              1,
+              "economical"
+          ],
+          "id": "getblock.io"
+      })
+    };
+
+    const resp = await fetch(`https://btc.getblock.io/${GETBLOCK_NETWORK}/`, options);
+    const json = await resp.json();
+
+    console.log(json)
+
+        // var gasStatistic = {
+        //     "fastplus" : Number(fastest),
+        //     "fast": Number(fast),
+        //     "medium": Number(average), 
+        //     "normal": Number(safelow)
+        // }
+        
+        // res.status(200).json({
+        //     status : 200,
+        //     message: "Fees Managment Get With Success",
+        //     data : gasStatistic
+        // });
+    // }
+    // else{
+    //     res.status(401).json({
+    //         status : 401,
+    //         message: "Unknown User",
+    //         data : null
+    //     });
+    // }
+}
+
+// estimatefees();
+async function sendTransaction(req,res){
+1
       const sender_uuid = req.query.uuid;
       const transaction_type = req.params.txtype;
 

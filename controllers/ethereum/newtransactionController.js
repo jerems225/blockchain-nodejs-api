@@ -113,10 +113,6 @@ async function get_eth_tx_new()
   }
 }
 
-get_eth_tx_new()
-
-
-
 module.exports = {
     get_eth_tx_new : get_eth_tx_new
 }

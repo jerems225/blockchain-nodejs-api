@@ -64,10 +64,9 @@ async function get_usdt_tx_confirmation(uuid,res)
                           if(receipt != null)
                         {
                               models.Transaction.update({fees: receipt.gasUsed, confirmation: receipt.status}, {
-                                where: { user_uuid: item.user_uuid }
+                                where: { user_uuid: item.user_uuid, hash : tx.hash, crypto_name: crypto_name }
                               }).then(element => {
                                 console.log(`Transaction ${result.length} confirmed`)
-                                process.exit();
                                 
                               }).catch(error => {
                                 console.log({

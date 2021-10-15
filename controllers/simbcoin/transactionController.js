@@ -9,6 +9,8 @@ const abi = require('../abis/abis');
 const txconfirmationController = require('./txconfirmationController');
 const tokenaddress = require('../abis/tokenaddress');
 
+const amount_min = 20;
+
 const SIMBCOIN_CONTRACT_ADDRESS = tokenaddress.simbAddress;
 
 async function sendTransaction(req,res) {
@@ -32,7 +34,7 @@ async function sendTransaction(req,res) {
         var value = req.query.value; //token value
 
 
-        if(value >= 5)
+        if(value >= amount_min)
         {
             //instance the ERC20  TOKEN CONTRACT
             var myContract = new web3.eth.Contract(abi.fauAbi, SIMBCOIN_CONTRACT_ADDRESS, {
@@ -146,7 +148,7 @@ async function sendTransaction(req,res) {
         {
             res.status(500).json({
                 status : 500,
-                message: `You Need to provide More ${symbol} Value: value >= 5 ${symbol}`,
+                message: `You Need to provide More ${symbol} Value: value >= ${amount_min} ${symbol}`,
                 data : {
                    amount : value
                 }

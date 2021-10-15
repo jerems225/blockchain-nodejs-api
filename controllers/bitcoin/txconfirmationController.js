@@ -47,7 +47,7 @@ async function get_btc_tx_confirmation(uuid,hash)
     if(txn >= 12)
     {
       models.Transaction.update({confirmation: true}, {
-        where: { user_uuid: uuid }
+        where: { user_uuid: uuid, hash : hash, crypto_name: crypto_name }
       }).then(element => {
         console.log(`Transaction ${result.length} confirmed`)
         process.exit();

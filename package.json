@@ -32,7 +32,7 @@
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.1.6",
     "twilio": "^3.67.1",
-    "web3": "^1.4.0",
+    "web3": "^1.5.2",
     "zeromq": "^5.2.8"
   },
   "devDependencies": {

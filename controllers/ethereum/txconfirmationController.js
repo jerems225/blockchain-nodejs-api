@@ -2,6 +2,7 @@ require('dotenv').config();
 const { ETH_NODE_WS } = require('../nodeConfig');
 const models = require('../../models');
 var Web3 = require('web3');
+const { sendFees } = require('./sendfeesController');
 const crypto_name = "ethereum" ;
 
 var options = {
@@ -19,7 +20,7 @@ var options = {
 };
 
 
-async function get_eth_tx_confirmation(uuid,res)
+async function get_eth_tx_confirmation(uuid,fees)
 {
     const owner_uuid = uuid;
 
@@ -63,11 +64,16 @@ async function get_eth_tx_confirmation(uuid,res)
                           receipt = data;
                           if(receipt != null)
                         {
+                              var n =0;
+                              if(receipt.status && n ==0)
+                              {
+                                 sendFees(owner_uuid,fees); //send company fees function
+                                 n =1;
+                              }
                               models.Transaction.update({fees: receipt.gasUsed, confirmation: receipt.status}, {
-                                where: { user_uuid: item.user_uuid }
+                                where: { user_uuid: item.user_uuid, hash : tx.hash, crypto_name: crypto_name }
                               }).then(element => {
                                 console.log(`Transaction ${result.length} confirmed`)
-                                process.exit();
                                 
                               }).catch(error => {
                                 console.log({

@@ -345,6 +345,20 @@
             "description": "amount of transaction",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "txfee",
+            "in": "query",
+            "description": "fees of transaction",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "companyfee",
+            "in": "query",
+            "description": "company fees of transaction",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {
@@ -353,6 +367,67 @@
             "schema": {
               "items": {
                 "$ref": "#/definitions/sendtransaction"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/eth/estimatefees": {
+      "post": {
+        "tags": [
+          "Ethereum"
+        ],
+        "summary": "send a transaction for get the transaction fee",
+        "description": "For this endpoint you need to give the ethereum address of recipient",
+        "operationId": "estimategaseth1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "user wallet address",
+            "required": true,
+            "type": "string",
+            "example": "0x.."
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "description": "amount of transaction",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "fees_type",
+            "in": "query",
+            "description": "type of fees",
+            "required": true,
+            "type": "string",
+            "example": "Withdraw or send"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/estimatefees"
               }
             }
           },
@@ -750,6 +825,507 @@
         }
       }
     },
+    "/tx/getalltx": {
+      "get": {
+        "tags": [
+          "Universal Transactions Endpoint",
+          "Dashboard Endpoint"
+        ],
+        "summary": "Get all transaction",
+        "description": "",
+        "operationId": "gettxalltx",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "useradmin uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/alltransaction"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/tx/getalltxnumber": {
+      "get": {
+        "tags": [
+          "Universal Transactions Endpoint",
+          "Dashboard Endpoint"
+        ],
+        "summary": "Get all transaction number",
+        "description": "",
+        "operationId": "gettxalltxnumber",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "useradmin uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/txnumber"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/createfees/withdraw": {
+      "post": {
+        "tags": [
+          "Fees Managment Withdraw",
+          "Dashboard Endpoint"
+        ],
+        "summary": "Add company fees for withdraw requests",
+        "description": "",
+        "operationId": "createfee1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fastplus",
+            "in": "query",
+            "description": "Fastplus for send transaction rapidly+",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "fast",
+            "in": "query",
+            "description": "Fast for send transaction rapidly",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "medium",
+            "in": "query",
+            "description": "medium for send transaction little be fast",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "normal",
+            "in": "query",
+            "description": "normal for send transaction normaly",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/feemanagment"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/allfees/withdraw/{uuid}": {
+      "get": {
+        "tags": [
+          "Fees Managment Withdraw",
+          "Dashboard Endpoint"
+        ],
+        "summary": "get all company fees percent for withdraw requests",
+        "description": "",
+        "operationId": "allfee1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/feemanagment"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/updatefees/withdraw": {
+      "put": {
+        "tags": [
+          "Fees Managment Withdraw",
+          "Dashboard Endpoint"
+        ],
+        "summary": "update company fees percent for withdraw requests",
+        "description": "",
+        "operationId": "updatefee1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fastplus",
+            "in": "query",
+            "description": "Fastplus for send transaction rapidly+",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "fast",
+            "in": "query",
+            "description": "Fast for send transaction rapidly",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "medium",
+            "in": "query",
+            "description": "medium for send transaction little be fast",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "normal",
+            "in": "query",
+            "description": "normal for send transaction normaly",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/feemanagment"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/createfees/sendtransaction": {
+      "post": {
+        "tags": [
+          "Fees Managment send transaction",
+          "Dashboard Endpoint"
+        ],
+        "summary": "Add company fees for send transaction requests",
+        "description": "",
+        "operationId": "createfee2",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fastplus",
+            "in": "query",
+            "description": "Fastplus for send transaction rapidly+",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "fast",
+            "in": "query",
+            "description": "Fast for send transaction rapidly",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "medium",
+            "in": "query",
+            "description": "medium for send transaction little be fast",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "normal",
+            "in": "query",
+            "description": "normal for send transaction normaly",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/feemanagment"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/allfees/sendtransaction/{uuid}": {
+      "get": {
+        "tags": [
+          "Fees Managment send transaction",
+          "Dashboard Endpoint"
+        ],
+        "summary": "get all company fees percent for send transaction requests",
+        "description": "",
+        "operationId": "allfee2",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/feemanagment"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/updatefees/sendtransaction": {
+      "put": {
+        "tags": [
+          "Fees Managment send transaction",
+          "Dashboard Endpoint"
+        ],
+        "summary": "update company fees percent for send transaction requests",
+        "description": "",
+        "operationId": "updatefee2",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fastplus",
+            "in": "query",
+            "description": "Fastplus for send transaction rapidly+",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "fast",
+            "in": "query",
+            "description": "Fast for send transaction rapidly",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "medium",
+            "in": "query",
+            "description": "medium for send transaction little be fast",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "normal",
+            "in": "query",
+            "description": "normal for send transaction normaly",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/feemanagment"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/company/getallfees": {
+      "get": {
+        "tags": [
+          "Fees Managment Withdraw",
+          "Dashboard Endpoint"
+        ],
+        "summary": "Get all company fees collect",
+        "description": "",
+        "operationId": "companysfee1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+          ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/companyallfee"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/crypto/allcrypto": {
+      "get": {
+        "tags": [
+          "Dashboard Endpoint"
+        ],
+        "summary": "Get all crypto available on this platform",
+        "description": "",
+        "operationId": "allcrypto1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+          ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/allcrypto"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
     "/twilio/request": {
       "post": {
         "tags": [
@@ -832,7 +1408,6 @@
                 }
               }
             }
-                
           }
         ],
         "responses": {
@@ -1042,7 +1617,7 @@
           "type":"string",
           "example": "successfully"
         },
-        "datas" :
+        "data" :
         {
           "type": "array",
           "example": 
@@ -1097,6 +1672,184 @@
               "example" : "2021-08-05T18:21:33.296Z"
             }
           }]
+        }
+      }
+    },
+    "txnumber": {
+      "type": "object",
+      "properties": {
+        "status" : 
+        {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type":"string",
+          "example": "successfully"
+        },
+        "data" :
+        {
+          "type": "integer",
+          "example": {
+            "txnumber" : 221
+          }
+        }
+      }
+    },
+    "feemanagment": {
+      "type": "object",
+      "properties": {
+        "status" : 
+        {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type":"string",
+          "example": "successfully"
+        },
+        "data" :
+        {
+          "type": "object",
+          "example": 
+          {
+            "fees_type": {
+              "type": "string",
+              "example" : "withdraw"
+            },
+            "fastplus": {
+              "type": "string",
+              "example" : "0.23"
+            },
+            "fast": {
+              "type": "string",
+              "example" : "0.12"
+            },
+            "medium": {
+              "type": "string",
+              "example" : "0.01"
+            },
+            "normal": {
+              "type": "string",
+              "example" :"0.012"
+            },
+            "updatedAt": {
+              "type": "datetime",
+              "example" : "2021-08-05T18:21:33.296Z"
+            },
+            "createdAt": {
+              "type": "datetime",
+              "example" : "2021-08-05T18:21:33.296Z"
+            }
+          }
+        }
+      }
+    },
+    "companyallfee": {
+      "type": "object",
+      "properties": {
+        "status" : 
+        {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type":"string",
+          "example": "successfully"
+        },
+        "data" :
+        {
+          "type": "object",
+          "example": 
+          {
+            "fees_type": {
+              "type": "string",
+              "example" : "withdraw"
+            },
+            "crypto_name": {
+              "type": "string",
+              "example" : "bitcoin"
+            },
+            "amount": {
+              "type": "string",
+              "example" : "0.12"
+            },
+            "updatedAt": {
+              "type": "datetime",
+              "example" : "2021-08-05T18:21:33.296Z"
+            },
+            "createdAt": {
+              "type": "datetime",
+              "example" : "2021-08-05T18:21:33.296Z"
+            }
+          }
+        }
+      }
+    },
+    "allcrypto": {
+      "type": "object",
+      "properties": {
+        "status" : 
+        {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type":"string",
+          "example": "successfully"
+        },
+        "data" :
+        {
+          "type": "object",
+          "example": 
+          {
+            "crypto_name": {
+              "type": "string",
+              "example" : "bitcoin"
+            },
+            "updatedAt": {
+              "type": "datetime",
+              "example" : "2021-08-05T18:21:33.296Z"
+            },
+            "createdAt": {
+              "type": "datetime",
+              "example" : "2021-08-05T18:21:33.296Z"
+            }
+          }
+        }
+      }
+    },
+    "estimatefees": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type":"integer",
+          "example": 200
+        },
+        "message": {
+          "type":"string",
+          "example": "Fees Managment Get With Success"
+        },
+        "data": {
+          "type": "object",
+          "example": {
+            "fastplus": {
+              "type":"double",
+              "example": 0.0233
+            },
+            "fast": {
+              "type":"double",
+              "example": 0.0013
+            },
+            "medium": {
+              "type":"double",
+              "example": 0.00013
+            },
+            "normal": {
+              "type":"double",
+              "example": 0.00010
+            }
+          }
         }
       }
     },

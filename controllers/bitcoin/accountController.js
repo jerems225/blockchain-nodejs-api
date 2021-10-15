@@ -183,9 +183,6 @@ async function get_Btc_Balance(req,res)
         }
 }
 
-//get user bitcoin account address from database
-
-
 module.exports = {
     create_Btc_Account : create_Btc_Account,
     get_Btc_Balance : get_Btc_Balance,
