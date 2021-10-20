@@ -27,9 +27,10 @@ async function get_tx_all(req,res)
         });
       }
       else{
-        res.status(401).json({
-          status: 401,
+        res.status(200).json({
+          status: 200,
           message: `This user doesn't have any transaction`,
+          data : null
         });
       }
 
@@ -55,10 +56,7 @@ async function get_tx_all_number(req,res)
 
   if(user && user.dataValues.roles[0] == 'ROLE_ADMIN')
   {
-       var datas = await models.Transaction.findAll({ where :
-      {
-        user_uuid : admin_uuid,
-      }});
+       var datas = await models.Transaction.findAll();
 
       if(datas.length != 0)
       {
@@ -71,9 +69,10 @@ async function get_tx_all_number(req,res)
         });
       }
       else{
-        res.status(401).json({
-          status: 401,
+        res.status(200).json({
+          status: 200,
           message: `No transactions`,
+          data : null
         });
       }
 
@@ -99,10 +98,7 @@ async function get_tx_all_all(req,res)
 
   if(result)
   {
-       var datas = await models.Transaction.findAll({ where :
-      {
-        user_uuid : admin_uuid,
-      }});
+       var datas = await models.Transaction.findAll();
 
       if(datas.length != 0)
       {
@@ -113,9 +109,10 @@ async function get_tx_all_all(req,res)
         });
       }
       else{
-        res.status(401).json({
-          status: 401,
+        res.status(200).json({
+          status: 200,
           message: `No transaction`,
+          data : null
         });
       }
 

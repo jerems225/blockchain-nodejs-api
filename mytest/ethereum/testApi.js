@@ -93,10 +93,14 @@ async function get_eth_tx_new()
     }
 }
 
+async function network()
+{
+    var network = await web3.eth.net;
+    console.log(network)
+}
 
-
-
-get_eth_tx_new()
+network()
+// get_eth_tx_new()
 
 
 // createAccount();

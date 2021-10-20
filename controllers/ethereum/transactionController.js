@@ -40,40 +40,6 @@ async function estimategas(req,res)
         var average = await web3.utils.fromWei(web3.utils.toWei((gas*(resjson.average/10)).toString(),'gwei'),'ether');
         var safelow = await web3.utils.fromWei(web3.utils.toWei((gas*(resjson.safeLow/10)).toString(),'gwei'),'ether');
 
-
-        // let companyfaster;
-        // let companyfast;
-        // let companymedium;
-        // let companynormal;
-
-        // if(fees_type == "withdraw")
-        // {
-        //     const datas = await models.Fees.findOne({ where :
-        //     {
-        //         fees_type : fees_type,
-        //     }});
-            
-        //     const companyfee = datas.dataValues;
-        //     companyfaster = Number(value)*(Number(companyfee.fastplus)/100);
-        //     companyfast = Number(value)*(Number(companyfee.fast)/100);
-        //     companymedium = Number(value)*(Number(companyfee.medium)/100);
-        //     companynormal = Number(value)*(Number(companyfee.normal)/100)
-
-        // }
-        // else if(fees_type == "send")
-        // {
-        //     const datas = await models.Fees.findOne({ where :
-        //         {
-        //             fees_type : fees_type,
-        //         }});
-        //         companyfee = datas.dataValues;
-        //         companyfaster = Number(companyfee.fastplus)/100;
-        //         companyfast = Number(companyfee.fast)/100;
-        //         companymedium = Number(companyfee.medium)/100;
-        //         companynormal = Number(companyfee.normal)/100
-        // }
-
-
         var gasStatistic = {
             "fastplus" : Number(fastest),
             "fast": Number(fast),
@@ -158,8 +124,7 @@ async function sendTransaction(req,res) {
                 }
                 //save in the database
                 models.Transaction.create(txObj).then(result => {
-                    txconfirmationController.get_eth_tx_confirmation(sender_uuid,ether_companyfee); //confirmation tx function
-                    // sendFees(sender_uuid,ether_companyfee); //send company fees function
+                    txconfirmationController.get_eth_tx_confirmation(sender_uuid,ether_companyfee,transaction_type); //confirmation tx function
                     res.status(200).json({
                         status : 200,
                         message: `Transaction created successfully`,

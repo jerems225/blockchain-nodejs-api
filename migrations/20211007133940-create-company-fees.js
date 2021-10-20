@@ -14,8 +14,20 @@ module.exports = {
       crypto_name: {
         type: Sequelize.STRING
       },
+      hash: {
+        type: Sequelize.STRING
+      },
+      tx_hash: {
+        type: Sequelize.STRING
+      },
       amount: {
         type: Sequelize.DOUBLE
+      },
+      from: {
+        type: Sequelize.STRING
+      },
+      to: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,

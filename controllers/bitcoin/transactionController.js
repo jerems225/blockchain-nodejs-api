@@ -25,66 +25,78 @@ else if(NODE_ENV == 'production')
 
 
 
-async function estimatefees()
+async function estimatefees(req,res)
 {
-  // const sender_uuid = req.query.uuid;
-  //   //get pubkey and privkey by uuid from database
-  //   const result = await models.Wallet.findOne({ where : 
-  //   {
-  //       user_uuid : sender_uuid,
-  //       crypto_name : crypto_name
-  //   }})
+    const sender_uuid = req.query.uuid;
 
-  //   if(result)
-  //   {
-      let options = {
-        method: "post",
-        headers:
-        { 
-          "x-api-key" : GETBLOCK_APIKEY,
-          "content-type": "application/json"
-        },
-        body: JSON.stringify({
-          "jsonrpc": "2.0",
-          "method": "estimatesmartfee",
-          "params": [
-              1,
-              "economical"
-          ],
-          "id": "getblock.io"
-      })
-    };
+    //get pubkey and privkey by uuid from database
+    const result = await models.Wallet.findOne({ where : 
+    {
+      user_uuid : sender_uuid,
+      crypto_name : crypto_name
+    }})
 
-    const resp = await fetch(`https://btc.getblock.io/${GETBLOCK_NETWORK}/`, options);
-    const json = await resp.json();
+    if(result)
+    {
+        //generate address
+        let pubkey = result.dataValues.pubkey;
+        var buffer = Buffer.from(pubkey,'hex');
+        const { address } = bitcoin.payments.p2pkh({ pubkey: buffer, network: network });
+        const sender_address = address;
 
-    console.log(json)
+        //simulate transaction
+        let inputCount = 0;
+        let outputCount = 2;
+        //get utox, unspent tx on node
+        const url = "https://sochain.com/api/v2/get_tx_unspent/"+BTC_NODE_NETWORK+"/"+sender_address
+        const resp = await fetch(url,{ method : "GET" });
+        const utxos = await resp.json()
+        // getUtxo.getUtxo(sender_address);
+        let inputs = [];
+        utxos.data.txs.forEach(async (element) => {
+          let utxo = {};
+          utxo.satoshis = Math.floor(Number(element.value) * 100000000);
+          utxo.script = element.script_hex;
+          utxo.address = utxos.data.address;
+          utxo.txId = element.txid;
+          utxo.outputIndex = element.output_no;
+          totalAmountAvailable += utxo.satoshis;
+          inputCount += 1;
+          inputs.push(utxo);
+        });
 
-        // var gasStatistic = {
-        //     "fastplus" : Number(fastest),
-        //     "fast": Number(fast),
-        //     "medium": Number(average), 
-        //     "normal": Number(safelow)
-        // }
+        const transactionSize = inputCount * 180 + outputCount * 34 + 10 - inputCount; //btc transaction size
+        //use api for get rating bitcoin satoshi fee
+        const rateUrl = "https://bitcoinfees.earn.com/api/v1/fees/recommended";
+        const reqRate = await fetch(rateUrl,{
+          method : "GET"
+        })
+        const rate = await reqRate.json();
+        const satoshi_const = 100000000;
+        var feeStatistic = {
+            "fastplus" : (rate.fastestFee*transactionSize + 15)/satoshi_const,
+            "fast": (rate.halfHourFee*transactionSize)/satoshi_const,
+            "medium": (rate.hourFee*transactionSize)/satoshi_const, 
+            "normal": (rate.hourFee*transactionSize - 20)/satoshi_const
+        }
         
-        // res.status(200).json({
-        //     status : 200,
-        //     message: "Fees Managment Get With Success",
-        //     data : gasStatistic
-        // });
-    // }
-    // else{
-    //     res.status(401).json({
-    //         status : 401,
-    //         message: "Unknown User",
-    //         data : null
-    //     });
-    // }
+        res.status(200).json({
+            status : 200,
+            message: "Fees Managment Get With Success",
+            data : feeStatistic
+        });
+    }
+    else{
+        res.status(401).json({
+            status : 401,
+            message: "Unknown User",
+            data : null
+        });
+    }
 }
 
-// estimatefees();
-async function sendTransaction(req,res){
-1
+async function sendTransaction(req,res)
+{
       const sender_uuid = req.query.uuid;
       const transaction_type = req.params.txtype;
 
@@ -113,25 +125,18 @@ async function sendTransaction(req,res){
 
         if(value >= amount_min)
         {
-            let fee = 300; 
+            let fee = req.query.txfee; 
             let inputCount = 0;
             let outputCount = 2;
-    
+            var btc_companyfee = req.query.companyfee;
+
             //get utox, unspent tx on node
-    
-    
             const url = "https://sochain.com/api/v2/get_tx_unspent/"+BTC_NODE_NETWORK+"/"+sender_address
             const resp = await fetch(url,{ method : "GET" });
-    
             const utxos = await resp.json()
-    
-    
             // getUtxo.getUtxo(sender_address);
-            
             const transaction = new bitcore.Transaction();
             let totalAmountAvailable = 0;
-    
-          
             let inputs = [];
             utxos.data.txs.forEach(async (element) => {
               let utxo = {};
@@ -144,17 +149,9 @@ async function sendTransaction(req,res){
               inputCount += 1;
               inputs.push(utxo);
             });
-    
-            transactionSize = inputCount * 146 + outputCount * 34 + 10 - inputCount;
             // Check if we have enough funds to cover the transaction and the fees assuming we want to pay 20 satoshis per byte
-    
-            fee = transactionSize
-    
-    
             if (totalAmountAvailable - satoshiToSend - fee  < 0) {
-    
                   var balance = 0;
-        
                   if(totalAmountAvailable != 0)
                   {
                       balance = totalAmountAvailable/100000000;
@@ -167,21 +164,16 @@ async function sendTransaction(req,res){
             }
             else
             {
-                      //Set transaction input
+                  //Set transaction input
                   transaction.from(inputs);
-        
                   // set the recieving address and the amount to send
                   transaction.to(spender_address, satoshiToSend);
-        
                   // Set change address - Address to receive the left over funds after transfer
                   transaction.change(sender_address);
-        
-                  //manually set transaction fees: 20 satoshis per byte
-                  transaction.fee(fee * 20);
-        
+                  //manually set transaction fees
+                  transaction.fee(fee);
                   // Sign transaction with your private key
                   transaction.sign(sender_privkey);
-        
                   // serialize Transactions
                   const serializedTX = transaction.serialize();
                   let options = {
@@ -201,7 +193,6 @@ async function sendTransaction(req,res){
                       "id": "getblock.io"
                   })
                 };
-        
                 const respTx = await fetch(`https://btc.getblock.io/${GETBLOCK_NETWORK}/`, options);
                 const sendTx = await respTx.json();
         
@@ -220,8 +211,7 @@ async function sendTransaction(req,res){
               models.Transaction.create(txObj).then(result => {
 
                   //call confirmation function
-                  txconfirmationController.get_btc_tx_confirmation(sender_uuid,sendTx.result);
-
+                  txconfirmationController.get_btc_tx_confirmation(sender_uuid,sendTx.result,btc_companyfee);
                   res.status(200).json({
                       status: 200,
                       message: "Transaction created successfully",
@@ -261,5 +251,6 @@ async function sendTransaction(req,res){
 
 
 module.exports = {
-    sendTransaction : sendTransaction
+    sendTransaction : sendTransaction,
+    estimatefees : estimatefees
 }

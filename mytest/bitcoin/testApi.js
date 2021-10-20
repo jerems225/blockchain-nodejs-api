@@ -38,15 +38,29 @@ async function getBalance(user_uuid)
 
 async function createAccount()
 {
-  const urlAccount = "http://127.0.0.1:5500/BTC/createAccount?uuid="+user_uuid;
-  var response = await fetch(urlAccount)
-
-  var res = await response.json();
-
-  console.log(res);
+  const rateUrl = "https://bitcoinfees.earn.com/api/v1/fees/recommended";
+  const reqRate = await fetch(rateUrl,{
+    method : "GET"
+  })
+  const rate = await reqRate.json();
+  
+  console.log(rate)
 }
+async function fees()
+{
+  const rateUrl = "https://bitcoinfees.earn.com/api/v1/fees/recommended";
+  const reqRate = await fetch(rateUrl,{
+    method : "GET"
+  })
+  const rate = await reqRate.json();
+  
+  console.log(rate)
+}
+fees()
 
-async function createAddress()
+
+
+// async function createAddress()
 
 // sendBitcoin('tb1qeyyya7ljghrsf9vhpu5ku6s8gxtze9kqsuhr49',0.01)
 // getBalance(user_uuid)

@@ -91,9 +91,10 @@ const admin_uuid = req.params.uuid;
       }
       else
       {
-          res.status(401).json({
-              status: 401,
+          res.status(200).json({
+              status: 200,
               message: `No Fees Managment`,
+              data : null
           });
       }
   }
@@ -137,9 +138,10 @@ const admin_uuid = req.query.uuid;
             });
         }
         else{
-            res.status(401).json({
-                status: 401,
+            res.status(200).json({
+                status: 200,
                 message: `No Fees Managment`,
+                data: null
             });
         }
     }
@@ -249,9 +251,10 @@ const admin_uuid = req.params.uuid;
       }
       else
       {
-          res.status(401).json({
-              status: 401,
+          res.status(200).json({
+              status: 200,
               message: `No Fees Managment`,
+              data : null
           });
       }
     
@@ -296,9 +299,10 @@ const admin_uuid = req.query.uuid;
             });
         }
         else{
-            res.status(401).json({
-                status: 401,
+            res.status(200).json({
+                status: 200,
                 message: `No Fees Managment`,
+                data : null
             });
         }
     }
@@ -342,19 +346,19 @@ async function getallfees(req,res)
             for(var i=0;i<=datas.length-1;i++)
             {
               
-                if(datas[i].crypto_name = crypto_name[0])
+                if(datas[i].crypto_name == crypto_name[0])
                 {
                   btcfees = btcfees + datas[i].amount;
                 }
-                else if(datas[i].crypto_name = crypto_name[1])
+                else if(datas[i].crypto_name == crypto_name[1])
                 {
                   ethfees = ethfees + datas[i].amount;
                 }
-                else if(datas[i].crypto_name = crypto_name[2])
+                else if(datas[i].crypto_name == crypto_name[2])
                 {
                   smbfees = smbfees + datas[i].amount;
                 }
-                else if(datas[i].crypto_name = crypto_name[3])
+                else if(datas[i].crypto_name == crypto_name[3])
                 {
                   usdtfees = usdtfees + datas[i].amount;
                 }

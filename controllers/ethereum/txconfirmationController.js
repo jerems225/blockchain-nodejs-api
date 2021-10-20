@@ -20,7 +20,7 @@ var options = {
 };
 
 
-async function get_eth_tx_confirmation(uuid,fees)
+async function get_eth_tx_confirmation(uuid,ether_companyfee,tx_type)
 {
     const owner_uuid = uuid;
 
@@ -65,22 +65,21 @@ async function get_eth_tx_confirmation(uuid,fees)
                           if(receipt != null)
                         {
                               var n =0;
-                              if(receipt.status && n ==0)
+                              if(receipt.status && n == 0)
                               {
-                                 sendFees(owner_uuid,fees); //send company fees function
+                                models.Transaction.update({fees: receipt.gasUsed, confirmation: receipt.status}, {
+                                  where: { user_uuid: item.user_uuid, hash : tx.hash, crypto_name: crypto_name }
+                                }).then(element => {
+                                  console.log(`Transaction ${result.length} confirmed`)
+                                  sendFees(owner_uuid,ether_companyfee,tx.hash); //send company fees function
+                                }).catch(error => {
+                                  console.log({
+                                      status : 500,
+                                      message: "Something went wrong",
+                                  });
+                                });
                                  n =1;
                               }
-                              models.Transaction.update({fees: receipt.gasUsed, confirmation: receipt.status}, {
-                                where: { user_uuid: item.user_uuid, hash : tx.hash, crypto_name: crypto_name }
-                              }).then(element => {
-                                console.log(`Transaction ${result.length} confirmed`)
-                                
-                              }).catch(error => {
-                                console.log({
-                                    status : 500,
-                                    message: "Something went wrong",
-                                });
-                              });
                         }
                         })
                     }
