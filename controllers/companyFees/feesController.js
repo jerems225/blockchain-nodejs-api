@@ -345,7 +345,6 @@ async function getallfees(req,res)
         {
             for(var i=0;i<=datas.length-1;i++)
             {
-              
                 if(datas[i].crypto_name == crypto_name[0])
                 {
                   btcfees = btcfees + datas[i].amount;

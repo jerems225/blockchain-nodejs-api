@@ -1830,25 +1830,21 @@
           "type": "object",
           "example": 
           {
-            "fees_type": {
-              "type": "string",
-              "example" : "withdraw"
+            "bitcoin": {
+              "btcfees" : 0.01,
+              "symbol" : "BTC"
             },
-            "crypto_name": {
-              "type": "string",
-              "example" : "bitcoin"
+            "ethereum": {
+              "btcfees" : 0.01,
+              "symbol" : "ETH"
             },
-            "amount": {
-              "type": "string",
-              "example" : "0.12"
+            "simbcoin": {
+              "smbfees" : 0.01,
+              "symbol" : "SMB"
             },
-            "updatedAt": {
-              "type": "datetime",
-              "example" : "2021-08-05T18:21:33.296Z"
-            },
-            "createdAt": {
-              "type": "datetime",
-              "example" : "2021-08-05T18:21:33.296Z"
+            "tether": {
+              "usdtfees" : 0.01,
+              "symbol" : "USDT"
             }
           }
         }
