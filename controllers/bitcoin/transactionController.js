@@ -43,6 +43,7 @@ async function estimatefees(req,res)
         var buffer = Buffer.from(pubkey,'hex');
         const { address } = bitcoin.payments.p2pkh({ pubkey: buffer, network: network });
         const sender_address = address;
+        const amount = Number(req.query.value);
 
         //simulate transaction
         let inputCount = 0;
@@ -72,12 +73,24 @@ async function estimatefees(req,res)
           method : "GET"
         })
         const rate = await reqRate.json();
+
+        //satoshi add by level of amount
+        var rateNeed = 4;
+        // if(amount >= 0.001  && amount < 0.002)
+        // {
+        //   rateNeed = 15000
+        // }
+        // if(amount >= 0.002  && amount < 0.003)
+        // {
+        //   rateNeed = 20000
+        // }
+
         const satoshi_const = 100000000;
         var feeStatistic = {
-            "fastplus" : (rate.fastestFee*transactionSize + 15)/satoshi_const,
-            "fast": (rate.halfHourFee*transactionSize)/satoshi_const,
-            "medium": (rate.hourFee*transactionSize)/satoshi_const, 
-            "normal": (rate.hourFee*transactionSize - 20)/satoshi_const
+            "fastplus" : ((rate.fastestFee*transactionSize + 1500)*rateNeed)/satoshi_const,
+            "fast": ((rate.halfHourFee*transactionSize + 1000)*rateNeed)/satoshi_const,
+            "medium": ((rate.hourFee*transactionSize + 500)*rateNeed)/satoshi_const, 
+            "normal": ((rate.hourFee*transactionSize + 250)*rateNeed - 20)/satoshi_const
         }
         
         res.status(200).json({
@@ -172,6 +185,7 @@ async function sendTransaction(req,res)
                   transaction.change(sender_address);
                   //manually set transaction fees
                   transaction.fee(fee);
+                  
                   // Sign transaction with your private key
                   transaction.sign(sender_privkey);
                   // serialize Transactions

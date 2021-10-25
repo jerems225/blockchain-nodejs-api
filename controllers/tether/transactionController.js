@@ -8,13 +8,11 @@ const crypto_name = "tether";
 const abi = require('../abis/abis');
 const txconfirmationController = require('./txconfirmationController');
 
-const amount_min = 20;
+const amount_min = 60;
 
 const tokenaddress = require('../abis/tokenaddress');
 
 const USDT_CONTRACT_ADDRESS = tokenaddress.usdtAddress;  // get env address
-
-// const USDT_CONTRACT_ADDRESS = "0xFab46E002BbF0b4509813474841E0716E6730136"  //faucet token address
 
 async function sendTransaction(req,res) {
   
@@ -40,7 +38,7 @@ async function sendTransaction(req,res) {
         if(value >= amount_min)
         {
             //instance the ERC20  TOKEN CONTRACT
-            var myContract = new web3.eth.Contract(abi.fauAbi, USDT_CONTRACT_ADDRESS, {
+            var myContract = new web3.eth.Contract(abi.usdtAbi, USDT_CONTRACT_ADDRESS, {
                 // from: SIMBCOIN_OWNER_ADDRESS, // default from address
                 // gasPrice: '20000000000' // default gas price in wei, 20 gwei in this case
             });
@@ -59,7 +57,6 @@ async function sendTransaction(req,res) {
             //calculate gas price :   web3.eth.getGasPrice()
 
             const gasPrice = await web3.eth.getGasPrice(); //in wei
-            const gasLimit = await web3.utils.toWei('30000','gwei') //in wei
 
             const gas =  gasPrice;
 
@@ -74,7 +71,8 @@ async function sendTransaction(req,res) {
                 const transaction = {
                     "from":sender_address,
                      "gasPrice": web3.utils.toHex(2 * 1e9),
-                     "gasLimit": web3.utils.toHex(210000),
+                     "gasLimit": web3.utils.toHex(21000),
+                     "gas" : fee,
                      "to":USDT_CONTRACT_ADDRESS,
                      "value":"0x0",
                      "data":myContract.methods.transfer(spender_address, value).encodeABI(),

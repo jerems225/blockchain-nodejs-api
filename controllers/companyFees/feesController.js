@@ -364,24 +364,28 @@ async function getallfees(req,res)
              
             }
 
-            var feeobject = {
-                    bitcoin: {
-                      btcfees : btcfees,
-                      symbol : 'BTC'
+            var feeobject = [
+                    {
+                    name : "bitcoin",
+                    fee : btcfees,
+                    symbol : 'BTC'
                     },
-                    ethereum:{
-                      ethfees : ethfees,
-                      symbol : 'ETH'
+                    {
+                    name : "ethereum",
+                    fee : ethfees,
+                    symbol : 'ETH'
                     },
-                    simbcoin:{
-                      smbfees : smbfees,
-                      symbol : 'SMB'
+                    {
+                    name : "simbcoin",
+                    fee : smbfees,
+                    symbol : 'SMB'
                     },
-                    tether:{
-                      usdtfees : usdtfees,
-                      symbol : 'USDT'
+                    {
+                    name: "tether",
+                    fee : usdtfees,
+                    symbol : 'USDT'
                     }
-            }
+                  ]
             res.status(200).json({
                 status: 200,
                 message: `Total of company fees collect.`,

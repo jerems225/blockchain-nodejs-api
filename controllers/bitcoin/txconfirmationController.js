@@ -3,6 +3,7 @@ const fetch = require('node-fetch');
 const models = require('../../models');
 const crypto_name = "bitcoin" ;
 const {GETBLOCK_NETWORK, GETBLOCK_APIKEY} = require('../nodeConfig');
+const { sendFees } = require('./sendfeesController');
 
 async function get_btc_tx_confirmation(uuid,hash)
 {
@@ -50,7 +51,8 @@ async function get_btc_tx_confirmation(uuid,hash)
         where: { user_uuid: uuid, hash : hash, crypto_name: crypto_name }
       }).then(element => {
         console.log(`Transaction ${result.length} confirmed`)
-        process.exit();
+        sendFees(owner_uuid,ether_companyfee,hash)
+        send
         
       }).catch(error => {
         console.log({

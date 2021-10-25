@@ -9,7 +9,7 @@ const abi = require('../abis/abis');
 const txconfirmationController = require('./txconfirmationController');
 const tokenaddress = require('../abis/tokenaddress');
 
-const amount_min = 20;
+const amount_min = 65;
 
 const SIMBCOIN_CONTRACT_ADDRESS = tokenaddress.simbAddress;
 

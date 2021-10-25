@@ -41,12 +41,16 @@ async function createTokenAccount(req,res)
         else
         {
           //create eth account
-          var user_eth_account = await web3.eth.accounts.create();
+          var account = await models.Wallet.findOne({ where : 
+            {
+              user_uuid : owner_uuid,
+              crypto_name : "ethereum"
+            }})
 
           const walletObject = {
               crypto_name : crypto_name,
-              pubkey : user_eth_account.address,
-              privkey : user_eth_account.privateKey,
+              pubkey : account.dataValues.pubkey,
+              privkey : account.dataValues.privateKey,
               mnemonic : "N/A",
               user_uuid : owner_uuid
           }
