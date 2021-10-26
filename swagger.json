@@ -687,6 +687,67 @@
         }
       }
     },
+    "/smb/estimatefees": {
+      "post": {
+        "tags": [
+          "Simbcoin"
+        ],
+        "summary": "send a transaction for get the transaction fee",
+        "description": "For this endpoint you need to give the simbcoin address of recipient",
+        "operationId": "estimategassmb1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "user wallet address",
+            "required": true,
+            "type": "string",
+            "example": "0x.."
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "description": "amount of transaction",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "fees_type",
+            "in": "query",
+            "description": "type of fees",
+            "required": true,
+            "type": "string",
+            "example": "Withdraw or send"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/estimatefees"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
     "/usdt/createwallet": {
       "post": {
         "tags": [
@@ -853,6 +914,67 @@
             "schema": {
               "items": {
                 "$ref": "#/definitions/sendtransaction"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/usdt/estimatefees": {
+      "post": {
+        "tags": [
+          "Tether"
+        ],
+        "summary": "send a transaction for get the transaction fee",
+        "description": "For this endpoint you need to give the tether address of recipient",
+        "operationId": "estimategasusdt1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "user wallet address",
+            "required": true,
+            "type": "string",
+            "example": "0x.."
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "description": "amount of transaction",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "fees_type",
+            "in": "query",
+            "description": "type of fees",
+            "required": true,
+            "type": "string",
+            "example": "Withdraw or send"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/estimatefees"
               }
             }
           },

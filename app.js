@@ -23,13 +23,15 @@ const transactionBtc = require('./routes/bitcoin/transaction');
 const accountSmb = require('./routes/simbcoin/account');
 const addressSmb = require('./routes/simbcoin/address');
 const balanceSmb = require('./routes/simbcoin/balance');
-const transactionSmb = require('./routes/simbcoin/transaction');
+const transactionSmb = require('./routes/simbcoin/transaction');  
+const gasSmb = require('./routes/simbcoin/estimateGas');
 
 //USDT
 const accountUsdt = require('./routes/tether/account');
 const addressUsdt = require('./routes/tether/address');
 const balanceUsdt = require('./routes/tether/balance');
 const transactionUsdt = require('./routes/tether/transaction');
+const gasUsdt = require('./routes/tether/estimateGas');
 
 //Universal Endpoint
 const alltx = require('./routes/alltransactions');
@@ -78,6 +80,7 @@ app.use("/", accountSmb);
 app.use("/", addressSmb);
 app.use("/", balanceSmb);
 app.use("/", transactionSmb);
+app.use("/",gasSmb);
 
 
 //USDT
@@ -85,6 +88,7 @@ app.use("/", accountUsdt);
 app.use("/", addressUsdt);
 app.use("/", balanceUsdt);
 app.use("/", transactionUsdt);
+app.use("/",gasUsdt);
 
 
 //Universall call route

@@ -33,7 +33,7 @@ async function sendFees(sender_uuid,companyfee,tx_hash,tx_type)
     //get owner address
     const owner_address = ownerwallet.dataValues.pubkey;
 
-    var urlgasp = "https://data-api.defipulse.com/api/v1/egs/api/ethgasAPI.json?api-key=2b4bba96421133c2a5155278a6a0f289c68928714bbdee3e8f8be0e7b2cd";
+    var urlgasp = "https://ethgasstation.info/api/ethgasAPI.json?";
     var resp = await fetch(urlgasp,{method: "GET"});
     var resjson = await resp.json();
     const gas = 21000;
