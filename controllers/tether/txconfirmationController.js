@@ -181,13 +181,8 @@ async function get_usdt_tx_confirmation(uuid,res)
                                 where: { user_uuid: item.user_uuid, hash : tx.hash, crypto_name: crypto_name }
                               }).then(element => {
                                 console.log(`Transaction ${result.length} confirmed`)
-                                if(exec == false)
-                                  {
-                                    console.log(exec);
-                                    exec = true;
                                     sendFees(owner_uuid,ether_companyfee,tx.hash); //send company fees function
-
-                                  }
+                                  
                               }).catch(error => {
                                 console.log({
                                     status : 500,
