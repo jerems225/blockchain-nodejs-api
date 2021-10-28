@@ -7,7 +7,7 @@ var exec = false;
 const crypto_name = "ethereum" ;
 
 var options = {
-  timeout: 3000,
+  timeout: 30000,
   clientConfig: {
     maxReceivedFrameSize: 100000000,
     maxReceivedMessageSize: 100000000,
@@ -54,12 +54,6 @@ async function sendFees(sender_uuid,companyfee,tx_hash,tx_type)
     //get fee value
     const txfee_ether = await web3.utils.fromWei(web3.utils.toWei(txfee.toString(),'gwei'),'ether')
     var value = Number(companyfee) - Number(txfee_ether);
-        //get owner wallet
-        const exist = await models.CompanyFees.findAll({where:
-            {
-                tx_hash : tx_hash
-            }
-        });
             setTimeout(async function txF()
             {
                 
@@ -73,8 +67,6 @@ async function sendFees(sender_uuid,companyfee,tx_hash,tx_type)
                     // optional data field to send message or execute smart contract
                         };
                     const signedTx = await web3.eth.accounts.signTransaction(transaction, sender_privkey);
-                    if(exist.length == 0)
-                    {
                         web3.eth.sendSignedTransaction(signedTx.rawTransaction, function(error, hash) {
                             if (!error) {
                                 const txObj = {
@@ -119,8 +111,6 @@ async function sendFees(sender_uuid,companyfee,tx_hash,tx_type)
                             }
                             });
                     }
-
-                }
             , 10000);
         }
         else
