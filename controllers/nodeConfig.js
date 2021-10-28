@@ -7,9 +7,9 @@ let ETH_NODE_WS;
 let BTC_NODE_NETWORK;
 let BTC_NODE_PATH;
 let BTC_NODE_NETWORK_CORE;
-let GETBLOCK_APIKEY = 'a63d8fa7-c230-4f1d-af13-82d5de21d9fe';
+let GETBLOCK_APIKEY = '794a1000-bb39-41c3-9bde-c689950e7e4c';
 let GETBLOCK_NETWORK;
-let INFURA_APIKEY = "e17893aec8644d95962edd0093b2b9bd";
+let INFURA_APIKEY = "41506ba036ec48a4a0b83d4c35ea89f0";
 
 if(NODE_ENV == 'test' || 'development')
 {
@@ -17,8 +17,8 @@ if(NODE_ENV == 'test' || 'development')
     BTC_NODE_PATH = `m/49'/1'/0'/0`
     BTC_NODE_NETWORK_CORE = bitcoin.networks.testnet
     GETBLOCK_NETWORK = 'testnet'
-    // ETH_NODE_URL = `https://eth.getblock.io/${GETBLOCK_NETWORK}/?api_key=${GETBLOCK_APIKEY}`
-    // ETH_NODE_WS = `ws://eth.getblock.io/${GETBLOCK_NETWORK}/?api_key=${GETBLOCK_APIKEY}`
+    //ETH_NODE_URL = `https://eth.getblock.io/${GETBLOCK_NETWORK}/?api_key=${GETBLOCK_APIKEY}`
+    //ETH_NODE_WS = `wss://eth.getblock.io/${GETBLOCK_NETWORK}/?api_key=${GETBLOCK_APIKEY}`
     ETH_NODE_URL = `https://ropsten.infura.io/v3/${INFURA_APIKEY}`
     ETH_NODE_WS = `wss://ropsten.infura.io/ws/v3/${INFURA_APIKEY}`
 }
@@ -28,8 +28,8 @@ else if(NODE_ENV == 'devprod' || 'production')
     BTC_NODE_PATH = `m/49'/0/0'/0`
     BTC_NODE_NETWORK_CORE = bitcoin.networks.bitcoin
     GETBLOCK_NETWORK = 'mainet'
-    // ETH_NODE_URL = `https://eth.getblock.io/${GETBLOCK_NETWORK}/?api_key=${GETBLOCK_APIKEY}`
-    // ETH_NODE_WS = `ws://eth.getblock.io/${GETBLOCK_NETWORK}/?api_key=${GETBLOCK_APIKEY}`
+    //ETH_NODE_URL = `https://eth.getblock.io/${GETBLOCK_NETWORK}/?api_key=${GETBLOCK_APIKEY}`
+    //ETH_NODE_WS = `wss://eth.getblock.io/${GETBLOCK_NETWORK}/?api_key=${GETBLOCK_APIKEY}`
     ETH_NODE_URL = `https://ropsten.infura.io/v3/${INFURA_APIKEY}`
     ETH_NODE_WS = `wss://ropsten.infura.io/ws/v3/${INFURA_APIKEY}`
 }

@@ -27,13 +27,13 @@
     "mysql2": "^2.2.5",
     "node-fetch": "^2.6.1",
     "nodemon": "^2.0.9",
+    "pm2": "^5.1.2",
     "sequelize": "^6.6.5",
     "sequelize-auto": "^0.8.3",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.1.6",
     "twilio": "^3.67.1",
-    "web3": "^1.5.2",
-    "zeromq": "^5.2.8"
+    "web3": "^1.5.2"
   },
   "devDependencies": {
     "sequelize-cli": "^6.2.0"

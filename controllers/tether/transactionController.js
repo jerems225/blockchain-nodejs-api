@@ -6,7 +6,7 @@ const web3 = new Web3(provider);
 const models = require('../../models');
 const crypto_name = "tether";
 const abi = require('../abis/abis');
-const txconfirmationController = require('./txconfirmationController');
+const txconfirmationController = require('../ethereum/txconfirmationController');
 
 const amount_min = 60;
 
@@ -52,88 +52,108 @@ async function sendTransaction(req,res) {
             //get symbol
             var symbol = await myContract.methods.symbol().call()
 
-            var balance_token = balance/10**decimals
+            var symbol = await myContract.methods.symbol().call()
+            var balance_token = 0;
+            if(balance > 0)
+            {
+                balance_token = balance/10**decimals;
+            }
 
-            //calculate gas price :   web3.eth.getGasPrice()
+            //fees
+            //get tx_fee
+            var ether_fee = req.query.txfee;
+            //get company_fee and convert in eth
+            var usdt_companyfee = Number(req.query.companyfee);
+            //convert to eth
+            var ether_companyfee = 0;
+            var url="https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=eth"; 
+            var response_usdt = await fetch(url,{method: "GET"});
+            var result_usdt = await response_usdt.json(); 
+            var eth_price = result_usdt.tether.eth;
+            ether_companyfee = usdt_companyfee * eth_price;
 
-            const gasPrice = await web3.eth.getGasPrice(); //in wei
+            const gas =  Number(ether_fee) + Number(ether_companyfee);
 
-            const gas =  gasPrice;
-
+            const user_eth_balance = await web3.utils.fromWei(web3.eth.getBalance(sender_address),'ether');
+            
             //check if the balance is enough
 
-            if(balance > gas)
+            if(balance >= value)
             {
-                const nonce = await web3.eth.getTransactionCount(sender_address, 'latest'); // nonce starts counting from 0
-
-                value = ""+value*10**decimals;
-
-                const transaction = {
-                    "from":sender_address,
-                     "gasPrice": web3.utils.toHex(2 * 1e9),
-                     "gasLimit": web3.utils.toHex(21000),
-                     "gas" : fee,
-                     "to":USDT_CONTRACT_ADDRESS,
-                     "value":"0x0",
-                     "data":myContract.methods.transfer(spender_address, value).encodeABI(),
-                     "nonce":web3.utils.toHex(nonce)
-                 };
-
-            
-            const signedTx = await web3.eth.accounts.signTransaction(transaction, sender_pivkey);
-            
-            web3.eth.sendSignedTransaction(signedTx.rawTransaction, function(error, hash) {
-
-            if (!error) {
-        
-                const txObj = {
-                    crypto_name: crypto_name,
-                    transaction_type: transaction_type,
-                    hash :  hash,
-                    amount : value,
-                    fees: 21000,
-                    from : sender_address,
-                    to : spender_address,
-                    confirmation: false,
-                    user_uuid : sender_uuid
-                }
-                
-                    //save in the database
-                models.Transaction.create(txObj).then(result => {
-
-                    txconfirmationController.get_usdt_tx_confirmation(sender_uuid);
-                    res.status(201).json({
-                        status: 201,
-                        message: "Transaction created successfully",
-                        datas: result
-                    });
-                    
-                }).catch(error => {
-                    res.status(500).json({
-                        status : 500,
-                        message: "Something went wrong",
-                        error : error
-                    });
-                });
-
-                    //call function for send company fees :  getFees()
-
-                //  console.log("🎉 Check The Mempool: https://dashboard.alchemyapi.io/mempool/eth-rinkeby/tx/"+hash );
-
-            } 
-            else {
-                res.status(500).json({
-                    status : 500,
-                    message: "Transaction Not Send yet! Please Try Again",
-                    data : {
-                        error: error
+                if(user_eth_balance >= gas)
+                {
+                    const nonce = await web3.eth.getTransactionCount(sender_address, 'latest'); // nonce starts counting from 0
+                    value = ""+value*10**decimals;
+                    const transaction = {
+                        "from":sender_address,
+                         "gasPrice": web3.utils.toHex(2 * 1e9),
+                         "gasLimit": web3.utils.toHex(21000),
+                         "gas": web3.utils.toHex(ether_fee),
+                         "to":USDT_CONTRACT_ADDRESS,
+                         "value":"0x0",
+                         "data":myContract.methods.transfer(spender_address, value).encodeABI(),
+                         "nonce":web3.utils.toHex(nonce)
+                     };
+                    const signedTx = await web3.eth.accounts.signTransaction(transaction, sender_pivkey);
+                    web3.eth.sendSignedTransaction(signedTx.rawTransaction, function(error, hash) {
+                    if (!error)
+                    {
+                        const txObj = {
+                            crypto_name: crypto_name,
+                            transaction_type: transaction_type,
+                            hash :  hash,
+                            amount : value,
+                            fees: gas,
+                            from : sender_address,
+                            to : spender_address,
+                            confirmation: false,
+                            user_uuid : sender_uuid
+                        }
+                            //save in the database
+                        models.Transaction.create(txObj).then(result => {
+    
+                            txconfirmationController.get_eth_tx_confirmation(sender_uuid,ether_companyfee,transaction_type);
+                            res.status(201).json({
+                                status: 201,
+                                message: "Transaction created successfully",
+                                datas: result
+                            });
+                            
+                        }).catch(error => {
+                            res.status(500).json({
+                                status : 500,
+                                message: "Something went wrong",
+                                error : error
+                            });
+                        });
+    
+                    } 
+                    else {
+                        res.status(500).json({
+                            status : 500,
+                            message: "Transaction Not Send yet! Please Try Again",
+                            data : {
+                                error: error
+                            }
+                        });
                     }
-                });
+                    //endifsendtransaction
+                    });
+                }
+                //endifbalanceeth
+                else
+                {
+                    res.status(401).json({
+                        status : 401,
+                        message: `Your ethereum Balance is not enough for this transaction`,
+                        data : {
+                            error:  "You need to provide more Ether for transaction fees",
+                            balance: user_eth_balance
+                        }
+                    });
+                }
             }
-
-            });
-            }
-
+            //endifbalanceusdt
             else{
                 res.status(401).json({
                     status : 401,
@@ -145,6 +165,7 @@ async function sendTransaction(req,res) {
                 });
             }
         }
+        //endif min value
         else
         {
             res.status(500).json({

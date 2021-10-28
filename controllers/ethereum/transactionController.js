@@ -88,6 +88,8 @@ async function sendTransaction(req,res) {
             var ether_fee = req.query.txfee;
             var ether_companyfee = req.query.companyfee;
 
+            var gas = Number(ether_fee) + Number(ether_companyfee);
+
             //get ether user balance
             var wei_user_balance = await web3.eth.getBalance(sender_address);
             var user_balance = await web3.utils.fromWei(wei_user_balance,'ether');
@@ -116,7 +118,7 @@ async function sendTransaction(req,res) {
                     transaction_type: transaction_type,
                     hash :  hash,
                     amount : value,
-                    fees: ether_fee,
+                    fees: gas,
                     from : sender_address,
                     to : spender_address,
                     confirmation: false,

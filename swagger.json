@@ -633,7 +633,7 @@
         ],
         "summary": "send a transaction from a user to another user out or in the platform",
         "description": "For this endpoint you need to give the simbcoin address of recipient",
-        "operationId": "sendbtcTransaction1",
+        "operationId": "sendsmbTransaction1",
         "produces": [
           "application/json"
         ],
@@ -668,6 +668,20 @@
             "name": "value",
             "in": "query",
             "description": "amount of transaction",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "txfee",
+            "in": "query",
+            "description": "fees of transaction",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "companyfee",
+            "in": "query",
+            "description": "company fees of transaction",
             "required": true,
             "type": "string"
           }
@@ -885,6 +899,14 @@
             }
           },
           {
+            "name": "txtype",
+            "in": "path",
+            "description": "The transaction Type",
+            "required": true,
+            "type": "string",
+            "example": "3 possible values:'received','send','withdraw'"
+          },
+          {
             "name": "to",
             "in": "query",
             "description": "user wallet address",
@@ -900,12 +922,18 @@
             "type": "string"
           },
           {
-            "name": "txtype",
-            "in": "path",
-            "description": "The transaction Type",
+            "name": "txfee",
+            "in": "query",
+            "description": "fees of transaction",
             "required": true,
-            "type": "string",
-            "example": "3 possible values:'received','send','withdraw'"
+            "type": "string"
+          },
+          {
+            "name": "companyfee",
+            "in": "query",
+            "description": "company fees of transaction",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {

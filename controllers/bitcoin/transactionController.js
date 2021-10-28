@@ -215,7 +215,7 @@ async function sendTransaction(req,res)
                   transaction_type: transaction_type,
                   hash :  sendTx.result,
                   amount : value,
-                  fees: fee,
+                  fees: fee + btc_companyfee,
                   from : sender_address,
                   to : spender_address,
                   confirmation: false,

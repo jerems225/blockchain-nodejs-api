@@ -99,7 +99,21 @@ async function network()
     console.log(network)
 }
 
-network()
+async function getcoin(){ var url="https://api.coingecko.com/api/v3/simple/price?ids=simbcoin-swap&vs_currencies=eth"; var response = await fetch(url,{method: "GET"}); var result = await response.json();
+
+    var val_usdt = 4;    
+
+    var eth_price = result.tether.eth;
+    var usdt_eth = val_usdt * eth_price;
+
+    console.log(usdt_eth)
+
+    //simbcoin-swap id_coingecko
+}
+
+getcoin()
+
+// network()
 // get_eth_tx_new()
 
 
