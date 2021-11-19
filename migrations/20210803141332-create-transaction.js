@@ -29,7 +29,33 @@ module.exports = {
       fees: {
         type: Sequelize.STRING
       },
+      amountusd: {
+        type: Sequelize.STRING
+      },
+      feesusd: {
+        type: Sequelize.STRING
+      },
+      amountcurrency: {
+        allowNull: true,
+        type: Sequelize.STRING
+      },
+      currency: {
+        allowNull:true,
+        type: Sequelize.STRING
+      },
+      country: {
+        allowNull:true,
+        type: Sequelize.STRING
+      },
+      momo_method: {
+        allowNull:true,
+        type: Sequelize.STRING
+      },
       confirmation: {
+        type: Sequelize.BOOLEAN
+      },
+      paymentstatus: {
+        allowNull: true,
         type: Sequelize.BOOLEAN
       },
       user_uuid: {

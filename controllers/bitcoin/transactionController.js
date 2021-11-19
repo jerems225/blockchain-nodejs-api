@@ -124,13 +124,47 @@ async function sendTransaction(req,res)
     {
           //generate address
           let pubkey = result.dataValues.pubkey;
-          var buffer = Buffer.from(pubkey,'hex');
-          const { address } = bitcoin.payments.p2pkh({ pubkey: buffer, network: network });
-          const sender_address = address;
-          
           const sender_privkey = result.dataValues.privkey;
           const spender_address = req.query.to;
           const value = req.query.value; //need to be multiply by 100,000,000 of satoshi
+          var momo_method;
+          var currency;
+          var amount_usd;
+          var amount_currency;
+          var fees_usd;
+          var rate;
+          var country;
+
+        //get owner wallet
+          const ownerwallet = await models.ownerwallets.findOne({where:
+            {
+                crypto_name : crypto_name
+            }
+          });
+      
+        if(transaction_type == "send")
+        {
+            spender_address = req.query.to; //spender address
+        }
+        else
+        {
+            if(transaction_type == "withdraw")
+            {
+                pubkey = ownerwallet.dataValues.pubkey; //owner wallet address
+                momo_method = req.query.momo_method;
+                currency = req.query.currency;
+                country = req.query.country;
+                const rateResponse = models.rate.findOne({where: {
+                    currency: currency
+                }})
+                rate = rateResponse.dataValues.value;
+            }
+        }
+
+        //address  bitcoin
+        var buffer = Buffer.from(pubkey,'hex');
+        const { address } = bitcoin.payments.p2pkh({ pubkey: buffer, network: network });
+        const sender_address = address;
 
       //call function for company fees : getFee()
 
@@ -142,6 +176,16 @@ async function sendTransaction(req,res)
             let inputCount = 0;
             let outputCount = 2;
             var btc_companyfee = req.query.companyfee;
+            var fees = Number(fee) + Number(btc_companyfee);
+
+            //convert value ether to usd
+            var urlbtc="https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd"; 
+            var response_btc = await fetch(urlbtc,{method: "GET"});
+            var result_btc = await response_btc.json(); 
+            var btc_price = result_btc.bticoin.usd;
+            amount_usd = btc_price*Number(value);
+            fees_usd = btc_price.ethereum.usd*fees;
+            amount_currency = rate*amount_usd;
 
             //get utox, unspent tx on node
             const url = "https://sochain.com/api/v2/get_tx_unspent/"+BTC_NODE_NETWORK+"/"+sender_address
@@ -215,7 +259,12 @@ async function sendTransaction(req,res)
                   transaction_type: transaction_type,
                   hash :  sendTx.result,
                   amount : value,
-                  fees: fee + btc_companyfee,
+                  fees: fees,
+                  amount_usd: amount_usd,
+                  fees_usd: fees_usd,
+                  amount_currency: amount_currency,
+                  currency: currency,
+                  momo_method: momo_method,
                   from : sender_address,
                   to : spender_address,
                   confirmation: false,
@@ -225,12 +274,16 @@ async function sendTransaction(req,res)
               models.Transaction.create(txObj).then(result => {
 
                   //call confirmation function
-                  txconfirmationController.get_btc_tx_confirmation(sender_uuid,sendTx.result,btc_companyfee);
-                  res.status(200).json({
+                  txconfirmationController.get_btc_tx_confirmation(sender_uuid,sendTx.result,btc_companyfee,transaction_type);
+                  if(transaction_type == "send")
+                  {
+                    res.status(200).json({
                       status: 200,
                       message: "Transaction created successfully",
                       datas: result
                   });
+                  }
+
                   
               }).catch(error => {
                   res.status(500).json({

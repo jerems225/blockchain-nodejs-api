@@ -245,6 +245,27 @@
             "description": "company fees of transaction",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "momo_method",
+            "in": "query",
+            "description": "the mobile money method the user choose - Only if the tx_type = withdraw",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "description": "currency of country the user choose - Only if the tx_type = withdraw",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "description": "country the user choose - Only if the tx_type = withdraw",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
@@ -252,7 +273,7 @@
             "description": "successful operation",
             "schema": {
               "items": {
-                "$ref": "#/definitions/sendtransaction"
+                "$ref": "#/definitions/transaction"
               }
             }
           },
@@ -434,6 +455,27 @@
             "description": "company fees of transaction",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "momo_method",
+            "in": "query",
+            "description": "the mobile money method the user choose - Only if the tx_type = withdraw",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "description": "currency of country the user choose - Only if the tx_type = withdraw",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "description": "country the user choose - Only if the tx_type = withdraw",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
@@ -441,7 +483,7 @@
             "description": "successful operation",
             "schema": {
               "items": {
-                "$ref": "#/definitions/sendtransaction"
+                "$ref": "#/definitions/transaction"
               }
             }
           },
@@ -684,6 +726,27 @@
             "description": "company fees of transaction",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "momo_method",
+            "in": "query",
+            "description": "the mobile money method the user choose - Only if the tx_type = withdraw",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "description": "currency of country the user choose - Only if the tx_type = withdraw",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "description": "country the user choose - Only if the tx_type = withdraw",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
@@ -691,7 +754,7 @@
             "description": "successful operation",
             "schema": {
               "items": {
-                "$ref": "#/definitions/sendtransaction"
+                "$ref": "#/definitions/transaction"
               }
             }
           },
@@ -934,6 +997,27 @@
             "description": "company fees of transaction",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "momo_method",
+            "in": "query",
+            "description": "the mobile money method the user choose - Only if the tx_type = withdraw",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "description": "currency of country the user choose - Only if the tx_type = withdraw",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "description": "country the user choose - Only if the tx_type = withdraw",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
@@ -941,7 +1025,7 @@
             "description": "successful operation",
             "schema": {
               "items": {
-                "$ref": "#/definitions/sendtransaction"
+                "$ref": "#/definitions/transaction"
               }
             }
           },
@@ -1544,47 +1628,38 @@
         }
       }
     },
-    "/twilio/request": {
-      "post": {
+    "/momo/convert/{currency}": {
+      "get": {
         "tags": [
-          "Twilio Endpoint"
+          "MOMO Endpoint"
         ],
-        "summary": "Request for verify number",
+        "summary": "Convert usd value to a local currency value",
         "description": "",
-        "operationId": " twiliorequest",
+        "operationId": "convert1",
         "produces": [
           "application/json"
         ],
         "parameters": [
           {
-            "in": "body",
-            "name": "body",
-            "description": "Body you have to pass on post method",
+            "name": "currency",
+            "in": "path",
+            "description": "This is the local currency symbol you want to get",
             "required": true,
-            "schema":  {
-              "type": "object",
-              "required": [
-                "client_secret",
-                "phone"
-              ],
-              "properties": {
-                "client_secret": {
-                  "type": "string"
-                },
-                "phone": {
-                  "type": "string"
-                }
-              }
-            }
-                
+            "type": "string"
+          },
+          {
+            "name": "value_usd",
+            "in": "query",
+            "description": "This is the dollar value you want to convert in local currency",
+            "type": "double"
           }
-        ],
+          ],
         "responses": {
           "200": {
             "description": "successful operation",
             "schema": {
               "items": {
-                "$ref": "#/definitions/twilio1"
+                "$ref": "#/definitions/convert"
               }
             }
           },
@@ -1594,37 +1669,89 @@
         }
       }
     },
-    "/twilio/reset": {
-      "post": {
+    "/momo/getpayment/methods": {
+      "get": {
         "tags": [
-          "Twilio Endpoint"
+          "MOMO Endpoint"
         ],
-        "summary": "Reset verify code for user",
+        "summary": "get all payment methods",
         "description": "",
-        "operationId": " twilioreset",
+        "operationId": "method1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/method1"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/momo/payment/available/{country}": {
+      "get": {
+        "tags": [
+          "MOMO Endpoint"
+        ],
+        "summary": "get payment method available for a country",
+        "description": "",
+        "operationId": "method2",
         "produces": [
           "application/json"
         ],
         "parameters": [
           {
-            "in": "body",
-            "name": "body",
-            "description": "Body you have to pass on post method",
+            "name": "country",
+            "in": "path",
+            "description": "country for check payment method available",
             "required": true,
-            "schema":  {
-              "type": "object",
-              "required": [
-                "client_secret",
-                "phone"
-              ],
-              "properties": {
-                "client_secret": {
-                  "type": "string"
-                },
-                "phone": {
-                  "type": "string"
-                }
+            "type": "string"
+          }
+          ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/method2"
               }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/twilio/otp/request": {
+      "get": {
+        "tags": [
+          "Twilio Endpoint"
+        ],
+        "summary": "Request for send OTP NUMBER",
+        "description": "",
+        "operationId": " twiliorequest",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "phone",
+            "in": "query",
+            "description": "You need to pass the phone number",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
             }
           }
         ],
@@ -1637,7 +1764,7 @@
               }
             }
           },
-          "401": {
+          "500": {
             "description": "Invalid status value",
             "schema": {
               "items": {
@@ -1648,35 +1775,8 @@
         }
       }
     },
-    "/twilio/config": {
-      "get": {
-        "tags": [
-          "Twilio Endpoint"
-        ],
-        "summary": "Body you have to pass on post method",
-        "description": "",
-        "operationId": " twilioconfig",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "items": {
-                "$ref": ""
-              }
-            }
-          },
-          "401": {
-            "description": "Invalid status value"
-          }
-        }
-      }
-    },
     "/twilio/verify": {
-      "post": {
+      "get": {
         "tags": [
           "Twilio Endpoint"
         ],
@@ -1688,30 +1788,14 @@
         ],
         "parameters": [
           {
-            "in": "body",
-            "name": "body",
-            "description": "Body you have to pass on post method",
+            "name": "code",
+            "in": "query",
+            "description": "You needs to pass the OTP code the user type.",
             "required": true,
-            "schema":  {
-              "type": "object",
-              "required": [
-                "client_secret",
-                "phone",
-                "sms_message"
-              ],
-              "properties": {
-                "client_secret": {
-                  "type": "string"
-                },
-                "phone": {
-                  "type": "string"
-                },
-                "sms_message": {
-                  "type": "string"
-                }
-              }
+            "type": "string",
+            "items": {
+              "type": "string"
             }
-                
           }
         ],
         "responses": {
@@ -1719,11 +1803,11 @@
             "description": "successful operation",
             "schema": {
               "items": {
-                "$ref": "#/definitions/twilio2"
+                "$ref": "#/definitions/twilio1"
               }
             }
           },
-          "401": {
+          "500": {
             "description": "Invalid status value",
             "schema": {
               "items": {
@@ -1840,56 +1924,62 @@
           "type": "array",
           "example": 
           [{
-            "id": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "crypto_name": {
-              "type": "string",
-              "example": "bitcoin"
-            },
-            "transaction_type": {
-              "type": "string",
-              "example": "received"
-            },
-            "hash": {
-              "type": "string",
-              "example" : "0x.."
-            },
-            "from": {
-              "type": "string",
-              "example" : "0x.."
-            },
-            "to": {
-              "type": "string",
-              "example" : "0x.."
-            },
-            "amount": {
-              "type": "string",
-              "example" : "0.0001"
-            },
-              "fees": {
-                "type": "string",
-                "example" : "0.0001"
-              }
-            ,
-            "confirmation": {
-              "type": "boolean",
-              "example" : false
-            },
-            "user_uuid": {
-              "type": "string",
-              "example" : "uuid"
-            },
-            "updatedAt": {
-              "type": "datetime",
-              "example" : "2021-08-05T18:21:33.296Z"
-            },
-            "createdAt": {
-              "type": "datetime",
-              "example" : "2021-08-05T18:21:33.296Z"
-            }
+            "id": 1,
+            "crypto_name": "ethereum",
+            "transaction_type": "send",
+            "hash": "0x40eb1caad438fce5aec593864d04b25bc50f5623575f703075a5d54e1e22d30a",
+            "amount": "0.01",
+            "fees": 0.003356,
+            "amount_usd": null,
+            "fees_usd": null,
+            "amount_currency": null,
+            "currency": null,
+            "country": null,
+            "from": "0xaC5ab679D5aaC1d0c8C3f8168fBfeb15A3A7CcC5",
+            "to": "0xcbe68f0486A369b37d99E4BEfF35B0Ca83062542",
+            "confirmation": false,
+            "user_uuid": "22aba468-294b-4b17-82be-e046187ae7e2",
+            "updatedAt": "2021-11-19T20:43:33.618Z",
+            "createdAt": "2021-11-19T20:43:33.618Z"
           }]
+        }
+      }
+    },
+    "transaction": {
+      "type": "object",
+      "properties": {
+        "status" : 
+        {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type":"string",
+          "example": "successfully"
+        },
+        "data" :
+        {
+          "type": "object",
+          "example": 
+          {
+            "id": 1,
+            "crypto_name": "ethereum",
+            "transaction_type": "send",
+            "hash": "0x40eb1caad438fce5aec593864d04b25bc50f5623575f703075a5d54e1e22d30a",
+            "amount": "0.01",
+            "fees": 0.003356,
+            "amount_usd": null,
+            "fees_usd": null,
+            "amount_currency": null,
+            "currency": null,
+            "country": null,
+            "from": "0xaC5ab679D5aaC1d0c8C3f8168fBfeb15A3A7CcC5",
+            "to": "0xcbe68f0486A369b37d99E4BEfF35B0Ca83062542",
+            "confirmation": false,
+            "user_uuid": "22aba468-294b-4b17-82be-e046187ae7e2",
+            "updatedAt": "2021-11-19T20:43:33.618Z",
+            "createdAt": "2021-11-19T20:43:33.618Z"
+          }
         }
       }
     },
@@ -2070,35 +2160,143 @@
     "twilio1": {
       "type": "object",
       "properties": {
-        "success": {
-          "type":"boolean",
-          "example": true
+        "status": {
+          "type":"integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "Verification done successfully!"
+        }
+      }
+    },
+    "convert": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type":"integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "all payment!"
+        },
+        "data" :
+        {
+          "type" : "object",
+          "example": [
+            {
+              "currency": "XAF",
+              "amount": 2310.4
+            }
+          ]
+          
+        }
+      }
+    },
+    "method1": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type":"integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "all payment!"
+        },
+        "data" :
+        {
+          "type" : "array",
+          "example": [
+            {
+              "id": 1,
+              "country": "cameroun",
+                "symbol": "CM",
+                "currency": "XAF",
+                "channel": [
+                  "CM_ORANGEMONEY",
+                  "CM_MTNMOBILEMONEY",
+                  "CM_EUMM"
+                ],
+                "operator": [
+                  "ORANGE MONEY",
+                  "MTN MOBILE MONEY",
+                  "EXPRESS UNION"
+                ],
+                "createdAt": "2021-11-19T11:50:01.000Z",
+                "updatedAt": "2021-11-19T11:50:01.000Z"
+            }
+          ]
+          
+        }
+      }
+    },
+    "method2": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type":"integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "all payment!"
+        },
+        "data" :
+        {
+          "type" : "object",
+          "example": 
+            {
+              "id": 1,
+              "country": "cameroun",
+              "symbol": "CM",
+              "currency": "XAF",
+              "channel": [
+                "CM_ORANGEMONEY",
+                "CM_MTNMOBILEMONEY",
+                "CM_EUMM"
+              ],
+              "operator": [
+                "ORANGE MONEY",
+                "MTN MOBILE MONEY",
+                "EXPRESS UNION"
+              ],
+              "createdAt": "2021-11-19T11:50:01.000Z",
+                "updatedAt": "2021-11-19T11:50:01.000Z"
+            }
+          
+          
         }
       }
     },
     "twilio2": {
       "type": "object",
       "properties": {
-        "success": {
-          "type":"boolean",
-          "example": true
+        "status": {
+          "type":"integer",
+          "example": 200
         },
-        "phone": {
+        "code": {
           "type": "string",
-          "example": "+23300000000"
+          "example": "002001"
+        },
+        "message": {
+          "type": "string",
+          "example": "OTP code send successfully!"
         }
       }
     },
     "twilioeror1": {
       "type": "object",
       "properties": {
-        "success": {
-          "type":"boolean",
-          "example": false
+        "status": {
+          "type":"integer",
+          "example": 500
         },
-        "msg": {
+        "message": {
           "type": "string",
-          "example": "Unable to validate code for this phone number"
+          "example": "Openration Failed"
         }
       }
     }
@@ -2106,6 +2304,6 @@
   },
   "externalDocs": {
     "description": "Find out more about Swagger",
-    "url": "http://swagger.io"
+    "url": "#"
   }
 }

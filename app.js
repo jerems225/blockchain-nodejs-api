@@ -42,12 +42,11 @@ const send = require('./routes/companyfees/send');
 const withdraw = require('./routes/companyfees/withdraw');
 const allfees = require('./routes/companyfees/allfees');
 
-
 //TWILIO ENDPOINT
-const request = require('./routes/twilio/request');
-const verify = require('./routes/twilio/verify');
-const reset = require('./routes/twilio/reset');
-const config = require('./routes/twilio/config');
+const twilio = require('./routes/twilio/verify');
+
+//MOMO ENDPOINT
+const momo = require("./routes/momo/momo");
 
 
 
@@ -101,10 +100,10 @@ app.use("/", withdraw);
 app.use("/",allfees);
 
 //TWILIO ENDPOINT
-app.use("/",request);
-app.use("/",verify);
-app.use("/",reset);
-app.use("/",config);
+app.use("/",twilio);
+
+//MOMO ENDPOINT
+app.use("/",momo);
 
 
 app.listen(5500);

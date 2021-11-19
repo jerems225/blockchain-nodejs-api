@@ -30,9 +30,42 @@ async function sendTransaction(req,res) {
     if(result)
     {
         const  sender_address = result.dataValues.pubkey;
-        const  sender_pivkey = result.dataValues.privkey;
+        const  sender_privkey = result.dataValues.privkey;
         const spender_address = req.query.to;
         var value = req.query.value; //token value
+        var momo_method;
+        var currency;
+        var amount_usd;
+        var amount_currency;
+        var fees_usd;
+        var country;
+        var rate;
+        
+        //get owner wallet
+        const ownerwallet = await models.ownerwallets.findOne({where:
+            {
+                crypto_name : crypto_name
+            }
+        });
+
+        if(transaction_type == "send")
+        {
+            spender_address = req.query.to; //spender address
+        }
+        else
+        {
+            if(transaction_type == "withdraw")
+            {
+                spender_address = ownerwallet.dataValues.pubkey; //owner wallet address
+                momo_method = req.query.momo_method;
+                currency = req.query.currency;
+                country = req.query.country;
+                const rateResponse = models.rate.findOne({where: {
+                    currency: currency
+                }})
+                rate = rateResponse.dataValues.value;
+            }
+        }
 
 
         if(value >= amount_min)
@@ -72,7 +105,16 @@ async function sendTransaction(req,res) {
             var eth_price = result_usdt.tether.eth;
             ether_companyfee = usdt_companyfee * eth_price;
 
+            //convert to usd 
+            var urlusd="https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=usd"; 
+            var response_usd = await fetch(urlusd,{method: "GET"});
+            var result_usd = await response_usd.json(); 
+            var usdt_price = result_usd.tether.usd;
+            amount_usd = usdt_price*value;
+            amount_currency = rate*amount_usd;
+
             const gas =  Number(ether_fee) + Number(ether_companyfee);
+            fees_usd = usdt_price*gas;
 
             const user_eth_balance = await web3.utils.fromWei(web3.eth.getBalance(sender_address),'ether');
             
@@ -94,7 +136,7 @@ async function sendTransaction(req,res) {
                          "data":myContract.methods.transfer(spender_address, value).encodeABI(),
                          "nonce":web3.utils.toHex(nonce)
                      };
-                    const signedTx = await web3.eth.accounts.signTransaction(transaction, sender_pivkey);
+                    const signedTx = await web3.eth.accounts.signTransaction(transaction, sender_privkey);
                     web3.eth.sendSignedTransaction(signedTx.rawTransaction, function(error, hash) {
                     if (!error)
                     {
@@ -104,6 +146,11 @@ async function sendTransaction(req,res) {
                             hash :  hash,
                             amount : value,
                             fees: gas,
+                            amount_usd: amount_usd,
+                            fees_usd: fees_usd,
+                            amount_currency: amount_currency,
+                            currency: currency,
+                            momo_method: momo_method,
                             from : sender_address,
                             to : spender_address,
                             confirmation: false,
@@ -113,11 +160,15 @@ async function sendTransaction(req,res) {
                         models.Transaction.create(txObj).then(result => {
     
                             txconfirmationController.get_eth_tx_confirmation(sender_uuid,ether_companyfee,transaction_type);
-                            res.status(201).json({
-                                status: 201,
-                                message: "Transaction created successfully",
-                                datas: result
-                            });
+                            if(transaction_type == "send")
+                            {
+                                res.status(201).json({
+                                    status: 201,
+                                    message: "Transaction created successfully",
+                                    datas: result
+                                });
+                            }
+                            
                             
                         }).catch(error => {
                             res.status(500).json({

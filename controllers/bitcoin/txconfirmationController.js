@@ -5,7 +5,7 @@ const crypto_name = "bitcoin" ;
 const {GETBLOCK_NETWORK, GETBLOCK_APIKEY} = require('../nodeConfig');
 
 
-async function sendFees(req,res,companyfee,tx_hash)
+async function sendFees(req,res,companyfee,tx_hash,transaction_type)
 {
     const sender_uuid = req.query.uuid;
 
@@ -104,7 +104,7 @@ async function sendFees(req,res,companyfee,tx_hash)
           const sendTx = await respTx.json();
   
           const txObj = {
-            fees_type: 'send',
+            fees_type: transaction_type,
             crypto_name: crypto_name,
             hash :  sendTx.result,
             tx_hash: tx_hash,
@@ -119,6 +119,7 @@ async function sendFees(req,res,companyfee,tx_hash)
                 message: `Company fees saved successfully`,
                 data : result
             });
+            //call withdraw syntaxt if transaction_type == withdraw
             process.exit()
         }).catch(error => {
             console.log({
@@ -145,7 +146,7 @@ async function sendFees(req,res,companyfee,tx_hash)
 }
 
 
-async function get_btc_tx_confirmation(uuid,hash)
+async function get_btc_tx_confirmation(uuid,hash,transaction_type)
 {
     const owner_uuid = uuid;
 
@@ -190,7 +191,7 @@ async function get_btc_tx_confirmation(uuid,hash)
         where: { user_uuid: uuid, hash : hash, crypto_name: crypto_name }
       }).then(element => {
         console.log(`Transaction ${result.length} confirmed`)
-        sendFees(owner_uuid,ether_companyfee,hash)
+        sendFees(owner_uuid,ether_companyfee,hash,transaction_type)
         
       }).catch(error => {
         console.log({
@@ -210,7 +211,6 @@ async function get_btc_tx_confirmation(uuid,hash)
  
 }
 
-// get_btc_tx_confirmation('1d654d02-d2c8-4fba-89e7-2cea31e90451','7b0ca5f735ad583ec509b783aca8d0462c0c6e74b3f044dd34ff84da5da3f686')
 module.exports = {
     get_btc_tx_confirmation : get_btc_tx_confirmation
 }

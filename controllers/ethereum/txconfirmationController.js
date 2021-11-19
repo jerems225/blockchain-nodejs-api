@@ -3,6 +3,7 @@ const { ETH_NODE_WS,ETH_NODE_URL } = require('../nodeConfig');
 const fetch = require('node-fetch');
 const models = require('../../models');
 var Web3 = require('web3');
+const { createPayment } = require('../momo/withdrawController');
 var exec = false;
 const crypto_name = "ethereum" ;
 
@@ -21,7 +22,7 @@ var options = {
 };
 
 
-async function sendFees(sender_uuid,companyfee,tx_hash,tx_type)
+async function sendFees(sender_uuid,companyfee,tx_hash,transaction_type,momo_method)
 {
   const provider = new Web3.providers.HttpProvider(ETH_NODE_URL);
   const web3 = new Web3(provider);
@@ -50,10 +51,13 @@ async function sendFees(sender_uuid,companyfee,tx_hash,tx_type)
     var resjson = await resp.json();
     const gas = 21000;
     //get txfee in gwei
-    const txfee = gas*(resjson.safeLow/10);
+    const txfee = gas;
     //get fee value
     const txfee_ether = await web3.utils.fromWei(web3.utils.toWei(txfee.toString(),'gwei'),'ether')
     var value = Number(companyfee) - Number(txfee_ether);
+
+    // console.log("value: "+value,"txfee: "+companyfee, "txfee: "+txfee_ether)
+    // process.exit();
             setTimeout(async function txF()
             {
                 
@@ -62,7 +66,7 @@ async function sendFees(sender_uuid,companyfee,tx_hash,tx_type)
                     'to': "0xcbe68f0486A369b37d99E4BEfF35B0Ca83062542", //owner_address
                     'value': web3.utils.toWei(value.toFixed(6),'ether'), 
                     'gas': txfee, 
-                    'nonce': nonce +1,
+                    'nonce': nonce ,
                     'gasLimit': web3.utils.toHex(gas)
                     // optional data field to send message or execute smart contract
                         };
@@ -70,7 +74,7 @@ async function sendFees(sender_uuid,companyfee,tx_hash,tx_type)
                         web3.eth.sendSignedTransaction(signedTx.rawTransaction, function(error, hash) {
                             if (!error) {
                                 const txObj = {
-                                    fees_type: 'send',
+                                    fees_type: transaction_type,
                                     crypto_name: crypto_name,
                                     hash :  hash,
                                     tx_hash: tx_hash,
@@ -85,6 +89,13 @@ async function sendFees(sender_uuid,companyfee,tx_hash,tx_type)
                                         message: `Company fees saved successfully`,
                                         data : result
                                     });
+                                    
+                                      //call withdraw syntaxt if transaction_type == withdraw
+                                      if(transaction_type == "withdraw")
+                                      {
+                                        createPayment();
+                                      }
+
                                     process.exit()
                                 }).catch(error => {
                                     console.log({
@@ -111,7 +122,7 @@ async function sendFees(sender_uuid,companyfee,tx_hash,tx_type)
                             }
                             });
                     }
-            , 10000);
+            , 20000);
         }
         else
         {
@@ -125,7 +136,7 @@ async function sendFees(sender_uuid,companyfee,tx_hash,tx_type)
 
 
 
-async function get_eth_tx_confirmation(uuid,ether_companyfee)
+async function get_eth_tx_confirmation(uuid,ether_companyfee,transaction_type,momo_method)
 {
   const owner_uuid = uuid;
   //verification if uuid is exist and valid before run code
@@ -176,7 +187,7 @@ async function get_eth_tx_confirmation(uuid,ether_companyfee)
                                   {
                                     console.log(exec);
                                     exec = true;
-                                    sendFees(owner_uuid,ether_companyfee,tx.hash); //send company fees function
+                                    sendFees(owner_uuid,ether_companyfee,tx.hash,transaction_type,momo_method); //send company fees function
 
                                   }
                                 }).catch(error => {
