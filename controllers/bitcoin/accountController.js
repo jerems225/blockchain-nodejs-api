@@ -114,12 +114,12 @@ async function get_Btc_Address(req,res)
     { 
       var buffer = Buffer.from(result.dataValues.pubkey,'hex');
       var u_address;
-      if(NODE_ENV == 'test' || 'development')
+      if(NODE_ENV == 'test' || NODE_ENV == 'development')
       {
         const { address } = bitcoin.payments.p2pkh({ pubkey: buffer, network: bitcoin.networks.testnet });
         u_address = address;
       }
-      else if(NODE_ENV == 'devprod' || 'production')
+      else if(NODE_ENV == 'devprod' || NODE_ENV ==  'production')
       {
         const { address } = bitcoin.payments.p2pkh({ pubkey: buffer, network: bitcoin.networks.bitcoin });
         u_address = address;

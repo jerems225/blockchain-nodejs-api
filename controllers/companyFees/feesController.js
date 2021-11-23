@@ -1,6 +1,6 @@
 require('dotenv').config();
 const models = require('../../models');
-const crypto_name = ["bitcoin","ethereum","tether","simbcoin"];
+const crypto_name = ["bitcoin","ethereum"];
 
 //withdraw Fees
 async function createwithdrawFees(req,res)
@@ -337,12 +337,8 @@ async function getallfees(req,res)
     {
         var btcfees = 0;
         var ethfees = 0;
-        var usdtfees = 0;
-        var smbfees = 0;
 
         const datas = await models.CompanyFees.findAll();
-        if(datas.length != 0)
-        {
             for(var i=0;i<=datas.length-1;i++)
             {
                 if(datas[i].crypto_name == crypto_name[0])
@@ -352,14 +348,6 @@ async function getallfees(req,res)
                 else if(datas[i].crypto_name == crypto_name[1])
                 {
                   ethfees = ethfees + datas[i].amount;
-                }
-                else if(datas[i].crypto_name == crypto_name[2])
-                {
-                  smbfees = smbfees + datas[i].amount;
-                }
-                else if(datas[i].crypto_name == crypto_name[3])
-                {
-                  usdtfees = usdtfees + datas[i].amount;
                 }
              
             }
@@ -375,30 +363,13 @@ async function getallfees(req,res)
                     fee : ethfees,
                     symbol : 'ETH'
                     },
-                    {
-                    name : "simbcoin",
-                    fee : smbfees,
-                    symbol : 'SMB'
-                    },
-                    {
-                    name: "tether",
-                    fee : usdtfees,
-                    symbol : 'USDT'
-                    }
                   ]
             res.status(200).json({
                 status: 200,
                 message: `Total of company fees collect.`,
                 data : feeobject
             });
-        }
-        else
-        {
-            res.status(401).json({
-                status: 401,
-                message: `Empty`,
-            });
-        }
+
     }
     else
     {

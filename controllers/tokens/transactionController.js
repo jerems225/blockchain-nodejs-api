@@ -4,20 +4,40 @@ const Web3 = require('web3');
 const provider = new Web3.providers.HttpProvider(ETH_NODE_URL);
 const web3 = new Web3(provider);
 const models = require('../../models');
-const crypto_name = "simbcoin";
-const abi = require('../abis/abis');
 const txconfirmationController = require('../ethereum/txconfirmationController');
-const tokenaddress = require('../abis/tokenaddress');
-
-const amount_min = 65;
-
-const SIMBCOIN_CONTRACT_ADDRESS = tokenaddress.simbAddress;
 
 async function sendTransaction(req,res) {
-  
 
     const sender_uuid = req.query.uuid;
     const transaction_type = req.params.txtype;
+    const crypto_symbol = req.params.token_symbol;
+    var amount_min;
+    var crypto_name;
+    var contract_address;
+    var abi;
+
+    const cryptoRequest = await models.Crypto.findOne({where:{
+      crypto_symbol: crypto_symbol
+    }})
+
+    //crypto info
+    const crypto = cryptoRequest.dataValues;
+    var crypto_name_market = crypto.crypto_name_market;
+
+    if(NODE_ENV == 'test' ||'development')
+    {
+      crypto_name = crypto.crypto_name;
+      contract_address = crypto.contract_address_test;
+      abi = crypto.contract_abi_test;
+      amount_min = crypto.amoun_min;
+    }
+    else if(NODE_ENV == 'devprod' || 'production')
+    {
+      crypto_name = crypto.crypto_name;
+      contract_address = crypto.contract_address;
+      abi = crypto.contract_abi;
+      amount_min = crypto.amoun_min;
+    }
 
     //get pubkey and privkey by uuid from database
     const result = await models.Wallet.findOne({ where : 
@@ -62,14 +82,14 @@ async function sendTransaction(req,res) {
                 const rateResponse = models.rate.findOne({where: {
                     currency: currency
                 }})
-                rate = rateResponse.dataValues.value;
+                rate = rateResponse.dataValues.value_sell;
             }
         }
         
         if(value >= amount_min)
         {
             //instance the ERC20  TOKEN CONTRACT
-            var myContract = new web3.eth.Contract(abi.fauAbi, SIMBCOIN_CONTRACT_ADDRESS, {
+            var myContract = new web3.eth.Contract(abi, contract_address, {
                 // from: SIMBCOIN_OWNER_ADDRESS, // default from address
                 // gasPrice: '20000000000' // default gas price in wei, 20 gwei in this case
             });
@@ -96,19 +116,22 @@ async function sendTransaction(req,res) {
             var smb_companyfee = Number(req.query.companyfee);
             //convert to eth
             var ether_companyfee = 0;
-            var url="https://api.coingecko.com/api/v3/simple/price?ids=simbcoin-swap&vs_currencies=eth"; 
+            var url=`https://api.coingecko.com/api/v3/simple/price?ids=${crypto_name_market}&vs_currencies=eth`; 
             var response_smb = await fetch(url,{method: "GET"});
             var result_smb = await response_smb.json(); 
-            var eth_price = result_smb.simbcoin-swap.eth;
+            var eth_price = result_smb[crypto_name_market].eth;
             ether_companyfee = smb_companyfee * eth_price;
 
             //convert to usd 
-            var urlusd="https://api.coingecko.com/api/v3/simple/price?ids=simbcoin-swap&vs_currencies=usd"; 
+            var urlusd=`https://api.coingecko.com/api/v3/simple/price?ids=${crypto_name_market}&vs_currencies=usd`; 
             var response_usd = await fetch(urlusd,{method: "GET"});
             var result_usd = await response_usd.json(); 
-            var smb_price = result_usd.simbcoin-swap.usd;
+            var smb_price = result_usd[crypto_name_market].usd;
             amount_usd = smb_price*value;
-            amount_currency = rate*amount_usd;
+            if(transaction_type == "withdraw")
+            {
+              amount_currency = rate*amount_usd;
+            }
 
             const gas =  Number(ether_fee) + Number(ether_companyfee);
             fees_usd = usdt_price*gas;
@@ -127,8 +150,8 @@ async function sendTransaction(req,res) {
                         "from":sender_address,
                          "gasPrice": web3.utils.toHex(2 * 1e9),
                          "gasLimit": web3.utils.toHex(21000),
-                         "gas": web3.utils.toHex(ether_fee),
-                         "to":SIMBCOIN_CONTRACT_ADDRESS,
+                         "gas": web3.utils.hex(web3.utils.fromWei(web3.utils.toWei(ether_fee,'ether'),'gwei')),
+                         "to":contract_address,
                          "value":"0x0",
                          "data":myContract.methods.transfer(spender_address, value).encodeABI(),
                          "nonce":web3.utils.toHex(nonce)
@@ -145,7 +168,7 @@ async function sendTransaction(req,res) {
                             fees: gas,
                             amount_usd: amount_usd,
                             fees_usd: fees_usd,
-                            amount_currency: amount_currency,
+                            amountcurrency: amount_currency,
                             currency: currency,
                             momo_method: momo_method,
                             from : sender_address,

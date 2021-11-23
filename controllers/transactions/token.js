@@ -1,24 +1,31 @@
-require('dotenv').config();
-const { ETH_NODE_URL } = require('../nodeConfig');
-const Web3 = require('web3');
-const provider = new Web3.providers.HttpProvider(ETH_NODE_URL);
-const web3 = new Web3(provider);
-const models = require('../../models');
-const crypto_name = "tether";
-const abi = require('../abis/abis');
-const txconfirmationController = require('../ethereum/txconfirmationController');
+async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency,country,status,rate)
+{
+    const sender_uuid = uuid;
+    const transaction_type = txtype;
+    var amount_min;
+    var contract_address;
+    var abi;
 
-const amount_min = 60;
+    const cryptoRequest = await models.Crypto.findOne({where:{
+      crypto_name: crypto_name
+    }})
 
-const tokenaddress = require('../abis/tokenaddress');
+    //crypto info
+    const crypto = cryptoRequest.dataValues;
+    var crypto_name_market = crypto.crypto_name_market;
 
-const USDT_CONTRACT_ADDRESS = tokenaddress.usdtAddress;  // get env address
-
-async function sendTransaction(req,res) {
-  
-
-    const sender_uuid = req.query.uuid;
-    const transaction_type = req.params.txtype;
+    if(NODE_ENV == 'test' ||'development')
+    {
+      contract_address = crypto.contract_address_test;
+      abi = crypto.contract_abi_test;
+      amount_min = crypto.amoun_min;
+    }
+    else if(NODE_ENV == 'devprod' || 'production')
+    {
+      contract_address = crypto.contract_address;
+      abi = crypto.contract_abi;
+      amount_min = crypto.amoun_min;
+    }
 
     //get pubkey and privkey by uuid from database
     const result = await models.Wallet.findOne({ where : 
@@ -29,51 +36,27 @@ async function sendTransaction(req,res) {
 
     if(result)
     {
-        const  sender_address = result.dataValues.pubkey;
-        const  sender_privkey = result.dataValues.privkey;
-        const spender_address = req.query.to;
-        var value = req.query.value; //token value
-        var momo_method;
-        var currency;
-        var amount_usd;
-        var amount_currency;
-        var fees_usd;
-        var country;
-        var rate;
-        
+        const  spender_address = result.dataValues.pubkey;
+
         //get owner wallet
         const ownerwallet = await models.ownerwallets.findOne({where:
             {
                 crypto_name : crypto_name
             }
         });
+        var owner = ownerwallet.dataValues;
+        const sender_address = owner.pubkey;
+        const  sender_privkey = owner.privkey;
 
-        if(transaction_type == "send")
-        {
-            spender_address = req.query.to; //spender address
-        }
-        else
-        {
-            if(transaction_type == "withdraw")
-            {
-                spender_address = ownerwallet.dataValues.pubkey; //owner wallet address
-                momo_method = req.query.momo_method;
-                currency = req.query.currency;
-                country = req.query.country;
-                const rateResponse = models.rate.findOne({where: {
-                    currency: currency
-                }})
-                rate = rateResponse.dataValues.value;
-            }
-        }
-
-
+        var amount_usd;
+        var amount_currency;
+        var fees_usd;
+        
         if(value >= amount_min)
         {
             //instance the ERC20  TOKEN CONTRACT
-            var myContract = new web3.eth.Contract(abi.usdtAbi, USDT_CONTRACT_ADDRESS, {
-                // from: SIMBCOIN_OWNER_ADDRESS, // default from address
-                // gasPrice: '20000000000' // default gas price in wei, 20 gwei in this case
+            var myContract = new web3.eth.Contract(abi, contract_address, {
+
             });
 
             // Call balanceOf function
@@ -85,35 +68,26 @@ async function sendTransaction(req,res) {
             //get symbol
             var symbol = await myContract.methods.symbol().call()
 
-            var symbol = await myContract.methods.symbol().call()
             var balance_token = 0;
             if(balance > 0)
             {
                 balance_token = balance/10**decimals;
             }
-
+           
             //fees
             //get tx_fee
-            var ether_fee = req.query.txfee;
-            //get company_fee and convert in eth
-            var usdt_companyfee = Number(req.query.companyfee);
-            //convert to eth
-            var ether_companyfee = 0;
-            var url="https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=eth"; 
-            var response_usdt = await fetch(url,{method: "GET"});
-            var result_usdt = await response_usdt.json(); 
-            var eth_price = result_usdt.tether.eth;
-            ether_companyfee = usdt_companyfee * eth_price;
+            var ether_fee = txfee;
+            const ether_companyfee = null;
 
             //convert to usd 
-            var urlusd="https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=usd"; 
+            var urlusd=`https://api.coingecko.com/api/v3/simple/price?ids=${crypto_name_market}&vs_currencies=usd`; 
             var response_usd = await fetch(urlusd,{method: "GET"});
             var result_usd = await response_usd.json(); 
-            var usdt_price = result_usd.tether.usd;
-            amount_usd = usdt_price*value;
+            var smb_price = result_usd[crypto_name_market].usd;
+            amount_usd = smb_price*value;
             amount_currency = rate*amount_usd;
 
-            const gas =  Number(ether_fee) + Number(ether_companyfee);
+            const gas =  Number(ether_fee);
             fees_usd = usdt_price*gas;
 
             const user_eth_balance = await web3.utils.fromWei(web3.eth.getBalance(sender_address),'ether');
@@ -130,8 +104,8 @@ async function sendTransaction(req,res) {
                         "from":sender_address,
                          "gasPrice": web3.utils.toHex(2 * 1e9),
                          "gasLimit": web3.utils.toHex(21000),
-                         "gas": web3.utils.toHex(ether_fee),
-                         "to":USDT_CONTRACT_ADDRESS,
+                         "gas": web3.utils.hex(web3.utils.fromWei(web3.utils.toWei(ether_fee,'ether'),'gwei')),
+                         "to":contract_address,
                          "value":"0x0",
                          "data":myContract.methods.transfer(spender_address, value).encodeABI(),
                          "nonce":web3.utils.toHex(nonce)
@@ -148,9 +122,11 @@ async function sendTransaction(req,res) {
                             fees: gas,
                             amount_usd: amount_usd,
                             fees_usd: fees_usd,
-                            amount_currency: amount_currency,
+                            amountcurrency: amount_currency,
                             currency: currency,
                             momo_method: momo_method,
+                            country : country,
+                            paymentstatus: status,
                             from : sender_address,
                             to : spender_address,
                             confirmation: false,
@@ -160,15 +136,11 @@ async function sendTransaction(req,res) {
                         models.Transaction.create(txObj).then(result => {
     
                             txconfirmationController.get_eth_tx_confirmation(sender_uuid,ether_companyfee,transaction_type);
-                            if(transaction_type == "send")
-                            {
-                                res.status(201).json({
-                                    status: 201,
-                                    message: "Transaction created successfully",
-                                    datas: result
-                                });
-                            }
-                            
+                            res.status(200).json({
+                                status: 200,
+                                message: `${crypto_name} sent to the user successfully`,
+                                datas: result
+                            });
                             
                         }).catch(error => {
                             res.status(500).json({
@@ -204,7 +176,7 @@ async function sendTransaction(req,res) {
                     });
                 }
             }
-            //endifbalanceusdt
+            //endifbalancesmb
             else{
                 res.status(401).json({
                     status : 401,
@@ -240,8 +212,5 @@ async function sendTransaction(req,res) {
 }
 
 module.exports = {
-
-    sendTransaction : sendTransaction
-
+    send : send
 }
-

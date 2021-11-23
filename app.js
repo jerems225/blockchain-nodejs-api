@@ -4,6 +4,9 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 app.use('/gitblockchain/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+//APP CONFIG
+const appconfig = require('./routes/app/appversion');
+
 //ETH
 const accountEth = require('./routes/ethereum/account');
 const addressEth = require('./routes/ethereum/address');
@@ -19,19 +22,13 @@ const balanceBtc = require('./routes/bitcoin/balance');
 const transactionBtc = require('./routes/bitcoin/transaction');
 // const newtxBTC = require('./controllers/bitcoin/newtransactionController');
 
-//SMB
-const accountSmb = require('./routes/simbcoin/account');
-const addressSmb = require('./routes/simbcoin/address');
-const balanceSmb = require('./routes/simbcoin/balance');
-const transactionSmb = require('./routes/simbcoin/transaction');  
-const gasSmb = require('./routes/simbcoin/estimateGas');
+//TOKENS
+const account = require('./routes/tokens/account');
+const address = require('./routes/tokens/address');
+const balance = require('./routes/tokens/balance');
+const transaction = require('./routes/tokens/transaction');  
+const gas = require('./routes/tokens/estimateGas');
 
-//USDT
-const accountUsdt = require('./routes/tether/account');
-const addressUsdt = require('./routes/tether/address');
-const balanceUsdt = require('./routes/tether/balance');
-const transactionUsdt = require('./routes/tether/transaction');
-const gasUsdt = require('./routes/tether/estimateGas');
 
 //Universal Endpoint
 const alltx = require('./routes/alltransactions');
@@ -55,6 +52,9 @@ app.use(express.urlencoded({ extended: true }));
 
 //////////**********************  Call routes ***************************** */
 
+//APP VERSION
+app.use("/",appconfig);
+
 //ETH
 app.use("/", accountEth);
 app.use("/", addressEth);
@@ -74,20 +74,12 @@ app.use("/", transactionBtc);
 //websocket listener for bitcoin new transaction
 // newtxBTC.get_btc_tx_new()
 
-//SMB
-app.use("/", accountSmb);
-app.use("/", addressSmb);
-app.use("/", balanceSmb);
-app.use("/", transactionSmb);
-app.use("/",gasSmb);
-
-
-//USDT
-app.use("/", accountUsdt);
-app.use("/", addressUsdt);
-app.use("/", balanceUsdt);
-app.use("/", transactionUsdt);
-app.use("/",gasUsdt);
+//TOKENS
+app.use("/", account);
+app.use("/", address);
+app.use("/", balance);
+app.use("/", transaction)
+app.use("/",gas);
 
 
 //Universall call route

@@ -32,14 +32,15 @@ async function createTokenAccount()
 
 async function getBalance(user_address)
 {
-    const url = "http://127.0.0.1:5500/USDT/accountBalance/"+user_address;
+    //convert to usd ;
+    var crypto_name = "simbcoin-swap";
+    var urlusd="https://api.coingecko.com/api/v3/simple/price?ids=simbcoin-swap&vs_currencies=usd"; 
+    var response_usd = await fetch(urlusd,{method: "GET"});
+    var result_usd = await response_usd.json(); 
+    var smb_price = result_usd[crypto_name].usd;
+    var amount_usd = smb_price;
 
-    var response = await fetch(url,{
-        method : "GET"
-    });
-    var res = await response.json();
-
-    console.log(res)
+    console.log(smb_price)
 }
 
 async function sendTransaction(from,to,value)
@@ -55,6 +56,9 @@ async function sendTransaction(from,to,value)
 }
 
 
+
+
+
 // createTokenAccount()
-// getBalance("0xB70cF43CBe4c06B5c6B89660172F4B77081147b9")
-sendTransaction("0xB70cF43CBe4c06B5c6B89660172F4B77081147b9","0x3f0fD44F1115F37f470214824Ab268Eed0aE0a3B","22")
+getBalance()
+// sendTransaction("0xB70cF43CBe4c06B5c6B89660172F4B77081147b9","0x3f0fD44F1115F37f470214824Ab268Eed0aE0a3B","22")

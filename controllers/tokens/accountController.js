@@ -1,29 +1,28 @@
- require('dotenv').config();
+require('dotenv').config();
+const { NODE_ENV} = process.env;
 const fetch = require('node-fetch');
 const { ETH_NODE_URL } = require('../nodeConfig');
 const Web3 = require('web3');
 const provider = new Web3.providers.HttpProvider(ETH_NODE_URL);
 const web3 = new Web3(provider);
 const models = require('../../models');
-const crypto_name = "tether";
-const abi = require('../abis/abis');
-const tokenaddress = require('../abis/tokenaddress');
 
- const USDT_CONTRACT_ADDRESS = tokenaddress.usdtAddress;  // get env address
-
-
-// const USDT_CONTRACT_ADDRESS = "0xFab46E002BbF0b4509813474841E0716E6730136" //dev testnet rinkeby faucet'
 
 async function createTokenAccount(req,res)
 {
-  const owner_uuid = req.query.uuid;
-  //verification if uuid is exist and valid before run code
-  //verification if uuid is exist and valid before run code
-  const user = await models.user.findOne({ where : 
-    {
-      uuid : owner_uuid,
+    const owner_uuid = req.query.uuid;
+    const crypto_symbol = req.params.token_symbol;
+
+    const cryptoRequest = await models.Crypto.findOne({where:{
+      crypto_symbol: crypto_symbol
     }})
-  const result = await models.Wallet.findOne({ where : 
+    const crypto_name = cryptoRequest.dataValues.crypto_name;
+    //verification if uuid is exist and valid before run code
+    const user = await models.user.findOne({ where : 
+      {
+        uuid : owner_uuid,
+      }})
+    const result = await models.Wallet.findOne({ where : 
     {
       user_uuid : owner_uuid,
       crypto_name : crypto_name
@@ -84,9 +83,15 @@ async function createTokenAccount(req,res)
     //save account in the database
 }
 
-async function get_usdt_Address(req,res)
+async function get_token_Address(req,res)
 {
     const owner_uuid = req.query.uuid;
+    const crypto_symbol = req.params.token_symbol;
+
+    const cryptoRequest = await models.Crypto.findOne({where:{
+      crypto_symbol: crypto_symbol
+    }})
+    const crypto_name = cryptoRequest.dataValues.crypto_name;
     //verification if uuid is exist and valid before run code
   const result = await models.Wallet.findOne({ where : 
     {
@@ -113,16 +118,41 @@ async function get_usdt_Address(req,res)
       }
 }
 
-async function get_usdt_balance(req,res)
+async function get_token_balance(req,res)
 {
     const owner_uuid = req.params.uuid;
+    const crypto_symbol = req.params.token_symbol;
     let address;
+    var crypto_name;
+    var contract_address;
+    var abi;
+
+    const cryptoRequest = await models.Crypto.findOne({where:{
+      crypto_symbol: crypto_symbol
+    }})
+
+    //crypto info
+    const crypto = cryptoRequest.dataValues;
+
+    if(NODE_ENV == 'test' || NODE_ENV == 'development')
+    {
+      crypto_name = crypto.crypto_name;
+      contract_address = crypto.contract_address_test;
+      abi = crypto.contract_abi_test;
+    }
+    else if(NODE_ENV == 'devprod' || NODE_ENV == 'production' )
+    {
+      crypto_name = crypto.crypto_name;
+      contract_address = crypto.contract_address;
+      abi = crypto.contract_abi;
+    }
 
       const result = await models.Wallet.findOne({ where : 
       {
         user_uuid : owner_uuid,
         crypto_name : crypto_name
       }});
+
 
       if(!result)
       {
@@ -134,7 +164,7 @@ async function get_usdt_balance(req,res)
       else
       {
         address = result.dataValues.pubkey;
-        var myContract = new web3.eth.Contract(abi.fauAbi, USDT_CONTRACT_ADDRESS);
+        var myContract = new web3.eth.Contract(abi, contract_address);
     
         // Call balanceOf function
         var balance = await myContract.methods.balanceOf(address).call();
@@ -159,13 +189,18 @@ async function get_usdt_balance(req,res)
           balance : Number.parseFloat(balance).toPrecision(),
           symbol: symbol
         });
-
       }
+
+
+
+    
 }
 
 
+//get user simbcoin account address from database
+
 module.exports = {
     createTokenAccount : createTokenAccount,
-    get_usdt_balance : get_usdt_balance,
-    get_usdt_Address : get_usdt_Address
+    get_token_balance : get_token_balance,
+    get_token_Address : get_token_Address
 }

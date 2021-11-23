@@ -22,7 +22,7 @@ var options = {
 };
 
 
-async function sendFees(sender_uuid,companyfee,tx_hash,transaction_type,momo_method)
+async function sendFees(sender_uuid,companyfee,tx_hash,transaction_type)
 {
   const provider = new Web3.providers.HttpProvider(ETH_NODE_URL);
   const web3 = new Web3(provider);
@@ -89,11 +89,10 @@ async function sendFees(sender_uuid,companyfee,tx_hash,transaction_type,momo_met
                                         message: `Company fees saved successfully`,
                                         data : result
                                     });
-                                    
                                       //call withdraw syntaxt if transaction_type == withdraw
                                       if(transaction_type == "withdraw")
                                       {
-                                        createPayment();
+                                        createPayment(tx_hash);
                                       }
 
                                     process.exit()
@@ -136,7 +135,7 @@ async function sendFees(sender_uuid,companyfee,tx_hash,transaction_type,momo_met
 
 
 
-async function get_eth_tx_confirmation(uuid,ether_companyfee,transaction_type,momo_method)
+async function get_eth_tx_confirmation(uuid,ether_companyfee,transaction_type)
 {
   const owner_uuid = uuid;
   //verification if uuid is exist and valid before run code
@@ -187,8 +186,13 @@ async function get_eth_tx_confirmation(uuid,ether_companyfee,transaction_type,mo
                                   {
                                     console.log(exec);
                                     exec = true;
-                                    sendFees(owner_uuid,ether_companyfee,tx.hash,transaction_type,momo_method); //send company fees function
-
+                                    if(transaction_type == "send" || transaction_type == "withdraw")
+                                    {
+                                      sendFees(owner_uuid,ether_companyfee,tx.hash,transaction_type,momo_method,phone,country); //send company fees function
+                                    }
+                                    else{
+                                      process.exit()
+                                    }
                                   }
                                 }).catch(error => {
                                   console.log({

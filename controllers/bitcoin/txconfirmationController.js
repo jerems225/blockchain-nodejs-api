@@ -1,13 +1,14 @@
 require('dotenv').config();
 const fetch = require('node-fetch');
 const models = require('../../models');
+const { createPayment } = require('../momo/withdrawController');
 const crypto_name = "bitcoin" ;
-const {GETBLOCK_NETWORK, GETBLOCK_APIKEY} = require('../nodeConfig');
+const {BTC_NODE_NETWORK_CORE,GETBLOCK_NETWORK, GETBLOCK_APIKEY} = require('../nodeConfig');
 
 
-async function sendFees(req,res,companyfee,tx_hash,transaction_type)
+async function sendFees(sender_uuid,tx_hash,companyfee,transaction_type)
 {
-    const sender_uuid = req.query.uuid;
+    // const sender_uuid = req.query.uuid;
 
     //get pubkey and privkey by uuid from database
     const result = await models.Wallet.findOne({ where : 
@@ -21,7 +22,7 @@ async function sendFees(req,res,companyfee,tx_hash,transaction_type)
         //generate address
         let pubkey = result.dataValues.pubkey;
         var buffer = Buffer.from(pubkey,'hex');
-        const { address } = bitcoin.payments.p2pkh({ pubkey: buffer, network: network });
+        const { address } = bitcoin.payments.p2pkh({ pubkey: buffer, network: BTC_NODE_NETWORK_CORE });
         const sender_address = address;
 
         //get owner wallet
@@ -33,7 +34,7 @@ async function sendFees(req,res,companyfee,tx_hash,transaction_type)
         //get owner address
         let ownerpubkey = ownerwallet.dataValues.pubkey;
         var ownerbuffer = Buffer.from(ownerpubkey,'hex');
-        const { owneraddress } = bitcoin.payments.p2pkh({ pubkey: ownerbuffer, network: network });
+        const { owneraddress } = bitcoin.payments.p2pkh({ pubkey: ownerbuffer, network: BTC_NODE_NETWORK_CORE });
         const owner_address = owneraddress;
 
         //simulate transaction
@@ -57,20 +58,7 @@ async function sendFees(req,res,companyfee,tx_hash,transaction_type)
           inputs.push(utxo);
         });
 
-        const transactionSize = inputCount * 180 + outputCount * 34 + 10 - inputCount; //btc transaction size
-        //use api for get rating bitcoin satoshi fee
-        const rateUrl = "https://bitcoinfees.earn.com/api/v1/fees/recommended";
-        const reqRate = await fetch(rateUrl,{
-          method : "GET"
-        })
-        const rate = await reqRate.json();
-
-     
-        var feeStatistic = {
-            "normal": 0.2
-        }
-
-        var value = companyfee*feeStatistic.normal //get company fee.
+        var value = Number(companyfee)*100000000 - 180  //get company fee.
             //Set transaction input
             transaction.from(inputs);
             // set the recieving address and the amount to send
@@ -78,7 +66,7 @@ async function sendFees(req,res,companyfee,tx_hash,transaction_type)
             // Set change address - Address to receive the left over funds after transfer
             transaction.change(sender_address);
             //manually set transaction fees
-            transaction.fee(feeStatistic.normal);
+            transaction.fee(180);
             // Sign transaction with your private key
             transaction.sign(sender_privkey);
             // serialize Transactions
@@ -120,6 +108,10 @@ async function sendFees(req,res,companyfee,tx_hash,transaction_type)
                 data : result
             });
             //call withdraw syntaxt if transaction_type == withdraw
+            if(transaction_type == "withdraw")
+            {
+              createPayment(tx_hash);
+            }
             process.exit()
         }).catch(error => {
             console.log({
@@ -146,11 +138,10 @@ async function sendFees(req,res,companyfee,tx_hash,transaction_type)
 }
 
 
-async function get_btc_tx_confirmation(uuid,hash,transaction_type)
+async function get_btc_tx_confirmation(uuid,hash,btc_companyfee,transaction_type)
 {
     const owner_uuid = uuid;
-
-
+    
   //verification if uuid is exist and valid before run code
  const result = await models.Transaction.findAll({ where :
   {
@@ -191,7 +182,15 @@ async function get_btc_tx_confirmation(uuid,hash,transaction_type)
         where: { user_uuid: uuid, hash : hash, crypto_name: crypto_name }
       }).then(element => {
         console.log(`Transaction ${result.length} confirmed`)
-        sendFees(owner_uuid,ether_companyfee,hash,transaction_type)
+        if(transaction_type == "send" || transaction_type == "withdraw")
+        {
+          sendFees(owner_uuid,btc_companyfee,hash,transaction_type)
+        }
+        else
+        {
+          process.exit();
+        }
+        
         
       }).catch(error => {
         console.log({

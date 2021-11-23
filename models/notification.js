@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class momo extends Model {
+  class notification extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,16 +13,13 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   };
-  momo.init({
-    country: DataTypes.STRING,
-    symbol: DataTypes.STRING,
-    code: DataTypes.STRING,
-    currency: DataTypes.STRING,
-    channel: DataTypes.JSON,
-    operator: DataTypes.JSON
+  notification.init({
+    title: DataTypes.STRING,
+    message: DataTypes.STRING,
+    status: DataTypes.BOOLEAN
   }, {
     sequelize,
-    modelName: 'momo',
+    modelName: 'notification',
   });
-  return momo;
+  return notification;
 };

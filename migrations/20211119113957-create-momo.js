@@ -14,6 +14,9 @@ module.exports = {
       symbol: {
         type: Sequelize.STRING
       },
+      code: {
+        type: Sequelize.STRING
+      },
       currency: {
         type: Sequelize.STRING
       },

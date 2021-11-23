@@ -554,12 +554,12 @@
         }
       }
     },
-    "/smb/createwallet": {
+    "/{token_symbol}/createwallet": {
       "post": {
         "tags": [
-          "Simbcoin"
+          "ETHEREUM TOKENS"
         ],
-        "summary": "Create a new simbcoin wallet",
+        "summary": "Create a new token wallet",
         "description": "",
         "operationId": "createsmbWallet",
         "produces": [
@@ -570,6 +570,16 @@
             "name": "uuid",
             "in": "query",
             "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "token_symbol",
+            "in": "path",
+            "description": "token symbol you need to be add in the path",
             "required": true,
             "type": "string",
             "items": {
@@ -592,14 +602,14 @@
         }
       }
     },
-    "/smb/accountbalance/{uuid}": {
+    "/{token_symbol}/accountbalance/{uuid}": {
       "get": {
         "tags": [
-          "Simbcoin"
+          "ETHEREUM TOKENS"
         ],
-        "summary": "Get a current simbcoin balance for a specific user",
+        "summary": "Get a current token balance for a specific user",
         "description": "",
-        "operationId": "getsmbBalance",
+        "operationId": "gettokenBalance",
         "produces": [
           "application/json"
         ],
@@ -608,6 +618,16 @@
             "name": "uuid",
             "in": "path",
             "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "token_symbol",
+            "in": "path",
+            "description": "token symbol you need to be add in the path",
             "required": true,
             "type": "string",
             "items": {
@@ -630,12 +650,12 @@
         }
       }
     },
-    "/smb/wallet/getaddress": {
+    "/{token_symbol}/wallet/getaddress": {
       "get": {
         "tags": [
-          "Simbcoin"
+          "ETHEREUM TOKENS"
         ],
-        "summary": "Get a current simbcoin address for a specific user",
+        "summary": "Get a current token address for a specific user",
         "description": "",
         "operationId": "getsmbAddress",
         "produces": [
@@ -646,6 +666,16 @@
             "name": "uuid",
             "in": "query",
             "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "token_symbol",
+            "in": "path",
+            "description": "token symbol you need to be add in the path",
             "required": true,
             "type": "string",
             "items": {
@@ -668,14 +698,14 @@
         }
       }
     },
-    "/smb/sendtransaction/{txtype}": {
+    "/{token_symbol}/sendtransaction/{txtype}": {
       "post": {
         "tags": [
-          "Simbcoin"
+          "ETHEREUM TOKENS"
         ],
         "summary": "send a transaction from a user to another user out or in the platform",
-        "description": "For this endpoint you need to give the simbcoin address of recipient",
-        "operationId": "sendsmbTransaction1",
+        "description": "For this endpoint you need to give the token address of recipient",
+        "operationId": "sendtokenTransaction1",
         "produces": [
           "application/json"
         ],
@@ -684,6 +714,16 @@
             "name": "uuid",
             "in": "query",
             "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "token_symbol",
+            "in": "path",
+            "description": "token symbol you need to be add in the path",
             "required": true,
             "type": "string",
             "items": {
@@ -764,10 +804,10 @@
         }
       }
     },
-    "/smb/estimatefees": {
+    "/{token_symbol}/estimatefees": {
       "post": {
         "tags": [
-          "Simbcoin"
+          "ETHEREUM TOKENS"
         ],
         "summary": "send a transaction for get the transaction fee",
         "description": "For this endpoint you need to give the simbcoin address of recipient",
@@ -787,270 +827,9 @@
             }
           },
           {
-            "name": "to",
-            "in": "query",
-            "description": "user wallet address",
-            "required": true,
-            "type": "string",
-            "example": "0x.."
-          },
-          {
-            "name": "value",
-            "in": "query",
-            "description": "amount of transaction",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "fees_type",
-            "in": "query",
-            "description": "type of fees",
-            "required": true,
-            "type": "string",
-            "example": "Withdraw or send"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "items": {
-                "$ref": "#/definitions/estimatefees"
-              }
-            }
-          },
-          "401": {
-            "description": "Invalid status value"
-          }
-        }
-      }
-    },
-    "/usdt/createwallet": {
-      "post": {
-        "tags": [
-          "Tether"
-        ],
-        "summary": "Create a new tether wallet",
-        "description": "",
-        "operationId": "createusdtWallet",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "uuid",
-            "in": "query",
-            "description": "user uuid need to be add in the url request",
-            "required": true,
-            "type": "string",
-            "items": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "items": {
-                "$ref": "#/definitions/createwallets"
-              }
-            }
-          },
-          "401": {
-            "description": "Invalid status value"
-          }
-        }
-      }
-    },
-    "/usdt/accountbalance/{uuid}": {
-      "get": {
-        "tags": [
-          "Tether"
-        ],
-        "summary": "Get a current tether balance for a specific user",
-        "description": "",
-        "operationId": "getusdtBalance",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "uuid",
+            "name": "token_symbol",
             "in": "path",
-            "description": "user uuid need to be add in the url request",
-            "required": true,
-            "type": "string",
-            "items": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "items": {
-                "$ref": "#/definitions/accountbalance"
-              }
-            }
-          },
-          "401": {
-            "description": "Invalid status value"
-          }
-        }
-      }
-    },
-    "/usdt/wallet/getaddress": {
-      "get": {
-        "tags": [
-          "Tether"
-        ],
-        "summary": "Get a current tether address for a specific user",
-        "description": "",
-        "operationId": "getbtcAddress",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "uuid",
-            "in": "query",
-            "description": "user uuid need to be add in the url request",
-            "required": true,
-            "type": "string",
-            "items": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "items": {
-                "$ref": "#/definitions/walletaddress"
-              }
-            }
-          },
-          "401": {
-            "description": "Invalid status value"
-          }
-        }
-      }
-    },
-    "/usdt/sendtransaction/{txtype}": {
-      "post": {
-        "tags": [
-          "Tether"
-        ],
-        "summary": "send a transaction from a user to another user out or in the platform",
-        "description": "For this endpoint you need to give the tether address of recipient",
-        "operationId": "sendusdtTransaction1",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "uuid",
-            "in": "query",
-            "description": "user uuid need to be add in the url request",
-            "required": true,
-            "type": "string",
-            "items": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "txtype",
-            "in": "path",
-            "description": "The transaction Type",
-            "required": true,
-            "type": "string",
-            "example": "3 possible values:'received','send','withdraw'"
-          },
-          {
-            "name": "to",
-            "in": "query",
-            "description": "user wallet address",
-            "required": true,
-            "type": "string",
-            "example": "0x.."
-          },
-          {
-            "name": "value",
-            "in": "query",
-            "description": "amount of transaction",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "txfee",
-            "in": "query",
-            "description": "fees of transaction",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "companyfee",
-            "in": "query",
-            "description": "company fees of transaction",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "momo_method",
-            "in": "query",
-            "description": "the mobile money method the user choose - Only if the tx_type = withdraw",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "currency",
-            "in": "query",
-            "description": "currency of country the user choose - Only if the tx_type = withdraw",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "country",
-            "in": "query",
-            "description": "country the user choose - Only if the tx_type = withdraw",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "items": {
-                "$ref": "#/definitions/transaction"
-              }
-            }
-          },
-          "401": {
-            "description": "Invalid status value"
-          }
-        }
-      }
-    },
-    "/usdt/estimatefees": {
-      "post": {
-        "tags": [
-          "Tether"
-        ],
-        "summary": "send a transaction for get the transaction fee",
-        "description": "For this endpoint you need to give the tether address of recipient",
-        "operationId": "estimategasusdt1",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "uuid",
-            "in": "query",
-            "description": "user uuid need to be add in the url request",
+            "description": "token symbol you need to be add in the path",
             "required": true,
             "type": "string",
             "items": {
@@ -1574,7 +1353,7 @@
               "type": "string"
             }
           }
-          ],
+        ],
         "responses": {
           "200": {
             "description": "successful operation",
@@ -1590,14 +1369,16 @@
         }
       }
     },
-    "/crypto/allcrypto": {
+    "/crypto/allcrypto/tokens": {
       "get": {
         "tags": [
-          "Dashboard Endpoint"
+          "Dashboard Endpoint",
+          "ETHEREUM TOKENS",
+          "Crypto Managment"
         ],
-        "summary": "Get all crypto available on this platform",
+        "summary": "Get all crypto (tokens) available on this platform",
         "description": "",
-        "operationId": "allcrypto1",
+        "operationId": "allcrypto2",
         "produces": [
           "application/json"
         ],
@@ -1612,7 +1393,7 @@
               "type": "string"
             }
           }
-          ],
+        ],
         "responses": {
           "200": {
             "description": "successful operation",
@@ -1628,7 +1409,162 @@
         }
       }
     },
-    "/momo/convert/{currency}": {
+    "/crypto/allcrypto/coins": {
+      "get": {
+        "tags": [
+          "Dashboard Endpoint",
+          "COINS",
+          "Crypto Managment"
+        ],
+        "summary": "Get all crypto (coins) available on this platform",
+        "description": "",
+        "operationId": "allcrypto3",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/allcrypto"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/crypto/allcrypto": {
+      "get": {
+        "tags": [
+          "Dashboard Endpoint",
+          "Crypto Managment"
+        ],
+        "summary": "Get all cryptos available on this platform",
+        "description": "",
+        "operationId": "allcrypto0",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/allcrypto"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/crypto/add/crypto": {
+      "post": {
+        "tags": [
+          "Dashboard Endpoint",
+          "Crypto Managment"
+        ],
+        "summary": "Add a new crypto on the platform",
+        "description": "",
+        "operationId": "AddCrypto1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "body for you query",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/addcrypto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/allcrypto"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/crypto/update/crypto": {
+      "post": {
+        "tags": [
+          "Dashboard Endpoint",
+          "Crypto Managment"
+        ],
+        "summary": "Add a new crypto on the platform",
+        "description": "",
+        "operationId": "UpdateCrypto1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "body for you query",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/addcrypto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/allcrypto"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/momo/convert/{operation}/{currency}": {
       "get": {
         "tags": [
           "MOMO Endpoint"
@@ -1648,12 +1584,19 @@
             "type": "string"
           },
           {
+            "name": "operation",
+            "in": "path",
+            "description": "if you want to sell or buy, two possible value: buy,sell",
+            "required": true,
+            "type": "string"
+          },
+          {
             "name": "value_usd",
             "in": "query",
             "description": "This is the dollar value you want to convert in local currency",
             "type": "double"
           }
-          ],
+        ],
         "responses": {
           "200": {
             "description": "successful operation",
@@ -1680,8 +1623,7 @@
         "produces": [
           "application/json"
         ],
-        "parameters": [
-          ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "successful operation",
@@ -1716,13 +1658,50 @@
             "required": true,
             "type": "string"
           }
-          ],
+        ],
         "responses": {
           "200": {
             "description": "successful operation",
             "schema": {
               "items": {
                 "$ref": "#/definitions/method2"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/momo/payment/buy/crypto": {
+      "post": {
+        "tags": [
+          "MOMO Endpoint"
+        ],
+        "summary": "create buy cryto request for a specifique user and ",
+        "description": "",
+        "operationId": "buycrypto1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/buycrypto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/transaction"
               }
             }
           },
@@ -1817,26 +1796,100 @@
           }
         }
       }
+    },
+    "/app/get/version": {
+      "get": {
+        "tags": [
+          "APP CONFIG"
+        ],
+        "summary": "Get all information of the app",
+        "description": "",
+        "operationId": "app12",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/app"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/twilioeror1"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/app/update/version": {
+      "put": {
+        "tags": [
+          "APP CONFIG"
+        ],
+        "summary": "Update all information of the app",
+        "description": "",
+        "operationId": "appupdate1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "body for you query",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateapp"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/app"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/twilioeror1"
+              }
+            }
+          }
+        }
+      }
     }
   },
+  
   "definitions": {
     "createwallets": {
       "type": "object",
       "properties": {
-        "status" : 
-        {
+        "status": {
           "type": "integer",
           "example": 200
         },
         "message": {
-          "type":"string",
+          "type": "string",
           "example": "successfully"
         },
-        "wallet" :
-        {
+        "wallet": {
           "type": "object",
-          "example": 
-          {
+          "example": {
             "id": {
               "type": "integer",
               "format": "int64"
@@ -1847,46 +1900,132 @@
             },
             "pubkey": {
               "type": "string",
-              "example" : "0x.."
+              "example": "0x.."
             },
             "privkey": {
               "type": "string",
-              "example" : "0x.."
+              "example": "0x.."
             },
             "mnemonic": {
               "type": "string",
-              "example" : "my me too"
+              "example": "my me too"
             },
             "updatedAt": {
               "type": "datetime",
-              "example" : "2021-08-05T18:21:33.296Z"
+              "example": "2021-08-05T18:21:33.296Z"
             },
             "createdAt": {
               "type": "datetime",
-              "example" : "2021-08-05T18:21:33.296Z"
+              "example": "2021-08-05T18:21:33.296Z"
             }
           }
-         
         }
       }
     },
     "walletaddress": {
       "type": "object",
       "properties": {
-        "status" : {
+        "status": {
           "type": "integer",
           "example": "200"
         },
-        "address" : {
+        "address": {
           "type": "string",
           "example": "0x.."
+        }
+      }
+    },
+    "addcrypto": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "example": "3434..."
+        },
+        "crypto_name": {
+          "type": "string",
+          "example": "bitcoin"
+        },
+        "crypto_symbol": {
+          "type": "string",
+          "example": "btc"
+        },
+        "contract_address": {
+          "type": "string",
+          "example": "0x..."
+        },
+        "contract_abi": {
+          "type": "array",
+          "example": []
+        },
+        "contract_address_test": {
+          "type": "string",
+          "example": "0x..."
+        },
+        "contract_abi_test": {
+          "type": "array",
+          "example": []
+        },
+        "amount_min": {
+          "type": "double",
+          "example": 0.01
+        },
+        "staking_amount_min": {
+          "type": "double",
+          "example": "0.01"
+        },
+        "staking_amount_max": {
+          "type": "double",
+          "example": 0.01
+        },
+        "stakable": {
+          "type": "boolean",
+          "example": true
+        },
+        "crypto_type": {
+          "type": "string",
+          "example": "token/coin"
+        },
+        "crypto_name_market": {
+          "type": "string",
+          "example": "bitcoin"
+        }
+      }
+    },
+    "app": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "example": 200
+        },
+        "message":{
+          "type": "string",
+          "example" : "successfully"
+        },
+        "data":
+        {
+          "type":"object",
+          "example": {
+            "version": "v1"
+          }
+        }
+      }
+    },
+    "updateapp": {
+      "type": "object",
+      "properties": {
+        "version":
+        {
+          "type":"object",
+          "example": "1"
         }
       }
     },
     "accountbalance": {
       "type": "object",
       "properties": {
-        "balance" : {
+        "balance": {
           "type": "double",
           "example": "0.004"
         }
@@ -1895,84 +2034,82 @@
     "sendtransaction": {
       "type": "object",
       "properties": {
-        "status" : 
-        {
+        "status": {
           "type": "integer",
           "example": 200
         },
         "message": {
-          "type":"string",
+          "type": "string",
           "example": "successfully"
         }
-       
       }
     },
     "alltransaction": {
       "type": "object",
       "properties": {
-        "status" : 
-        {
+        "status": {
           "type": "integer",
           "example": 200
         },
         "message": {
-          "type":"string",
+          "type": "string",
           "example": "successfully"
         },
-        "data" :
-        {
+        "data": {
           "type": "array",
-          "example": 
-          [{
-            "id": 1,
-            "crypto_name": "ethereum",
-            "transaction_type": "send",
-            "hash": "0x40eb1caad438fce5aec593864d04b25bc50f5623575f703075a5d54e1e22d30a",
-            "amount": "0.01",
-            "fees": 0.003356,
-            "amount_usd": null,
-            "fees_usd": null,
-            "amount_currency": null,
-            "currency": null,
-            "country": null,
-            "from": "0xaC5ab679D5aaC1d0c8C3f8168fBfeb15A3A7CcC5",
-            "to": "0xcbe68f0486A369b37d99E4BEfF35B0Ca83062542",
-            "confirmation": false,
-            "user_uuid": "22aba468-294b-4b17-82be-e046187ae7e2",
-            "updatedAt": "2021-11-19T20:43:33.618Z",
-            "createdAt": "2021-11-19T20:43:33.618Z"
-          }]
+          "example": [
+            {
+              "id": 1,
+              "crypto_name": "ethereum",
+              "transaction_type": "send",
+              "hash": "0x40eb1caad438fce5aec593864d04b25bc50f5623575f703075a5d54e1e22d30a",
+              "amount": "0.01",
+              "fees": 0.003356,
+              "amount_usd": 34334,
+              "fees_usd": 232,
+              "amount_currency": 2323,
+              "currency": "XAF",
+              "country": "cameroun",
+              "phone": "3478343444",
+              "statuspayment": true,
+              "from": "0xaC5ab679D5aaC1d0c8C3f8168fBfeb15A3A7CcC5",
+              "to": "0xcbe68f0486A369b37d99E4BEfF35B0Ca83062542",
+              "confirmation": false,
+              "user_uuid": "22aba468-294b-4b17-82be-e046187ae7e2",
+              "updatedAt": "2021-11-19T20:43:33.618Z",
+              "createdAt": "2021-11-19T20:43:33.618Z"
+            }
+          ]
         }
       }
     },
     "transaction": {
       "type": "object",
       "properties": {
-        "status" : 
-        {
+        "status": {
           "type": "integer",
           "example": 200
         },
         "message": {
-          "type":"string",
+          "type": "string",
           "example": "successfully"
         },
-        "data" :
-        {
+        "data": {
           "type": "object",
-          "example": 
-          {
+          "example": {
             "id": 1,
             "crypto_name": "ethereum",
             "transaction_type": "send",
             "hash": "0x40eb1caad438fce5aec593864d04b25bc50f5623575f703075a5d54e1e22d30a",
             "amount": "0.01",
             "fees": 0.003356,
-            "amount_usd": null,
-            "fees_usd": null,
-            "amount_currency": null,
-            "currency": null,
-            "country": null,
+            "amount_usd": 34334,
+            "fees_usd": 232,
+            "amount_currency": 2323,
+            "currency": "XAF",
+            "country": "cameroun",
+            "phone": "3478343444",
+            "statuspayment": true,
             "from": "0xaC5ab679D5aaC1d0c8C3f8168fBfeb15A3A7CcC5",
             "to": "0xcbe68f0486A369b37d99E4BEfF35B0Ca83062542",
             "confirmation": false,
@@ -1986,20 +2123,18 @@
     "txnumber": {
       "type": "object",
       "properties": {
-        "status" : 
-        {
+        "status": {
           "type": "integer",
           "example": 200
         },
         "message": {
-          "type":"string",
+          "type": "string",
           "example": "successfully"
         },
-        "data" :
-        {
+        "data": {
           "type": "integer",
           "example": {
-            "txnumber" : 221
+            "txnumber": 221
           }
         }
       }
@@ -2007,47 +2142,44 @@
     "feemanagment": {
       "type": "object",
       "properties": {
-        "status" : 
-        {
+        "status": {
           "type": "integer",
           "example": 200
         },
         "message": {
-          "type":"string",
+          "type": "string",
           "example": "successfully"
         },
-        "data" :
-        {
+        "data": {
           "type": "object",
-          "example": 
-          {
+          "example": {
             "fees_type": {
               "type": "string",
-              "example" : "withdraw"
+              "example": "withdraw"
             },
             "fastplus": {
               "type": "string",
-              "example" : "0.23"
+              "example": "0.23"
             },
             "fast": {
               "type": "string",
-              "example" : "0.12"
+              "example": "0.12"
             },
             "medium": {
               "type": "string",
-              "example" : "0.01"
+              "example": "0.01"
             },
             "normal": {
               "type": "string",
-              "example" :"0.012"
+              "example": "0.012"
             },
             "updatedAt": {
               "type": "datetime",
-              "example" : "2021-08-05T18:21:33.296Z"
+              "example": "2021-08-05T18:21:33.296Z"
             },
             "createdAt": {
               "type": "datetime",
-              "example" : "2021-08-05T18:21:33.296Z"
+              "example": "2021-08-05T18:21:33.296Z"
             }
           }
         }
@@ -2056,35 +2188,24 @@
     "companyallfee": {
       "type": "object",
       "properties": {
-        "status" : 
-        {
+        "status": {
           "type": "integer",
           "example": 200
         },
         "message": {
-          "type":"string",
+          "type": "string",
           "example": "successfully"
         },
-        "data" :
-        {
+        "data": {
           "type": "object",
-          "example": 
-          {
+          "example": {
             "bitcoin": {
-              "btcfees" : 0.01,
-              "symbol" : "BTC"
+              "btcfees": 0.01,
+              "symbol": "BTC"
             },
             "ethereum": {
-              "btcfees" : 0.01,
-              "symbol" : "ETH"
-            },
-            "simbcoin": {
-              "smbfees" : 0.01,
-              "symbol" : "SMB"
-            },
-            "tether": {
-              "usdtfees" : 0.01,
-              "symbol" : "USDT"
+              "btcfees": 0.01,
+              "symbol": "ETH"
             }
           }
         }
@@ -2093,33 +2214,70 @@
     "allcrypto": {
       "type": "object",
       "properties": {
-        "status" : 
-        {
+        "status": {
           "type": "integer",
           "example": 200
         },
         "message": {
-          "type":"string",
+          "type": "string",
           "example": "successfully"
         },
-        "data" :
-        {
-          "type": "object",
-          "example": 
-          {
-            "crypto_name": {
-              "type": "string",
-              "example" : "bitcoin"
-            },
-            "updatedAt": {
-              "type": "datetime",
-              "example" : "2021-08-05T18:21:33.296Z"
-            },
-            "createdAt": {
-              "type": "datetime",
-              "example" : "2021-08-05T18:21:33.296Z"
-            }
+        "data": {
+          "type": "array",
+          "example": {
+            "id": 3,
+            "crypto_name": "tether",
+            "crypto_symbol": "usdt",
+            "contract_address": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+            "contract_abi": [],
+            "contract_address_test": "0xdac17f958d2ee523a2206206994597c13d831ec7",
+            "contract_abi_test": [],
+            "amount_min": 60,
+            "staking_amount_min": null,
+            "staking_amount_max": null,
+            "stakable": false,
+            "crypto_type": "token/coin",
+            "crypto_name_market": "tether",
+            "createdAt": "2021-11-22T16:30:07.000Z",
+            "updatedAt": "2021-11-22T16:30:07.000Z"
           }
+        }
+      }
+    },
+    "buycrypto": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "example": "3434..."
+        },
+        "crypto_name": {
+          "type": "string",
+          "example": "bitcoin"
+        },
+        "txfee": {
+          "type": "double",
+          "example": 0.08
+        },
+        "value": {
+          "type": "string",
+          "example": "267"
+        },
+        "momo_method": {
+          "type": "string",
+          "example": "CM_MTNMOBILEMONEY"
+        },
+        "currency": {
+          "type": "string",
+          "example": "XAF"
+        },
+        "country": {
+          "type": "string",
+          "example": "cameroun"
+        },
+        "phone": {
+          "type": "string",
+          "example": "365657677"
         }
       }
     },
@@ -2127,30 +2285,30 @@
       "type": "object",
       "properties": {
         "status": {
-          "type":"integer",
+          "type": "integer",
           "example": 200
         },
         "message": {
-          "type":"string",
+          "type": "string",
           "example": "Fees Managment Get With Success"
         },
         "data": {
           "type": "object",
           "example": {
             "fastplus": {
-              "type":"double",
+              "type": "double",
               "example": 0.0233
             },
             "fast": {
-              "type":"double",
+              "type": "double",
               "example": 0.0013
             },
             "medium": {
-              "type":"double",
+              "type": "double",
               "example": 0.00013
             },
             "normal": {
-              "type":"double",
+              "type": "double",
               "example": 0.00010
             }
           }
@@ -2161,7 +2319,7 @@
       "type": "object",
       "properties": {
         "status": {
-          "type":"integer",
+          "type": "integer",
           "example": 200
         },
         "message": {
@@ -2174,23 +2332,21 @@
       "type": "object",
       "properties": {
         "status": {
-          "type":"integer",
+          "type": "integer",
           "example": 200
         },
         "message": {
           "type": "string",
           "example": "all payment!"
         },
-        "data" :
-        {
-          "type" : "object",
+        "data": {
+          "type": "object",
           "example": [
             {
               "currency": "XAF",
               "amount": 2310.4
             }
           ]
-          
         }
       }
     },
@@ -2198,55 +2354,16 @@
       "type": "object",
       "properties": {
         "status": {
-          "type":"integer",
+          "type": "integer",
           "example": 200
         },
         "message": {
           "type": "string",
           "example": "all payment!"
         },
-        "data" :
-        {
-          "type" : "array",
+        "data": {
+          "type": "array",
           "example": [
-            {
-              "id": 1,
-              "country": "cameroun",
-                "symbol": "CM",
-                "currency": "XAF",
-                "channel": [
-                  "CM_ORANGEMONEY",
-                  "CM_MTNMOBILEMONEY",
-                  "CM_EUMM"
-                ],
-                "operator": [
-                  "ORANGE MONEY",
-                  "MTN MOBILE MONEY",
-                  "EXPRESS UNION"
-                ],
-                "createdAt": "2021-11-19T11:50:01.000Z",
-                "updatedAt": "2021-11-19T11:50:01.000Z"
-            }
-          ]
-          
-        }
-      }
-    },
-    "method2": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type":"integer",
-          "example": 200
-        },
-        "message": {
-          "type": "string",
-          "example": "all payment!"
-        },
-        "data" :
-        {
-          "type" : "object",
-          "example": 
             {
               "id": 1,
               "country": "cameroun",
@@ -2263,10 +2380,43 @@
                 "EXPRESS UNION"
               ],
               "createdAt": "2021-11-19T11:50:01.000Z",
-                "updatedAt": "2021-11-19T11:50:01.000Z"
+              "updatedAt": "2021-11-19T11:50:01.000Z"
             }
-          
-          
+          ]
+        }
+      }
+    },
+    "method2": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "all payment!"
+        },
+        "data": {
+          "type": "object",
+          "example": {
+            "id": 1,
+            "country": "cameroun",
+            "symbol": "CM",
+            "currency": "XAF",
+            "channel": [
+              "CM_ORANGEMONEY",
+              "CM_MTNMOBILEMONEY",
+              "CM_EUMM"
+            ],
+            "operator": [
+              "ORANGE MONEY",
+              "MTN MOBILE MONEY",
+              "EXPRESS UNION"
+            ],
+            "createdAt": "2021-11-19T11:50:01.000Z",
+            "updatedAt": "2021-11-19T11:50:01.000Z"
+          }
         }
       }
     },
@@ -2274,7 +2424,7 @@
       "type": "object",
       "properties": {
         "status": {
-          "type":"integer",
+          "type": "integer",
           "example": 200
         },
         "code": {
@@ -2291,7 +2441,7 @@
       "type": "object",
       "properties": {
         "status": {
-          "type":"integer",
+          "type": "integer",
           "example": 500
         },
         "message": {
@@ -2300,7 +2450,6 @@
         }
       }
     }
-    
   },
   "externalDocs": {
     "description": "Find out more about Swagger",

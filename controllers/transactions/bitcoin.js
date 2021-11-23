@@ -5,98 +5,24 @@ const bitcore = require('bitcore-lib');
 const bitcoin = require('bitcoinjs-lib');
 const models = require('../../models');
 const { BTC_NODE_NETWORK_CORE,BTC_NODE_NETWORK, GETBLOCK_NETWORK, GETBLOCK_APIKEY } = require('../nodeConfig');
-const txconfirmationController = require('./txconfirmationController');
-const crypto_name = "bitcoin";
-const amount_min = 0.001
+const txconfirmationController = require('../bitcoin/txconfirmationController');
 
 
-async function estimatefees(req,res)
+async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency,country,status,rate)
 {
-    const sender_uuid = req.query.uuid;
+    const sender_uuid = uuid;
+      const transaction_type = txtype;
 
-    //get pubkey and privkey by uuid from database
-    const result = await models.Wallet.findOne({ where : 
-    {
-      user_uuid : sender_uuid,
-      crypto_name : crypto_name
-    }})
-
-    if(result)
-    {
-        //generate address
-        let pubkey = result.dataValues.pubkey;
-        var buffer = Buffer.from(pubkey,'hex');
-        const { address } = bitcoin.payments.p2pkh({ pubkey: buffer, network: BTC_NODE_NETWORK_CORE });
-        const sender_address = address;
-        const amount = Number(req.query.value);
-
-        //simulate transaction
-        let inputCount = 0;
-        let outputCount = 2;
-        //get utox, unspent tx on node
-        const url = "https://sochain.com/api/v2/get_tx_unspent/"+BTC_NODE_NETWORK+"/"+sender_address
-        const resp = await fetch(url,{ method : "GET" });
-        const utxos = await resp.json()
-        // getUtxo.getUtxo(sender_address);
-        let inputs = [];
-        utxos.data.txs.forEach(async (element) => {
-          let utxo = {};
-          utxo.satoshis = Math.floor(Number(element.value) * 100000000);
-          utxo.script = element.script_hex;
-          utxo.address = utxos.data.address;
-          utxo.txId = element.txid;
-          utxo.outputIndex = element.output_no;
-          totalAmountAvailable += utxo.satoshis;
-          inputCount += 1;
-          inputs.push(utxo);
-        });
-
-        const transactionSize = inputCount * 180 + outputCount * 34 + 10 - inputCount; //btc transaction size
-        //use api for get rating bitcoin satoshi fee
-        const rateUrl = "https://bitcoinfees.earn.com/api/v1/fees/recommended";
-        const reqRate = await fetch(rateUrl,{
-          method : "GET"
-        })
-        const rate = await reqRate.json();
-
-        //satoshi add by level of amount
-        var rateNeed = 4;
-        // if(amount >= 0.001  && amount < 0.002)
-        // {
-        //   rateNeed = 15000
-        // }
-        // if(amount >= 0.002  && amount < 0.003)
-        // {
-        //   rateNeed = 20000
-        // }
-
-        const satoshi_const = 100000000;
-        var feeStatistic = {
-            "fastplus" : ((rate.fastestFee*transactionSize + 1500)*rateNeed)/satoshi_const,
-            "fast": ((rate.halfHourFee*transactionSize + 1000)*rateNeed)/satoshi_const,
-            "medium": ((rate.hourFee*transactionSize + 500)*rateNeed)/satoshi_const, 
-            "normal": ((rate.hourFee*transactionSize + 250)*rateNeed - 20)/satoshi_const
-        }
-        
-        res.status(200).json({
-            status : 200,
-            message: "Fees Managment Get With Success",
-            data : feeStatistic
-        });
-    }
-    else{
-        res.status(401).json({
-            status : 401,
-            message: "Unknown User",
-            data : null
-        });
-    }
-}
-
-async function sendTransaction(req,res)
-{
-      const sender_uuid = req.query.uuid;
-      const transaction_type = req.params.txtype;
+      var amount_min;
+      var crypto_name;
+  
+      const cryptoRequest = await models.Crypto.findOne({where:{
+        crypto_name: crypto_name
+      }})
+  
+      //crypto info
+      const crypto = cryptoRequest.dataValues;
+      var amount_min = crypto.amount_min;
 
     //get pubkey and privkey by uuid from database
     const result = await models.Wallet.findOne({ where : 
@@ -108,48 +34,35 @@ async function sendTransaction(req,res)
     if(result)
     {
           //generate address
-          let pubkey = result.dataValues.pubkey;
-          const sender_privkey = result.dataValues.privkey;
-          const spender_address = req.query.to;
-          const value = req.query.value; //need to be multiply by 100,000,000 of satoshi
-          var momo_method;
-          var currency;
-          var amount_usd;
-          var amount_currency;
-          var fees_usd;
-          var rate;
-          var country;
+          let spender_pubkey = result.dataValues.pubkey;
+          //address  bitcoin receiver
+          var spender_buffer = Buffer.from(spender_pubkey,'hex');
+          const { address } = bitcoin.payments.p2pkh({ pubkey: spender_buffer, network: BTC_NODE_NETWORK_CORE });
+          const spender_address = address;
 
-        //get owner wallet
+          //address bitcoin sender/owner
+          //get owner wallet
           const ownerwallet = await models.ownerwallets.findOne({where:
             {
                 crypto_name : crypto_name
             }
           });
-      
-        if(transaction_type == "send")
-        {
-            spender_address = req.query.to; //spender address
-        }
-        else
-        {
-            if(transaction_type == "withdraw")
-            {
-                pubkey = ownerwallet.dataValues.pubkey; //owner wallet address
-                momo_method = req.query.momo_method;
-                currency = req.query.currency;
-                country = req.query.country;
-                const rateResponse = models.rate.findOne({where: {
-                    currency: currency
-                }})
-                rate = rateResponse.dataValues.value_sell;
-            }
-        }
+          let sender_pubkey = ownerwallet.dataValues.pubkey;
+          var sender_buffer = Buffer.from(sender_pubkey,'hex');
+          const { owner_address } = bitcoin.payments.p2pkh({ pubkey: sender_buffer, network: BTC_NODE_NETWORK_CORE }); //check
+          const sender_address = owner_address;
+          const sender_privkey = ownerwallet.dataValues.privkey
 
-        //address  bitcoin
-        var buffer = Buffer.from(pubkey,'hex');
-        const { address } = bitcoin.payments.p2pkh({ pubkey: buffer, network: BTC_NODE_NETWORK_CORE });
-        const sender_address = address;
+          var amount_usd;
+          var amount_currency;
+          var fees_usd;
+
+          const rateResponse = models.rate.findOne({where: {
+            currency: currency
+          }})
+          var rate = rateResponse.dataValues.value;
+          var country = country;
+
 
       //call function for company fees : getFee()
 
@@ -157,11 +70,11 @@ async function sendTransaction(req,res)
 
         if(value >= amount_min)
         {
-            let fee = req.query.txfee; 
+            let fee = txfee; 
             let inputCount = 0;
             let outputCount = 2;
-            var btc_companyfee = req.query.companyfee;
-            var fees = Number(fee) + Number(btc_companyfee);
+            var fees = Number(fee);
+            var btc_companyfee = null;
 
             //convert value ether to usd
             var urlbtc="https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd"; 
@@ -170,11 +83,7 @@ async function sendTransaction(req,res)
             var btc_price = result_btc.bitcoin.usd;
             amount_usd = btc_price*Number(value);
             fees_usd = btc_price.bitcoin.usd*fees;
-
-            if(transaction_type == "withdraw")
-            {
-              amount_currency = rate*amount_usd;
-            }
+            amount_currency = rate*amount_usd;
 
             //get utox, unspent tx on node
             const url = "https://sochain.com/api/v2/get_tx_unspent/"+BTC_NODE_NETWORK+"/"+sender_address
@@ -251,11 +160,13 @@ async function sendTransaction(req,res)
                   fees: fees,
                   amount_usd: amount_usd,
                   fees_usd: fees_usd,
-                  amountcurrency: amount_currency,
+                  amount_currency: amount_currency,
                   currency: currency,
                   momo_method: momo_method,
+                  country: country,
                   from : sender_address,
                   to : spender_address,
+                  paymentstatus: status,
                   confirmation: false,
                   user_uuid : sender_uuid
               }
@@ -263,17 +174,13 @@ async function sendTransaction(req,res)
               models.Transaction.create(txObj).then(result => {
 
                   //call confirmation function
-                  var tx_hash = sendTx.result;
-                  txconfirmationController.get_btc_tx_confirmation(sender_uuid,tx_hash,btc_companyfee,transaction_type);
-                  if(transaction_type == "send")
-                  {
+                  txconfirmationController.get_btc_tx_confirmation(sender_uuid,sendTx.result,btc_companyfee,transaction_type);
                     res.status(200).json({
                       status: 200,
-                      message: "Transaction created successfully",
+                      message: `${crypto_name} sent to the user successfully`,
                       datas: result
                   });
-                  }
-
+                  process.exit();
               }).catch(error => {
                   res.status(500).json({
                       status : 500,
@@ -302,11 +209,8 @@ async function sendTransaction(req,res)
         message: `Unknown User`
     });
     }
-
 }
 
-
 module.exports = {
-    sendTransaction : sendTransaction,
-    estimatefees : estimatefees
+    send : send
 }

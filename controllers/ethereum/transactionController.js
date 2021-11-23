@@ -86,6 +86,7 @@ async function sendTransaction(req,res) {
         var fees_usd;
         var rate;
         var country;
+        var phone;
         const value = req.query.value;
 
         //get owner wallet
@@ -107,10 +108,11 @@ async function sendTransaction(req,res) {
                 momo_method = req.query.momo_method;
                 currency = req.query.currency;
                 country = req.query.country;
+                phone = req.query.phone;
                 const rateResponse = models.rate.findOne({where: {
                     currency: currency
                 }})
-                rate = rateResponse.dataValues.value;
+                rate = rateResponse.dataValues.value_sell;
             }
         }
 
@@ -137,7 +139,10 @@ async function sendTransaction(req,res) {
             var result_eth = await response_eth.json(); 
             amount_usd = result_eth.ethereum.usd*value;
             fees_usd = result_eth.ethereum.usd*gas;
-            amount_currency = rate*amount_usd;
+            if(transaction_type == "withdraw")
+            {
+              amount_currency = rate*amount_usd;
+            }
 
             if(user_balance > check_available_amount)
             {
@@ -162,9 +167,10 @@ async function sendTransaction(req,res) {
                     fees: gas,
                     amount_usd: amount_usd,
                     fees_usd: fees_usd,
-                    amount_currency: amount_currency,
+                    amountcurrency: amount_currency,
                     currency: currency,
                     momo_method: momo_method,
+                    country: country,
                     from : sender_address,
                     to : spender_address,
                     confirmation: false,
@@ -172,7 +178,7 @@ async function sendTransaction(req,res) {
                 }
                 //save in the database
                 models.Transaction.create(txObj).then(result => {
-                    txconfirmationController.get_eth_tx_confirmation(sender_uuid,ether_companyfee,transaction_type,momo_method); //confirmation tx function
+                    txconfirmationController.get_eth_tx_confirmation(sender_uuid,ether_companyfee,transaction_type); //confirmation tx function
                     if(transaction_type == "send")
                     {
                         res.status(200).json({
