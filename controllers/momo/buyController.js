@@ -2,9 +2,9 @@ require('dotenv').config();
 const  MONETBIL_SERVICE_KEY = "yBeM7buRXlNiV9UQ2TfMjVbTlpj9bg6h";
 const fetch = require('node-fetch');
 const models = require('../../models');
-const bitcoin = require('../transactions/bitcoin');
-const ethereum = require('../transactions/ethereum');
-const token = require('../transactions/token');
+const bitcoin = require('./transactions/bitcoin');
+const ethereum = require('./transactions/ethereum');
+const token = require('./transactions/token');
 const placePaymentUrl = "https://api.monetbil.com/payment/v1/placePayment";
 
 //activate payment method

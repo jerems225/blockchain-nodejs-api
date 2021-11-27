@@ -49,7 +49,7 @@ async function createTokenAccount(req,res)
           const walletObject = {
               crypto_name : crypto_name,
               pubkey : account.dataValues.pubkey,
-              privkey : account.dataValues.privateKey,
+              privkey : account.dataValues.privKey,
               mnemonic : "N/A",
               user_uuid : owner_uuid
           }
@@ -78,8 +78,80 @@ async function createTokenAccount(req,res)
           message: `Unknown User`
       });
     }
-  
+    //save account in the database
+}
 
+async function create_owner_TokenAccount(req,res)
+{
+    const owner_uuid = req.params.uuid;
+    const name = req.params.name;
+
+    const user = await models.user.findOne({where : {
+      uuid: owner_uuid
+    }})
+
+    const result = await models.ownerstakewallet.findOne({ where : 
+    {
+      crypto_name : name
+    }})
+
+    if(user)
+    {
+      if(user.dataValues.roles[0] == "ROLE_ADMIN")
+      {
+        if(result)
+        {
+          res.status(401).json({
+            status : 401,
+            message: `This asset already have as ${name} stake owner account`
+        });
+        }
+        else
+        {
+          //create eth account
+          var account = await models.ownerstakewallet.findOne({ where : 
+            {
+              crypto_name : "ethereum"
+            }})
+
+          const walletObject = {
+              crypto_name : name,
+              pubkey : account.dataValues.pubkey,
+              privkey : account.dataValues.privKey,
+              mnemonic : "N/A",
+          }
+        
+          //save in the database
+          models.ownerstakewallet.create(walletObject).then(result => {
+            res.status(200).json({
+                status: 200,
+                message: "Wallet created successfully",
+                wallet : result
+            });
+            
+          }).catch(error => {
+            res.status(500).json({
+                status : 500,
+                message: "Something went wrong",
+                error : error
+            });
+          });
+        }
+      }else
+      {
+          res.status(401).json({
+            status : 401,
+            message: `UnAuthorized User`
+        });
+      }
+    }
+    else
+    {
+        res.status(401).json({
+          status : 401,
+          message: `Unknown User`
+      });
+    }
     //save account in the database
 }
 
@@ -202,5 +274,6 @@ async function get_token_balance(req,res)
 module.exports = {
     createTokenAccount : createTokenAccount,
     get_token_balance : get_token_balance,
-    get_token_Address : get_token_Address
+    get_token_Address : get_token_Address,
+    create_owner_TokenAccount : create_owner_TokenAccount
 }

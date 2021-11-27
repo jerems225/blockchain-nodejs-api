@@ -7,6 +7,11 @@ app.use('/gitblockchain/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument)
 //APP CONFIG
 const appconfig = require('./routes/app/appversion');
 
+//STAKING ENDPOINT
+const staking = require('./routes/staking/stake');
+const rewardController = require('./controllers/staking/rewardsController');
+const autorenewController = require('./controllers/staking/autoRenewController');
+
 //ETH
 const accountEth = require('./routes/ethereum/account');
 const addressEth = require('./routes/ethereum/address');
@@ -54,6 +59,11 @@ app.use(express.urlencoded({ extended: true }));
 
 //APP VERSION
 app.use("/",appconfig);
+
+//STAKING
+app.use("/",staking);
+// rewardController.rewards();
+// autorenewController.run_auto_renew_stake();
 
 //ETH
 app.use("/", accountEth);

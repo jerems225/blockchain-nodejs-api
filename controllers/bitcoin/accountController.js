@@ -9,9 +9,6 @@ const { Address, PublicKey } = require('bitcore-lib');
 const {BTC_NODE_NETWORK, BTC_NODE_NETWORK_CORE, BTC_NODE_PATH }= require('../nodeConfig');
 const crypto_name = "bitcoin";
 
-// Derivation path
-const path = BTC_NODE_PATH
-
 async function create_Btc_Account(req,res){
 
  const owner_uuid = req.query.uuid;
@@ -42,19 +39,8 @@ async function create_Btc_Account(req,res){
             //create btc account
             let mnemonic = bip39.generateMnemonic()
             const seed = bip39.mnemonicToSeedSync(mnemonic)
-
-            let root;
-            if(NODE_ENV == 'test' || 'development')
-            {
-              root = bip32.fromSeed(seed,bitcoin.networks.testnet)
-            }
-            else if(NODE_ENV == 'devprod' || 'production')
-            {
-              root = bip32.fromSeed(seed,bitcoin.networks.bitcoin)
-            }
-          
-
-            let account = root.derivePath(path)
+            let root = bip32.fromSeed(seed,BTC_NODE_NETWORK_CORE)
+            let account = root.derivePath(BTC_NODE_PATH)
             let node = account.derive(0).derive(0)
 
             var publicKey = node.publicKey.toString('hex');
@@ -91,6 +77,81 @@ async function create_Btc_Account(req,res){
     
     
 }
+
+async function create_owner_Btc_Account(req,res){
+
+  const owner_uuid = req.params.uuid;
+ 
+ //verification if uuid is exist and valid before run code 
+   const user = await models.user.findOne({ where : 
+   {
+     uuid : owner_uuid,
+   }})
+   
+   if(user)
+   {
+    const result = await models.ownerstakewallet.findOne({ where : 
+      {
+        crypto_name : crypto_name
+      }})
+ 
+      if(user.dataValues.roles[0] == "ROLE_ADMIN")
+      {
+          if(result)
+          {
+            res.status(401).json({
+              status : 401,
+              message: `This asset already have as ${crypto_name} stake owner account`
+          });
+          }
+          else
+          {
+              //create btc account
+              let mnemonic = bip39.generateMnemonic()
+              const seed = bip39.mnemonicToSeedSync(mnemonic)
+              let root = bip32.fromSeed(seed,BTC_NODE_NETWORK_CORE)
+              let account = root.derivePath(BTC_NODE_PATH)
+              let node = account.derive(0).derive(0)
+  
+              var publicKey = node.publicKey.toString('hex');
+              const walletObject = {
+                    crypto_name : crypto_name,
+                    pubkey : publicKey,
+                    privkey : node.toWIF(),
+                    mnemonic : mnemonic,
+                }
+            //save in the database
+            models.ownerstakewallet.create(walletObject).then(result => {
+              res.status(200).json({
+                  status: 200,
+                  message: "Wallet created successfully",
+                  wallet : result
+              });
+            }).catch(error => {
+              res.status(500).json({
+                  status : 500,
+                  message: "Something went wrong",
+                  error : error
+              });
+            });
+          }
+      }
+      else
+      {
+        res.status(401).json({
+          status : 401,
+          message: "UnAuthorized User",
+      });
+      }
+   }
+   else
+      {
+        res.status(401).json({
+          status : 401,
+          message: "Unknown User",
+      });
+    }
+ }
 
 async function get_Btc_Address(req,res)
 {
@@ -131,6 +192,86 @@ async function get_Btc_Address(req,res)
         address: u_address
     });
     }
+}
+
+
+async function get_Btc_Owner_Address(req,res)
+{
+  const type = req.params.type;
+    if(type == "tx")
+    {
+      //verification if uuid is exist and valid before run code
+      const result = await models.Wallet.findOne({ where : 
+        {
+          crypto_name : crypto_name
+        }})
+      
+        if(!result)
+        {
+          res.status(401).json({
+            status : 401,
+            message: `Unknown User`
+        });
+        }
+        else
+        { 
+          var buffer = Buffer.from(result.dataValues.pubkey,'hex');
+          var u_address;
+          if(NODE_ENV == 'test' || NODE_ENV == 'development')
+          {
+            const { address } = bitcoin.payments.p2pkh({ pubkey: buffer, network: bitcoin.networks.testnet });
+            u_address = address;
+          }
+          else if(NODE_ENV == 'devprod' || NODE_ENV ==  'production')
+          {
+            const { address } = bitcoin.payments.p2pkh({ pubkey: buffer, network: bitcoin.networks.bitcoin });
+            u_address = address;
+          }
+        
+          
+          res.status(200).json({
+            status : 200,
+            address: u_address
+        });
+      }
+    }else
+    {
+      //verification if uuid is exist and valid before run code
+      const result = await models.ownerwallets.findOne({ where : 
+        {
+          crypto_name : crypto_name
+        }})
+      
+        if(!result)
+        {
+          res.status(401).json({
+            status : 401,
+            message: `Unknown User`
+        });
+        }
+        else
+        { 
+          var buffer = Buffer.from(result.dataValues.pubkey,'hex');
+          var u_address;
+          if(NODE_ENV == 'test' || NODE_ENV == 'development')
+          {
+            const { address } = bitcoin.payments.p2pkh({ pubkey: buffer, network: bitcoin.networks.testnet });
+            u_address = address;
+          }
+          else if(NODE_ENV == 'devprod' || NODE_ENV ==  'production')
+          {
+            const { address } = bitcoin.payments.p2pkh({ pubkey: buffer, network: bitcoin.networks.bitcoin });
+            u_address = address;
+          }
+        
+          
+          res.status(200).json({
+            status : 200,
+            address: u_address
+        });
+      }
+    }
+          
 }
 
 
@@ -186,5 +327,7 @@ async function get_Btc_Balance(req,res)
 module.exports = {
     create_Btc_Account : create_Btc_Account,
     get_Btc_Balance : get_Btc_Balance,
-    get_Btc_Address : get_Btc_Address
+    get_Btc_Address : get_Btc_Address,
+    get_Btc_Owner_Address: get_Btc_Owner_Address,
+    create_owner_Btc_Account : create_owner_Btc_Account
 }

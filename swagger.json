@@ -1797,6 +1797,194 @@
         }
       }
     },
+    "/staking/create/stake": {
+      "post": {
+        "tags": [
+          "Staking Endpoint"
+        ],
+        "summary": "add e request on the staking pool for a specific user",
+        "description": "",
+        "operationId": "createstake1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createstake"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/stake"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/staking/admin/get/stakeholders/{uuid}": {
+      "get": {
+        "tags": [
+          "Staking Endpoint",
+          "Dashboard Endpoint"
+        ],
+        "summary": "Get all stakeholders, Admin Only",
+        "description": "",
+        "operationId": "allstakes",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+            {
+              "name": "uuid",
+              "in": "path",
+              "description": "You needs to pass the user admin uuid",
+              "required": true,
+              "type": "string",
+              "items": {
+                "type": "string"
+              }
+            }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/getuserstake"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/staking/get/userstakes/{uuid}": {
+      "get": {
+        "tags": [
+          "Staking Endpoint"
+        ],
+        "summary": "Get all user stakes",
+        "description": "",
+        "operationId": "userstakes1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+            {
+              "name": "uuid",
+              "in": "path",
+              "description": "You needs to pass the user uuid",
+              "required": true,
+              "type": "string",
+              "items": {
+                "type": "string"
+              }
+            }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/getuserstake"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/staking/enable/autorenew": {
+      "post": {
+        "tags": [
+          "Staking Endpoint"
+        ],
+        "summary": "enable auto renew setting for automatically reinvest an amount",
+        "description": "",
+        "operationId": "enabst1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/enable"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/enableres"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/staking/disable/autorenew": {
+      "post": {
+        "tags": [
+          "Staking Endpoint"
+        ],
+        "summary": "disable auto renew setting for automatically stop reinvest an amount",
+        "description": "",
+        "operationId": "disabst1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/enable"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/enableres"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
     "/app/get/version": {
       "get": {
         "tags": [
@@ -1869,6 +2057,35 @@
                 "$ref": "#/definitions/twilioeror1"
               }
             }
+          }
+        }
+      }
+    },
+    "/current/date": {
+      "get": {
+        "tags": [
+          "APP CONFIG"
+        ],
+        "summary": "getcurrent date",
+        "description": "",
+        "operationId": "appdate",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/date"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value"
           }
         }
       }
@@ -2234,7 +2451,8 @@
             "contract_abi_test": [],
             "amount_min": 60,
             "staking_amount_min": null,
-            "staking_amount_max": null,
+            "days" : [30,120,360],
+            "rates": [15,18,26],
             "stakable": false,
             "crypto_type": "token/coin",
             "crypto_name_market": "tether",
@@ -2374,6 +2592,8 @@
                 "CM_MTNMOBILEMONEY",
                 "CM_EUMM"
               ],
+              "available_buy":true,
+              "available_withdraw":false,
               "operator": [
                 "ORANGE MONEY",
                 "MTN MOBILE MONEY",
@@ -2409,6 +2629,8 @@
               "CM_MTNMOBILEMONEY",
               "CM_EUMM"
             ],
+            "available_buy":true,
+            "available_withdraw":false,
             "operator": [
               "ORANGE MONEY",
               "MTN MOBILE MONEY",
@@ -2447,6 +2669,139 @@
         "message": {
           "type": "string",
           "example": "Openration Failed"
+        }
+      }
+    },
+    "createstake": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "example": "3434..."
+        },
+        "crypto_name": {
+          "type": "string",
+          "example": "bitcoin"
+        },
+        "amount_invest": {
+          "type": "double",
+          "example": 2
+        },
+        "day": {
+          "type": "integer",
+          "example": 30
+        }
+      }
+    },
+    "enable": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "example": "3434..."
+          },
+        "stake_id": {
+          "type": "integer",
+          "example": 30
+        }
+      }
+    },
+    "date": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "example": 34
+          },
+        "message":{ 
+          "type": "integer",
+          "example": 30
+        },
+        "data" :{
+          "type" : "object",
+          "example" : {
+            "current_date" : "2021-12-27T00:46:40.759Z"
+          }
+        }
+      }
+    },
+    "enableres": {
+      "type": "object",
+      "properties": {
+        "auto_renew": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "getuserstake": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "successfully!"
+        },
+        "data" : {
+          "type": "array",
+          "example": [{
+                "id": 27,
+                "crypto_name": "ethereum",
+                "start_time": "2021-11-26T13:34:43.000Z",
+                "end_time": "2021-12-26T13:34:43.000Z",
+                "fee_start": 0.000882,
+                "fee_end": 0.000882,
+                "amount_invest": 0.11,
+                "amount_reward": 0.0275,
+                "amount_reward_day": 0.0009166666666666666,
+                "period": 30,
+                "rate": 0.25,
+                "start_status": true,
+                "end_status": null,
+                "amount_invest_return": null,
+                "tx_stake_confirm": true,
+                "auto_renew": true,
+                "user_uuid": "22aba468-294b-4b17-82be-e046187ae7e2",
+                "createdAt": "2021-11-26T13:34:44.000Z",
+                "updatedAt": "2021-11-26T15:09:14.000Z"
+          }]
+        }
+      }
+    },
+    "stake": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "successfully!"
+        },
+        "data" : {
+          "type": "object",
+          "example": {
+                "crypto_name": "ethereum",
+                "user_uuid": "22aba468-294b-4b17-82be-e046187ae7e2",
+                "amount_invest": 0.10001,
+                "amount_reward": 0.0250025,
+                "amount_reward_day": 0.0008334166666666667,
+                "period": 30,
+                "rate": 0.25,
+                "start_status": true,
+                "reward_return_status": false,
+                "start_time": "2021-11-26T21:24:24.289Z",
+                "end_time": "2021-12-26T21:24:24.289Z",
+                "fee_start": 0.001008,
+                "fee_end": 0.001008,
+                "end_status": false,
+                "auto_renew": false,
+                "tx_stake_confirm": false
+          }
         }
       }
     }

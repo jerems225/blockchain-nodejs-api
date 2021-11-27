@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class momo extends Model {
+  class ownerstakewallet extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,18 +13,14 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   };
-  momo.init({
-    country: DataTypes.STRING,
-    symbol: DataTypes.STRING,
-    code: DataTypes.STRING,
-    currency: DataTypes.STRING,
-    available_buy: DataTypes.STRING,
-    available_withdraw: DataTypes.STRING,
-    channel: DataTypes.JSON,
-    operator: DataTypes.JSON
+  ownerstakewallet.init({
+    crypto_name: DataTypes.STRING,
+    pubkey: DataTypes.STRING,
+    privkey: DataTypes.STRING,
+    mnemonic: DataTypes.STRING
   }, {
     sequelize,
-    modelName: 'momo',
+    modelName: 'ownerstakewallet',
   });
-  return momo;
+  return ownerstakewallet;
 };

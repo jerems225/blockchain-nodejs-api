@@ -1,36 +1,24 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('momos', {
+    await queryInterface.createTable('ownerstakewallets', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      country: {
+      crypto_name: {
         type: Sequelize.STRING
       },
-      symbol: {
+      pubkey: {
         type: Sequelize.STRING
       },
-      code: {
+      privkey: {
         type: Sequelize.STRING
       },
-      currency: {
+      mnemonic: {
         type: Sequelize.STRING
-      },
-      channel: {
-        type: Sequelize.JSON
-      },
-      operator: {
-        type: Sequelize.JSON
-      },
-      available_buy: {
-        type: Sequelize.BOOLEAN
-      },
-      available_withdraw: {
-        type: Sequelize.BOOLEAN
       },
       createdAt: {
         allowNull: false,
@@ -43,6 +31,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('momos');
+    await queryInterface.dropTable('ownerstakewallets');
   }
 };

@@ -22,7 +22,8 @@ module.exports = (sequelize, DataTypes) => {
     contract_abi_test: DataTypes.JSON,
     amount_min: DataTypes.DOUBLE,
     staking_amount_min: DataTypes.DOUBLE,
-    staking_amount_max: DataTypes.DOUBLE,
+    days: DataTypes.JSON,
+    rates: DataTypes.JSON,
     stakable: DataTypes.BOOLEAN,
     crypto_type: DataTypes.STRING,
     crypto_name_market: DataTypes.STRING

@@ -33,8 +33,11 @@ module.exports = {
       staking_amount_min: {
         type: Sequelize.DOUBLE
       },
-      staking_amount_max: {
-        type: Sequelize.DOUBLE
+      days: {
+        type: Sequelize.JSON
+      },
+      rates: {
+        type: Sequelize.JSON
       },
       amount_min: {
         type: Sequelize.DOUBLE

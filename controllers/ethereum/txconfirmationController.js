@@ -182,18 +182,22 @@ async function get_eth_tx_confirmation(uuid,ether_companyfee,transaction_type)
                                   where: { user_uuid: item.user_uuid, hash : tx.hash, crypto_name: crypto_name }
                                 }).then(element => {
                                   console.log(`Transaction ${result.length} confirmed`)
-                                  if(exec == false)
-                                  {
-                                    console.log(exec);
                                     exec = true;
                                     if(transaction_type == "send" || transaction_type == "withdraw")
                                     {
                                       sendFees(owner_uuid,ether_companyfee,tx.hash,transaction_type,momo_method,phone,country); //send company fees function
                                     }
-                                    else{
-                                      process.exit()
+                                    else if(transaction_type == "staking"){
+                                          models.stakeholder.update({tx_stake_confirm : true},{where:{
+                                            crypto_name : crypto_name,
+                                            user_uuid : owner_uuid
+                                          }}).then(result1 =>{console.log("upadate user_tx_stake_confirm: " ,result1)});
+
+                                          models.user.update({isHolder : true},{where: {
+                                            uuid : owner_uuid
+                                          }}).then(result2 => {console.log("upadate user_isholder: " ,result2)});
+                                      // process.exit()
                                     }
-                                  }
                                 }).catch(error => {
                                   console.log({
                                       status : 500,

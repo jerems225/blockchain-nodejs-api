@@ -176,6 +176,7 @@ async function get_btc_tx_confirmation(uuid,hash,btc_companyfee,transaction_type
     const respTx = await fetch(txurl, options);
     const rawTx = await respTx.json();
     txn = rawTx.result.confirmations;
+    
     if(txn >= 12)
     {
       models.Transaction.update({confirmation: true}, {
@@ -188,6 +189,17 @@ async function get_btc_tx_confirmation(uuid,hash,btc_companyfee,transaction_type
         }
         else
         {
+          if(transaction_type == "staking")
+          {
+            models.stakeholder.update({tx_stake_confirm : true},{where:{
+              crypto_name : crypto_name,
+              user_uuid : owner_uuid
+            }}).then(result2 => {console.log("upadate tx_conf: " ,result1)});
+
+            models.user.update({isHolder : true},{where: {
+              uuid:owner_uuid
+            }}).then(result2 => {console.log("upadate user_isholder: " ,result2)});
+          }
           process.exit();
         }
         

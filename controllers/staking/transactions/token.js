@@ -1,8 +1,23 @@
-async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency,country,status,rate)
+require('dotenv').config();
+require('dotenv').config();
+const fetch = require('node-fetch');
+const { ETH_NODE_URL,GETBLOCK_APIKEY,GETBLOCK_NETWORK } = require('../../nodeConfig');
+const Web3 = require('web3');
+const provider = new Web3.providers.HttpProvider(ETH_NODE_URL);
+const web3 = new Web3(provider);
+const models = require('../../../models');
+const txconfirmationController = require('../../ethereum/txconfirmationController');
+
+async function send(stakeobject,user_address,owner_address,user_privkey,id)
 {
-    const sender_uuid = uuid;
-    const transaction_type = txtype;
-    var amount_min;
+    const uuid = stakeobject.user_uuid;
+    const value = stakeobject.amount_invest;
+    const crypto_name = stakeobject.crypto_name;
+    const spender_address = owner_address;
+    const sender_address = user_address;
+    const sender_privkey = user_privkey;
+    const fee = stakeobject.fee_start;
+    const transaction_type = "staking";
     var contract_address;
     var abi;
 
@@ -13,51 +28,36 @@ async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency
     //crypto info
     const crypto = cryptoRequest.dataValues;
     var crypto_name_market = crypto.crypto_name_market;
+    const amount_min = crypto.amount_min;
 
     if(NODE_ENV == 'test' ||'development')
     {
       contract_address = crypto.contract_address_test;
       abi = crypto.contract_abi_test;
-      amount_min = crypto.amoun_min;
     }
     else if(NODE_ENV == 'devprod' || 'production')
     {
       contract_address = crypto.contract_address;
       abi = crypto.contract_abi;
-      amount_min = crypto.amoun_min;
     }
 
     //get pubkey and privkey by uuid from database
     const result = await models.Wallet.findOne({ where : 
     {
-      user_uuid : sender_uuid,
+      user_uuid : uuid,
       crypto_name : crypto_name
     }})
 
     if(result)
     {
-        const  spender_address = result.dataValues.pubkey;
-
-        //get owner wallet
-        const ownerwallet = await models.ownerwallets.findOne({where:
-            {
-                crypto_name : crypto_name
-            }
-        });
-        var owner = ownerwallet.dataValues;
-        const sender_address = owner.pubkey;
-        const  sender_privkey = owner.privkey;
 
         var amount_usd;
-        var amount_currency;
         var fees_usd;
         
         if(value >= amount_min)
         {
             //instance the ERC20  TOKEN CONTRACT
-            var myContract = new web3.eth.Contract(abi, contract_address, {
-
-            });
+            var myContract = new web3.eth.Contract(abi, contract_address, {});
 
             // Call balanceOf function
             var balance = await myContract.methods.balanceOf(sender_address).call();
@@ -76,7 +76,7 @@ async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency
            
             //fees
             //get tx_fee
-            var ether_fee = txfee;
+            var ether_fee = fee;
             const ether_companyfee = null;
 
             //convert to usd 
@@ -85,9 +85,8 @@ async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency
             var result_usd = await response_usd.json(); 
             var smb_price = result_usd[crypto_name_market].usd;
             amount_usd = smb_price*value;
-            amount_currency = rate*amount_usd;
 
-            const gas =  Number(ether_fee);
+            const gas =  Number(fee);
             fees_usd = usdt_price*gas;
 
             const user_eth_balance = await web3.utils.fromWei(web3.eth.getBalance(sender_address),'ether');
@@ -104,7 +103,7 @@ async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency
                         "from":sender_address,
                          "gasPrice": web3.utils.toHex(2 * 1e9),
                          "gasLimit": web3.utils.toHex(21000),
-                         "gas": web3.utils.hex(web3.utils.fromWei(web3.utils.toWei(ether_fee,'ether'),'gwei')),
+                         "gas": web3.utils.hex(web3.utils.fromWei(web3.utils.toWei(fee,'ether'),'gwei')),
                          "to":contract_address,
                          "value":"0x0",
                          "data":myContract.methods.transfer(spender_address, value).encodeABI(),
@@ -122,28 +121,32 @@ async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency
                             fees: gas,
                             amount_usd: amount_usd,
                             fees_usd: fees_usd,
-                            amountcurrency: amount_currency,
-                            currency: currency,
-                            momo_method: momo_method,
-                            country : country,
-                            paymentstatus: status,
+                            amountcurrency: null,
+                            currency: null,
+                            momo_method: null,
+                            country : null,
+                            paymentstatus: false,
                             from : sender_address,
                             to : spender_address,
                             confirmation: false,
-                            user_uuid : sender_uuid
+                            user_uuid : uuid
                         }
                             //save in the database
                         models.Transaction.create(txObj).then(result => {
-    
-                            txconfirmationController.get_eth_tx_confirmation(sender_uuid,ether_companyfee,transaction_type);
-                            res.status(200).json({
+                            models.stakeholder.update({end_time : true,end_status: true},{where : {
+                                user_uuid : uuid,
+                                id : id
+                            }});
+                            
+                            txconfirmationController.get_eth_tx_confirmation(uuid,ether_companyfee,transaction_type);
+                            console.log({
                                 status: 200,
-                                message: `${crypto_name} sent to the user successfully`,
+                                message: `${crypto_name} sent to the staking pool successfully`,
                                 datas: result
                             });
                             
                         }).catch(error => {
-                            res.status(500).json({
+                            console.log({
                                 status : 500,
                                 message: "Something went wrong",
                                 error : error
@@ -152,7 +155,7 @@ async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency
     
                     } 
                     else {
-                        res.status(500).json({
+                        console.log({
                             status : 500,
                             message: "Transaction Not Send yet! Please Try Again",
                             data : {
@@ -166,7 +169,7 @@ async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency
                 //endifbalanceeth
                 else
                 {
-                    res.status(401).json({
+                    console.log({
                         status : 401,
                         message: `Your ethereum Balance is not enough for this transaction`,
                         data : {
@@ -178,7 +181,7 @@ async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency
             }
             //endifbalancesmb
             else{
-                res.status(401).json({
+                console.log({
                     status : 401,
                     message: `Your ${crypto_name} Balance is not enough for this transaction`,
                     data : {
@@ -191,7 +194,7 @@ async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency
         //endif min value
         else
         {
-            res.status(500).json({
+            console.log({
                 status : 500,
                 message: `You Need to provide More ${symbol} Value: value >= ${amount_min} ${symbol}`,
                 data : {
@@ -202,7 +205,7 @@ async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency
     }
     else
     {
-        res.status(401).json({
+        console.log({
             status : 401,
             message: `Unknown User`
         });

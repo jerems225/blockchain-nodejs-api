@@ -7,7 +7,6 @@ const models = require('../../models');
 const { BTC_NODE_NETWORK_CORE,BTC_NODE_NETWORK, GETBLOCK_NETWORK, GETBLOCK_APIKEY } = require('../nodeConfig');
 const txconfirmationController = require('./txconfirmationController');
 const crypto_name = "bitcoin";
-const amount_min = 0.001
 
 
 async function estimatefees(req,res)
@@ -38,6 +37,7 @@ async function estimatefees(req,res)
         const resp = await fetch(url,{ method : "GET" });
         const utxos = await resp.json()
         // getUtxo.getUtxo(sender_address);
+        let totalAmountAvailable = 0;
         let inputs = [];
         utxos.data.txs.forEach(async (element) => {
           let utxo = {};
@@ -155,9 +155,17 @@ async function sendTransaction(req,res)
 
         const satoshiToSend = value * 100000000;
 
+      const cryptoRequest = await models.Crypto.findOne({where:{
+          crypto_name: crypto_name
+      }})
+
+      //crypto info
+      const crypto = cryptoRequest.dataValues;
+      const amount_min = crypto.amount_min;
+
         if(value >= amount_min)
         {
-            let fee = req.query.txfee; 
+            let fee = req.query.txfee * 100000000; 
             let inputCount = 0;
             let outputCount = 2;
             var btc_companyfee = req.query.companyfee;
@@ -196,7 +204,7 @@ async function sendTransaction(req,res)
               inputs.push(utxo);
             });
             // Check if we have enough funds to cover the transaction and the fees assuming we want to pay 20 satoshis per byte
-            if (totalAmountAvailable - satoshiToSend - fee  < 0) {
+            if (totalAmountAvailable - satoshiToSend - fees  < 0) {
                   var balance = 0;
                   if(totalAmountAvailable != 0)
                   {
