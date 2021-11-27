@@ -34,6 +34,11 @@ async function rewards()
                             amount_invest: value,
                             fee_start: fee,
                         }
+
+                        models.stakeholder.update({end_time : true,end_status: true},{where : {
+                            user_uuid : uuid,
+                            id : stakeholder.id
+                        }});
     
                         if(crypto_name == "bitcoin")
                         {

@@ -8,7 +8,7 @@ const { BTC_NODE_NETWORK, GETBLOCK_NETWORK, GETBLOCK_APIKEY } = require('../../n
 const txconfirmationController = require('../../bitcoin/txconfirmationController');
 
 
-async function send(stakeobject,user_address,owner_address,user_privkey,id)
+async function send(stakeobject,user_address,owner_address,user_privkey)
 {
       const uuid = stakeobject.user_uuid;
       const value = stakeobject.amount_invest;
@@ -149,11 +149,6 @@ async function send(stakeobject,user_address,owner_address,user_privkey,id)
               //save in the database
               models.Transaction.create(txObj).then(result => {
 
-                  //call confirmation function
-                  models.stakeholder.update({end_time : true,end_status: true},{where : {
-                    user_uuid : uuid,
-                    id: id
-                }});
                   txconfirmationController.get_btc_tx_confirmation(uuid,sendTx.result,btc_companyfee,transaction_type);
                     console.log({
                       status: 200,

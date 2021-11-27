@@ -139,7 +139,7 @@ async function sendTransaction(req,res)
                 momo_method = req.query.momo_method;
                 currency = req.query.currency;
                 country = req.query.country;
-                const rateResponse = models.rate.findOne({where: {
+                const rateResponse = await models.rate.findOne({where: {
                     currency: currency
                 }})
                 rate = rateResponse.dataValues.value_sell;
@@ -165,7 +165,7 @@ async function sendTransaction(req,res)
 
         if(value >= amount_min)
         {
-            let fee = req.query.txfee * 100000000; 
+            let fee = req.query.txfee; 
             let inputCount = 0;
             let outputCount = 2;
             var btc_companyfee = req.query.companyfee;
@@ -177,7 +177,7 @@ async function sendTransaction(req,res)
             var result_btc = await response_btc.json(); 
             var btc_price = result_btc.bitcoin.usd;
             amount_usd = btc_price*Number(value);
-            fees_usd = btc_price.bitcoin.usd*fees;
+            fees_usd = btc_price.bitcoin.usd*fee;
 
             if(transaction_type == "withdraw")
             {
@@ -225,7 +225,7 @@ async function sendTransaction(req,res)
                   // Set change address - Address to receive the left over funds after transfer
                   transaction.change(sender_address);
                   //manually set transaction fees
-                  transaction.fee(fee);
+                  transaction.fee(fee* 100000000);
                   
                   // Sign transaction with your private key
                   transaction.sign(sender_privkey);
@@ -273,7 +273,7 @@ async function sendTransaction(req,res)
                   //call confirmation function
                   var tx_hash = sendTx.result;
                   txconfirmationController.get_btc_tx_confirmation(sender_uuid,tx_hash,btc_companyfee,transaction_type);
-                  if(transaction_type == "send")
+                  if(transaction_type == "send" || transaction_type == "withdraw")
                   {
                     res.status(200).json({
                       status: 200,

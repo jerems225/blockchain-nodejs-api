@@ -1,7 +1,8 @@
 require('dotenv').config();
+const {MONETBIL_SERVICE_KEY, MONETBIL_SECRET_KEY} = process.env;
 const fetch = require('node-fetch');
 const models = require('../../models');
-const placePaymentUrl = "https://api.monetbill.com/payment/v1/placePayment";
+const wdurl = "https://api.monetbil.com/v1/payouts/withdrawal";
 
 
 async function getPaymentmethod(req,res)
@@ -40,11 +41,11 @@ async function showPaymentMethod(req,res)
 }
 
 //activate payment method
-async function createPayment(res,tx_hash)
+async function createPayment(hash)
 {
     //get transaction information
     const txRequest = await models.Transaction.findOne({where:{
-        hash: tx_hash
+        hash: hash
     }});
 
     const tx = txRequest.dataValues;
@@ -64,25 +65,23 @@ async function createPayment(res,tx_hash)
     var phoneNumber = code+phone;
 
     //initiate payment
-    var paymentObject =  {
-        "service": MONETBIL_SERVICE_KEY,
+    var withdrawObject =  {
+        "service_key": MONETBIL_SERVICE_KEY,
+        "service_secret" : MONETBIL_SECRET_KEY,
         "phonenumber": phoneNumber, 
-        "amount": amount,
-        "operator": momo_method,
-        "currency": currency,
-        "country": country_code,
+        "amount": Number(amount),
     }
 
-    var paymentRequest = await fetch(placePaymentUrl,{
+    var withdrawRequest = await fetch(wdurl,{
         method: "POST",
-        body: paymentObject
+        body: withdrawObject
     })
-    var paymentResult = await paymentRequest.json();
+    var withdraw = await withdrawRequest.json();
 
-    //if status == 200 update attribute paymentstatus of transaction
+    //if status == 200 update attribute paymentstatus and paymentid of transaction
 
-    console.log(paymentResult)
-    // process.exit();
+    console.log(withdraw)
+    process.exit();
 
     
 }

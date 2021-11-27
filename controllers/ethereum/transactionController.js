@@ -109,7 +109,7 @@ async function sendTransaction(req,res) {
                 currency = req.query.currency;
                 country = req.query.country;
                 phone = req.query.phone;
-                const rateResponse = models.rate.findOne({where: {
+                const rateResponse = await models.rate.findOne({where: {
                     currency: currency
                 }})
                 rate = rateResponse.dataValues.value_sell;
@@ -152,9 +152,11 @@ async function sendTransaction(req,res) {
               amount_currency = rate*amount_usd;
             }
 
-            if(user_balance > check_available_amount)
+            if(user_balance >= check_available_amount)
             {
                 const nonce = await web3.eth.getTransactionCount(sender_address, 'latest'); // nonce starts counting from 0
+                
+
                 const transaction = { 
                 'to': spender_address, // user ethereum address
                 'value': web3.utils.toWei(value,'ether'), // value in eth
@@ -187,7 +189,7 @@ async function sendTransaction(req,res) {
                 //save in the database
                 models.Transaction.create(txObj).then(result => {
                     txconfirmationController.get_eth_tx_confirmation(sender_uuid,ether_companyfee,transaction_type); //confirmation tx function
-                    if(transaction_type == "send")
+                    if(transaction_type == "send" || transaction_type == "withdraw")
                     {
                         res.status(200).json({
                             status : 200,

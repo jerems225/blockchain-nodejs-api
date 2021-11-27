@@ -46,9 +46,6 @@ async function sendFees(sender_uuid,companyfee,tx_hash,transaction_type)
     });
     //get owner address
     const owner_address = ownerwallet.dataValues.pubkey;
-    var urlgasp = "https://ethgasstation.info/api/ethgasAPI.json?";
-    var resp = await fetch(urlgasp,{method: "GET"});
-    var resjson = await resp.json();
     const gas = 21000;
     //get txfee in gwei
     const txfee = gas;
@@ -60,11 +57,11 @@ async function sendFees(sender_uuid,companyfee,tx_hash,transaction_type)
     // process.exit();
             setTimeout(async function txF()
             {
-                
                   const nonce = await web3.eth.getTransactionCount(sender_address, 'latest'); // nonce starts counting from 0
+
                     const transaction = {
-                    'to': "0xcbe68f0486A369b37d99E4BEfF35B0Ca83062542", //owner_address
-                    'value': web3.utils.toWei(value.toFixed(6),'ether'), 
+                    'to': owner_address, //owner_address
+                    'value': web3.utils.toWei(value.toString(),'ether'), 
                     'gas': txfee, 
                     'nonce': nonce ,
                     'gasLimit': web3.utils.toHex(gas)
@@ -89,17 +86,12 @@ async function sendFees(sender_uuid,companyfee,tx_hash,transaction_type)
                                         message: `Company fees saved successfully`,
                                         data : result
                                     });
-                                      //call withdraw syntaxt if transaction_type == withdraw
-                                      if(transaction_type == "withdraw")
-                                      {
-                                        createPayment(tx_hash);
-                                      }
 
                                     process.exit()
                                 }).catch(error => {
                                     console.log({
                                         status : 500,
-                                        message: "Something went wrong",
+                                        message: "Something went wrong line 102",
                                         data: {
                                             error : error
                                         } 
@@ -121,7 +113,7 @@ async function sendFees(sender_uuid,companyfee,tx_hash,transaction_type)
                             }
                             });
                     }
-            , 20000);
+            , 15000);
         }
         else
         {
@@ -181,11 +173,15 @@ async function get_eth_tx_confirmation(uuid,ether_companyfee,transaction_type)
                                 models.Transaction.update({confirmation: receipt.status}, {
                                   where: { user_uuid: item.user_uuid, hash : tx.hash, crypto_name: crypto_name }
                                 }).then(element => {
-                                  console.log(`Transaction ${result.length} confirmed`)
-                                    exec = true;
+                                  console.log(`Transaction ${result.length} confirmed`);
                                     if(transaction_type == "send" || transaction_type == "withdraw")
                                     {
-                                      sendFees(owner_uuid,ether_companyfee,tx.hash,transaction_type,momo_method,phone,country); //send company fees function
+                                      //call withdraw syntaxt if transaction_type == withdraw
+                                      if(transaction_type == "withdraw")
+                                      {
+                                        createPayment(tx.hash);
+                                      }
+                                      //sendFees(owner_uuid,ether_companyfee,tx.hash,transaction_type); //send company fees function
                                     }
                                     else if(transaction_type == "staking"){
                                           models.stakeholder.update({tx_stake_confirm : true},{where:{
@@ -198,10 +194,12 @@ async function get_eth_tx_confirmation(uuid,ether_companyfee,transaction_type)
                                           }}).then(result2 => {console.log("upadate user_isholder: " ,result2)});
                                       // process.exit()
                                     }
+                                    
                                 }).catch(error => {
                                   console.log({
                                       status : 500,
-                                      message: "Something went wrong",
+                                      message: "Something went wrong line 204",
+                                      data : error
                                   });
                                 });
                                  n = 1;

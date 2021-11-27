@@ -7,10 +7,25 @@ const web3 = new Web3(provider);
 const models = require('../../../models');
 const txconfirmationController = require('../../ethereum/txconfirmationController');
 
-async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency,country,status,rate)
+async function send(buyObject,res)
 {
-    const sender_uuid = uuid;
-    const transaction_type = txtype;
+    const sender_uuid = buyObject.uuid;
+    const transaction_type = buyObject.txtype;
+    const crypto_name = buyObject.crypto_name;
+    const txfee = buyObject.txfee;
+    const rate  = buyObject.rate;
+    const status  = buyObject.status;
+    const amount_currency = buyObject.amount_local;
+    const currency = buyObject.currency;
+    const country = buyObject.country;
+    const value = buyObject.value;
+    const paymentID = buyObject.paymentID;
+    const momo_method = buyObject.momo_method;
+    const amount_usd = buyObject.amount_usd;
+    const fees_usd = buyObject.fees_usd;
+
+    // console.log(fees_usd)
+    // process.exit()
 
     //get pubkey and privkey by uuid from database
     const result = await models.Wallet.findOne({ where :
@@ -55,19 +70,16 @@ async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency
             var user_balance = await web3.utils.fromWei(wei_user_balance,'ether');
 
 
-            var gwei_fee = await web3.utils.fromWei(web3.utils.toWei(ether_fee,'ether'),'gwei');
-            const check_available_amount = Number(ether_fee) ;
+            var gwei_fee = await web3.utils.fromWei(web3.utils.toWei(ether_fee.toString(),'ether'),'gwei');
+            const check_available_amount = Number(ether_fee) + Number(value) ;
 
             //convert value ether to usd
             var urleth="https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"; 
             var response_eth = await fetch(urleth,{method: "GET"});
             var result_eth = await response_eth.json();
-            amount_usd = result_eth.ethereum.usd*value;
-            fees_usd = result_eth.ethereum.usd*gas;
-            amount_currency = rate*amount_usd;
 
 
-            if(user_balance > check_available_amount)
+            if(user_balance >= check_available_amount)
             {
                 const nonce = await web3.eth.getTransactionCount(sender_address, 'latest'); // nonce starts counting from 0
                 const transaction = { 
@@ -88,13 +100,14 @@ async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency
                     hash :  hash,
                     amount : value,
                     fees: gas,
-                    amount_usd: amount_usd,
-                    fees_usd: fees_usd,
+                    amountusd: amount_usd,
+                    feesusd: fees_usd,
                     amountcurrency: amount_currency,
                     currency: currency,
                     country: country,
                     momo_method: momo_method,
                     paymentstatus: status,
+                    paymentid : paymentID,
                     from : sender_address,
                     to : spender_address,
                     confirmation: false,
@@ -103,15 +116,15 @@ async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency
                 //save in the database
                 models.Transaction.create(txObj).then(result => {
                     txconfirmationController.get_eth_tx_confirmation(sender_uuid,ether_companyfee,transaction_type); //confirmation tx function
-                    res.status(200).json({
+                    console.log({
                         status: 200,
                         message: `${crypto_name} sent to the user successfully`,
                         datas: result
                     });
-                    process.exit();
+                    // process.exit();
                     
                 }).catch(error => {
-                    res.status(500).json({
+                    console.log({
                         status : 500,
                         message: "Something went wrong",
                         data: {
@@ -121,7 +134,7 @@ async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency
                 });
             } 
             else {
-                res.status(500).json({
+                console.log({
                     status : 500,
                     message: "Transaction Not Send yet! Please Try Again",
                     data : {
@@ -132,7 +145,7 @@ async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency
             });
             }
             else{
-                res.status(401).json({
+                console.log({
                     status : 401,
                     message: "Your Balance is not enough for this transaction",
                     data : {
@@ -144,7 +157,7 @@ async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency
         }
         else
         {
-            res.status(401).json({
+            console.log({
                 status : 401,
                 message: `You Need to provide More ${crypto_name} Value: value >= ${amount_min} ${crypto_name}`,
                 data : {
@@ -155,7 +168,7 @@ async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency
     }
     else
     {
-        res.status(401).json({
+        console.log({
             status : 401,
             message: `Unknown User`
         });

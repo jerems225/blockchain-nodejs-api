@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
     momo_method: DataTypes.STRING,
     confirmation: DataTypes.BOOLEAN,
     paymentstatus: DataTypes.BOOLEAN,
+    paymentid: DataTypes.STRING,
     user_uuid: DataTypes.STRING,
   }, {
     sequelize,

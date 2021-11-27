@@ -30,7 +30,6 @@ async function createStake(req,res)
         }})
         const crypto = cryptoRequest.dataValues;
         const staking_amount_min = crypto.staking_amount_min;
-        const staking_amount_max = crypto.staking_amount_max;
         const crypto_symbol = crypto.symbol;
 
         //get user wallet info
@@ -72,7 +71,7 @@ async function createStake(req,res)
             user_address = user_pubkey
         }
 
-        if(amount_invest < staking_amount_max && amount_invest > staking_amount_min)
+        if(amount_invest > staking_amount_min)
         {
         
             const rates = crypto.rates;

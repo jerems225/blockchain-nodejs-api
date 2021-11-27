@@ -1,5 +1,5 @@
 require('dotenv').config();
-const  MONETBIL_SERVICE_KEY = "yBeM7buRXlNiV9UQ2TfMjVbTlpj9bg6h";
+const { MONETBIL_SERVICE_KEY } = process.env;
 const fetch = require('node-fetch');
 const models = require('../../models');
 const bitcoin = require('./transactions/bitcoin');
@@ -17,11 +17,13 @@ async function createPayment(req,res)
     const uuid = req.body.uuid;
     const crypto_name = req.body.crypto_name;
     const value = req.body.value;
+    const amount_usd = req.body.amount_usd;
     const txtype = "buycrypto";
     const momo_method = req.body.momo_method;
     const currency = req.body.currency;
     const country = req.body.country;
     const phone = req.body.phone;
+    var amount = req.body.amount_local;
 
     const cryptoRequest = await models.Crypto.findOne({where:{
         crypto_name: crypto_name
@@ -36,18 +38,24 @@ async function createPayment(req,res)
       const userRequest = await models.user.findOne({where:{
           uuid: uuid
       }})
-
       const user = userRequest.dataValues;
-
     if(user)
     {
+        //rate local dollar
+        const rateRequest = await models.rate.findOne({where:{
+            currency:currency
+        }})
+        var rate = rateRequest.dataValues.value_buy;
+                
         //convert
         var url=`https://api.coingecko.com/api/v3/simple/price?ids=${crypto_name_market}&vs_currencies=usd`; 
         var response = await fetch(url,{method: "GET"});
         var result = await response.json(); 
         var price = result[crypto_name_market].usd;
-        var amount_usd = price*Number(value);
-        // amount_usd = 58000 * value;
+        const fee_usd = price*Number(txfee);
+        const fee_amount_local = fee_usd * rate;
+
+        amount += fee_amount_local; //add fee to the amount.
 
         //get momo informations
         const momoRequest = await models.momo.findOne({where:{
@@ -64,16 +72,11 @@ async function createPayment(req,res)
                 method = element;
             }
         });
+
         var phoneNumber = code+phone;
-
-        const rateRequest = await models.rate.findOne({where:{
-            currency:currency
-        }})
-        var rate = rateRequest.dataValues.value_buy;
-        var amount = rate*Number(amount_usd);
-
+        
         var paymentObject =  {
-            "service": MONETBIL_SERVICE_KEY,
+            "service_key": MONETBIL_SERVICE_KEY,
             "phonenumber": phoneNumber, 
             "amount": amount,
             "operator": method,
@@ -86,29 +89,68 @@ async function createPayment(req,res)
             body: paymentObject
         })
         var paymentResult = await paymentRequest.json();
+        const paymentID = paymentResult.paymentId;
+        // const status = paymentResult.status;
+        const status = true;
 
-        console.log(paymentResult)
-        // process.exit();
-
-        //if payment status == true
-        var status = true;
-        //check crypto_name
-        if(crypto_type == "coin")
-        {
-            if(crypto_name=="bitcoin")
-            {
-                bitcoin.send(uuid,value,txfee,txtype,crypto_name,momo_method,currency,country,status,rate);
-            }
-            else if(crypto_name == "ethereum")
-            {
-                ethereum.send(uuid,value,txfee,txtype,crypto_name,momo_method,currency,country,status,rate);
-            }
+        const buyObject = {
+            crypto_name : crypto_name,
+            uuid : uuid,
+            value: value,
+            amount_usd : amount_usd,
+            fees_usd: fee_usd,
+            amount_local : amount,
+            txfee : txfee,
+            txtype : txtype,
+            momo_method : momo_method,
+            currency : currency,
+            country : country,
+            status : status,
+            rate : rate,
+            status: status,
+            paymentID : paymentID
         }
-        
+
+        console.log(paymentResult,MONETBIL_SERVICE_KEY)
+        process.exit();
+
+        if(status != "REQUEST ACCEPTED")
+        {
+            if(crypto_type == "coin")
+            {
+                if(crypto_name == "bitcoin")
+                {
+                    bitcoin.send(buyObject);
+                }
+                else if(crypto_name == "ethereum")
+                {
+                    ethereum.send(buyObject);
+                }
+            }
+            else
+            {
+                token.send(buyObject);
+            }
+
+            res.status(200).json({
+                status : 200,
+                message : paymentResult.status,
+                data : {
+                    payment : paymentResult,
+                    transaction: buyObject
+                }
+            })
+        }
         else
         {
-            token.send(uuid,value,txfee,txtype,crypto_name,momo_method,currency,country,status,rate);
+            res.status(500).json({
+                status: 500,
+                message : paymentResult.status,
+                data : paymentResult
+            })
         }
+
+        
     }
     else{
         res.status(401).json({

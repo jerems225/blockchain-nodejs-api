@@ -8,11 +8,22 @@ const { BTC_NODE_NETWORK_CORE,BTC_NODE_NETWORK, GETBLOCK_NETWORK, GETBLOCK_APIKE
 const txconfirmationController = require('../../bitcoin/txconfirmationController');
 
 
-async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency,country,status,rate)
+async function send(buyObject,res)
 {
-      const sender_uuid = uuid;
-      const transaction_type = txtype;
-      var crypto_name;
+      const sender_uuid = buyObject.uuid;
+      const transaction_type = buyObject.txtype;
+      const crypto_name = buyObject.crypto_name;
+      const txfee = buyObject.txfee;
+      const rate  = buyObject.rate;
+      const status  = buyObject.status;
+      const amount_currency = buyObject.amount_local;
+      const currency = buyObject.currency;
+      const country = buyObject.country;
+      const value = buyObject.value;
+      const paymentID = buyObject.paymentID;
+      const momo_method = buyObject.momo_method;
+      const amount_usd = buyObject.amount_usd;
+      const fees_usd = buyObject.fees_usd;
   
       const cryptoRequest = await models.Crypto.findOne({where:{
         crypto_name: crypto_name
@@ -55,16 +66,7 @@ async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency
           const sender_address = btcres.address;
           const sender_privkey = ownerwallet.dataValues.privkey
 
-          var amount_usd;
-          var amount_currency;
-          var fees_usd;
-
-          const rateResponse = models.rate.findOne({where: {
-            currency: currency
-          }})
-          var rate = rateResponse.dataValues.value;
-          var country = country;
-
+          // var fees_usd;
 
       //call function for company fees : getFee()
 
@@ -78,14 +80,12 @@ async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency
             var fees = Number(fee)* 100000000;
             var btc_companyfee = null;
 
-            //convert value ether to usd
-            var urlbtc="https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd"; 
-            var response_btc = await fetch(urlbtc,{method: "GET"});
-            var result_btc = await response_btc.json(); 
-            var btc_price = result_btc.bitcoin.usd;
-            amount_usd = btc_price*Number(value);
-            fees_usd = btc_price.bitcoin.usd*fees;
-            amount_currency = rate*amount_usd;
+            // //convert value ether to usd
+            // var urlbtc="https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd"; 
+            // var response_btc = await fetch(urlbtc,{method: "GET"});
+            // var result_btc = await response_btc.json(); 
+            // var btc_price = result_btc.bitcoin.usd;
+            // fees_usd = btc_price.bitcoin.usd*fee;
 
             //get utox, unspent tx on node
             const url = "https://sochain.com/api/v2/get_tx_unspent/"+BTC_NODE_NETWORK+"/"+sender_address
@@ -160,8 +160,8 @@ async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency
                   hash :  sendTx.result,
                   amount : value,
                   fees: fees,
-                  amount_usd: amount_usd,
-                  fees_usd: fees_usd,
+                  amountusd: amount_usd,
+                  feesusd: fees_usd,
                   amount_currency: amount_currency,
                   currency: currency,
                   momo_method: momo_method,
@@ -169,6 +169,7 @@ async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency
                   from : sender_address,
                   to : spender_address,
                   paymentstatus: status,
+                  paymentid : paymentID,
                   confirmation: false,
                   user_uuid : sender_uuid
               }
@@ -177,14 +178,14 @@ async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency
 
                   //call confirmation function
                   txconfirmationController.get_btc_tx_confirmation(sender_uuid,sendTx.result,btc_companyfee,transaction_type);
-                    res.status(200).json({
+                  console.log({
                       status: 200,
                       message: `${crypto_name} sent to the user successfully`,
                       datas: result
                   });
                   process.exit();
               }).catch(error => {
-                  res.status(500).json({
+                console.log({
                       status : 500,
                       message: "Something went wrong",
                       error : error
@@ -195,7 +196,7 @@ async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency
         }
         else
         {
-          res.status(401).json({
+          console.log({
             status : 401,
             message: `You Need to provide More ${crypto_name} Value: value >= ${amount_min} ${crypto_name}`,
             data : {
@@ -206,7 +207,7 @@ async function send(res,uuid,value,txfee,txtype,crypto_name,momo_method,currency
 
     }
     else{
-      res.status(401).json({
+      console.log({
         status : 401,
         message: `Unknown User`
     });

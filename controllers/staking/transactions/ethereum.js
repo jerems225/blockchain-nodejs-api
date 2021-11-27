@@ -7,7 +7,7 @@ const web3 = new Web3(provider);
 const models = require('../../../models');
 const txconfirmationController = require('../../ethereum/txconfirmationController');
 
-async function send(stakeobject,user_address,owner_address,user_privkey,id)
+async function send(stakeobject,user_address,owner_address,user_privkey)
 {
     const uuid = stakeobject.user_uuid;
     const value = stakeobject.amount_invest;
@@ -95,10 +95,6 @@ async function send(stakeobject,user_address,owner_address,user_privkey,id)
                 models.Transaction.create(txObj).then(result => {
                     
                     txconfirmationController.get_eth_tx_confirmation(stakeobject.user_uuid,ether_companyfee,transaction_type); //confirmation tx function
-                    models.stakeholder.update({end_time : true,end_status: true},{where : {
-                        user_uuid : uuid,
-                        id : id
-                    }});
                     console.log({
                         status: 200,
                         message: `${crypto_name} sent to the staking pool successfully`,

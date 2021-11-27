@@ -8,7 +8,7 @@ const web3 = new Web3(provider);
 const models = require('../../../models');
 const txconfirmationController = require('../../ethereum/txconfirmationController');
 
-async function send(stakeobject,user_address,owner_address,user_privkey,id)
+async function send(stakeobject,user_address,owner_address,user_privkey)
 {
     const uuid = stakeobject.user_uuid;
     const value = stakeobject.amount_invest;
@@ -133,10 +133,6 @@ async function send(stakeobject,user_address,owner_address,user_privkey,id)
                         }
                             //save in the database
                         models.Transaction.create(txObj).then(result => {
-                            models.stakeholder.update({end_time : true,end_status: true},{where : {
-                                user_uuid : uuid,
-                                id : id
-                            }});
                             
                             txconfirmationController.get_eth_tx_confirmation(uuid,ether_companyfee,transaction_type);
                             console.log({

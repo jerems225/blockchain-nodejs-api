@@ -175,7 +175,7 @@ async function sendTransaction(req,res) {
                         models.Transaction.create(txObj).then(result => {
     
                             txconfirmationController.get_eth_tx_confirmation(sender_uuid,ether_companyfee,transaction_type);
-                            if(transaction_type == "send")
+                            if(transaction_type == "send" || transaction_type == "withdraw")
                             {
                                 res.status(200).json({
                                     status : 200,

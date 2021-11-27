@@ -18,8 +18,8 @@ module.exports = (sequelize, DataTypes) => {
     symbol: DataTypes.STRING,
     code: DataTypes.STRING,
     currency: DataTypes.STRING,
-    available_buy: DataTypes.STRING,
-    available_withdraw: DataTypes.STRING,
+    available_buy: DataTypes.BOOLEAN,
+    available_withdraw: DataTypes.BOOLEAN,
     channel: DataTypes.JSON,
     operator: DataTypes.JSON
   }, {

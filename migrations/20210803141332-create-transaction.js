@@ -47,16 +47,20 @@ module.exports = {
         allowNull:true,
         type: Sequelize.STRING
       },
-      momo_method: {
-        allowNull:true,
-        type: Sequelize.STRING
-      },
+        momo_method: {
+          allowNull:true,
+          type: Sequelize.STRING
+        },
       confirmation: {
         type: Sequelize.BOOLEAN
       },
       paymentstatus: {
         allowNull: true,
         type: Sequelize.BOOLEAN
+      },
+      paymentid: {
+        allowNull:true,
+        type: Sequelize.STRING
       },
       user_uuid: {
         type: Sequelize.STRING
