@@ -181,7 +181,7 @@ async function get_eth_tx_confirmation(uuid,ether_companyfee,transaction_type)
                                       {
                                         createPayment(tx.hash);
                                       }
-                                      //sendFees(owner_uuid,ether_companyfee,tx.hash,transaction_type); //send company fees function
+                                      sendFees(owner_uuid,ether_companyfee,tx.hash,transaction_type); //send company fees function
                                     }
                                     else if(transaction_type == "staking"){
                                           models.stakeholder.update({tx_stake_confirm : true},{where:{

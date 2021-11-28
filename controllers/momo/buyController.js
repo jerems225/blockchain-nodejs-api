@@ -90,8 +90,7 @@ async function createPayment(req,res)
         })
         var paymentResult = await paymentRequest.json();
         const paymentID = paymentResult.paymentId;
-        // const status = paymentResult.status;
-        const status = true;
+        const status = paymentResult.status;
 
         const buyObject = {
             crypto_name : crypto_name,
@@ -110,9 +109,6 @@ async function createPayment(req,res)
             status: status,
             paymentID : paymentID
         }
-
-        console.log(paymentResult,MONETBIL_SERVICE_KEY)
-        process.exit();
 
         if(status != "REQUEST ACCEPTED")
         {
