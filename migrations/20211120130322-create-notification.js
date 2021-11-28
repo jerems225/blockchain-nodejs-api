@@ -14,8 +14,14 @@ module.exports = {
       message: {
         type: Sequelize.STRING
       },
-      status: {
+      read: {
         type: Sequelize.BOOLEAN
+      },
+      notification_type: {
+        type: Sequelize.STRING
+      },
+      user_uuid: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,

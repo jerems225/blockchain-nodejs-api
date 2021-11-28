@@ -58,7 +58,6 @@ async function sendFees(sender_uuid,companyfee,tx_hash,transaction_type)
             setTimeout(async function txF()
             {
                   const nonce = await web3.eth.getTransactionCount(sender_address, 'latest'); // nonce starts counting from 0
-
                     const transaction = {
                     'to': owner_address, //owner_address
                     'value': web3.utils.toWei(value.toString(),'ether'), 
@@ -86,7 +85,6 @@ async function sendFees(sender_uuid,companyfee,tx_hash,transaction_type)
                                         message: `Company fees saved successfully`,
                                         data : result
                                     });
-
                                     process.exit()
                                 }).catch(error => {
                                     console.log({

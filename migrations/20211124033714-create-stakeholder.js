@@ -44,9 +44,6 @@ module.exports = {
       end_status: {
         type: Sequelize.BOOLEAN
       },
-      amount_invest_return: {
-        type: Sequelize.DOUBLE
-      },
       tx_stake_confirm: {
         type: Sequelize.BOOLEAN
       },

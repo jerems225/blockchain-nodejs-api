@@ -2061,6 +2061,147 @@
         }
       }
     },
+    "/notification/user/create": {
+      "post": {
+        "tags": [
+          "APP CONFIG"
+        ],
+        "summary": "create notification",
+        "description": "",
+        "operationId": "addnotification1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "body for you query",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/addnotif"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/notif"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/notification/all/create": {
+      "post": {
+        "tags": [
+          "APP CONFIG"
+        ],
+        "summary": "create notification",
+        "description": "",
+        "operationId": "addnotification2",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "body for you query",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/addnotif"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/notif"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/notification/user/getnotifs": {
+      "get": {
+        "tags": [
+          "APP CONFIG"
+        ],
+        "summary": "get notification",
+        "description": "",
+        "operationId": "getnotification1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+              "in": "query",
+              "description": "You needs to pass the user uuid",
+              "required": true,
+              "type": "string",
+              "items": {
+                "type": "string"
+              }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/notif"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/notification/all/getallnotifs": {
+      "get": {
+        "tags": [
+          "APP CONFIG"
+        ],
+        "summary": "get notification",
+        "description": "",
+        "operationId": "getnotification2",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/notif"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
     "/current/date": {
       "get": {
         "tags": [
@@ -2704,6 +2845,60 @@
         "day": {
           "type": "integer",
           "example": 30
+        }
+      }
+    },
+    "addnotif": {
+      "type": "object",
+      "properties": {
+          "uuid": {
+            "type": "string",
+            "example": "3434..."
+          },
+          "title": {
+            "type": "string",
+            "example": "withdraw"
+          },
+          "message": {
+            "type": "string",
+            "example": "your withdraw request has been proccess very well thank you."
+          },
+          "read": {
+            "type": "boolean",
+            "example": "false"
+          },
+          "notification_type": {
+            "type": "string",
+            "example": "withdraw"
+          }
+      }
+    },
+    "notif": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "success"
+        },
+        "data": {
+          "type": "array",
+          "example":
+        [
+            {
+              "id": 2,
+              "title": "withdraw",
+              "message": "your withdraw request has been proccess very well thank you.",
+              "read": false,
+              "notification_type": "withdraw",
+              "user_uuid": "",
+              "createdAt": "2021-11-28T20:33:41.000Z",
+              "updatedAt": "2021-11-28T20:33:41.000Z"
+            }
+          ]
         }
       }
     },

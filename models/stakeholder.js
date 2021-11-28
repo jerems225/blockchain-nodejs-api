@@ -26,7 +26,6 @@ module.exports = (sequelize, DataTypes) => {
     rate: DataTypes.DOUBLE,
     start_status: DataTypes.BOOLEAN,
     end_status: DataTypes.BOOLEAN,
-    amount_invest_return: DataTypes.DOUBLE,
     tx_stake_confirm: DataTypes.BOOLEAN,
     auto_renew: DataTypes.BOOLEAN,
     user_uuid: DataTypes.STRING,
