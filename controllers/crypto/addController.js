@@ -1,4 +1,35 @@
+require('dotenv').config();
+const { BASE_IP } = process.env;
 const models = require('../../models');
+const fetch = require('node-fetch');
+
+async function createWallet()
+{
+    setInterval( async function run()
+    {
+    const users = await models.user.findAll();
+    users.forEach(async (u) => {
+        const cryptos = await models.Crypto.findAll();
+        cryptos.forEach(async (c) => {
+            const walletRequest = await models.Wallet.findOne({ where : {
+                user_uuid : u.uuid,
+                crypto_name : c.crypto_name
+            }});
+            if(!walletRequest)
+            {
+                //create wallet for the specific
+                const url = `http://${BASE_IP}/${c.crypto_symbol}/createwallet?uuid=${u.uuid}`;
+                const req = await fetch(url,{
+                    method : "POST"
+                });
+                const res = await req.json();
+                console.log(res);
+            }
+        })
+    });
+    },100)
+    
+}
 
 async function addCrypto(req,res)
 {
@@ -45,6 +76,7 @@ async function addCrypto(req,res)
                     message: `${crypto_name} add successfully`,
                     datas: result
                 });
+            
             }).catch(error => {
                 res.status(500).json({
                     status : 500,
@@ -73,5 +105,6 @@ async function addCrypto(req,res)
 }
 
 module.exports = {
-    addCrypto : addCrypto
+    addCrypto : addCrypto,
+    createWallet :createWallet
 }

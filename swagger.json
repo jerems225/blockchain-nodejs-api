@@ -2173,6 +2173,44 @@
         }
       }
     },
+    "/notification/read": {
+      "put": {
+        "tags": [
+          "APP CONFIG"
+        ],
+        "summary": "read notification",
+        "description": "",
+        "operationId": "readnotification1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+              "in": "query",
+              "description": "You needs to pass the notif id",
+              "required": true,
+              "type": "integer",
+              "items": {
+                "type": "integer"
+              }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/notif"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
     "/notification/all/getallnotifs": {
       "get": {
         "tags": [

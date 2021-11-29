@@ -120,11 +120,26 @@ async function get_all_notification(req,res)
     })
 }
 
+async function readNotif(req,res)
+{
+    const notif_id = req.query.id;
+    models.notification.update({read : true}, { where : {
+        id : notif_id
+    }}).then(result => {
+        res.status(200).json({
+            status : 200,
+            message : "Notification read",
+            data : result
+        })
+    })
+}
+
 module.exports = {
     getVersion  : getVersion,
     updateVersion : updateVersion,
     all_createNotification : all_createNotification,
     user_createNotification : user_createNotification,
     get_user_Notification : get_user_Notification,
-    get_all_notification : get_all_notification
+    get_all_notification : get_all_notification,
+    readNotif : readNotif
 }

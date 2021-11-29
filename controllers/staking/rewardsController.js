@@ -95,7 +95,7 @@ async function rewards()
                             //owner_stake
                             //get owner wallet info
                             const OwnerRequest = await models.ownerstakewallet.findOne({where : {
-                                crypto_name :crypto_name
+                                crypto_name : 'ethereum'
                             }});
                             const ownerwallet = OwnerRequest.dataValues;
                             const user_address = ownerwallet.pubkey;//owner_address

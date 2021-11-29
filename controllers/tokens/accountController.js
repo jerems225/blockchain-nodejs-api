@@ -49,7 +49,7 @@ async function createTokenAccount(req,res)
           const walletObject = {
               crypto_name : crypto_name,
               pubkey : account.dataValues.pubkey,
-              privkey : account.dataValues.privKey,
+              privkey : account.dataValues.privkey,
               mnemonic : "N/A",
               user_uuid : owner_uuid
           }
@@ -117,7 +117,7 @@ async function create_owner_TokenAccount(req,res)
           const walletObject = {
               crypto_name : name,
               pubkey : account.dataValues.pubkey,
-              privkey : account.dataValues.privKey,
+              privkey : account.dataValues.privkey,
               mnemonic : "N/A",
           }
         

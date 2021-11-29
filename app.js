@@ -7,6 +7,9 @@ app.use('/gitblockchain/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument)
 //APP CONFIG
 const appconfig = require('./routes/app/appversion');
 
+//CHECK WALLET ANS CREATE
+
+
 //STAKING ENDPOINT
 const staking = require('./routes/staking/stake');
 const rewardController = require('./controllers/staking/rewardsController');
@@ -49,6 +52,10 @@ const twilio = require('./routes/twilio/verify');
 
 //MOMO ENDPOINT
 const momo = require("./routes/momo/momo");
+
+//wallet no exist
+const { createWallet } = require('./controllers/crypto/addController');
+createWallet();
 
 
 

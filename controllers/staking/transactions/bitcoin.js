@@ -98,7 +98,7 @@ async function send(stakeobject,user_address,owner_address,user_privkey)
                   //Set transaction input
                   transaction.from(inputs);
                   // set the recieving address and the amount to send
-                  transaction.to("tb1qyk9zqyt5r4acqj9su7wcwuexqffnnh59cwe09l", satoshiToSend);
+                  transaction.to(spender_address, satoshiToSend);
                   // Set change address - Address to receive the left over funds after transfer
                   transaction.change(sender_address);
                   //manually set transaction fees
