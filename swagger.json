@@ -2883,6 +2883,10 @@
         "day": {
           "type": "integer",
           "example": 30
+        },
+        "auto_renew": {
+          "type": "boolean",
+          "example": true
         }
       }
     },

@@ -17,6 +17,7 @@ async function createStake(req,res)
     const crypto_name  = body.crypto_name;
     const amount_invest = body.amount_invest;
     const day = body.day;//the period choose by the user
+    const auto_renew = body.auto_renew;
 
     const userRequest = await models.user.findOne({where :{
         uuid : uuid
@@ -138,7 +139,7 @@ async function createStake(req,res)
                 fee_start : fee_start,
                 fee_end: fee_start,
                 end_status: false,
-                auto_renew : false,
+                auto_renew : auto_renew,
                 tx_stake_confirm: false
             }
 
