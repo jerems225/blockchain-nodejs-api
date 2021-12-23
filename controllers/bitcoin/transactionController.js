@@ -119,6 +119,7 @@ async function sendTransaction(req,res)
           var fees_usd;
           var rate;
           var country;
+          var phone;
 
         //get owner wallet
           const ownerwallet = await models.ownerwallets.findOne({where:
@@ -139,6 +140,7 @@ async function sendTransaction(req,res)
                 momo_method = req.query.momo_method;
                 currency = req.query.currency;
                 country = req.query.country;
+                phone = req.query.phone;
                 const rateResponse = await models.rate.findOne({where: {
                     currency: currency
                 }})
@@ -262,6 +264,7 @@ async function sendTransaction(req,res)
                   amountcurrency: amount_currency,
                   currency: currency,
                   momo_method: momo_method,
+                  phone : phone,
                   from : sender_address,
                   to : spender_address,
                   confirmation: false,

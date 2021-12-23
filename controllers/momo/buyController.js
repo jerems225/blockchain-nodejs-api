@@ -74,19 +74,21 @@ async function createPayment(req,res)
         });
 
         var phoneNumber = code+phone;
+
+        console.log(phoneNumber,country_code,method)
         
         var paymentObject =  {
-            "service_key": MONETBIL_SERVICE_KEY,
-            "phonenumber": phoneNumber, 
-            "amount": amount,
-            "operator": method,
-            "currency": currency,
-            "country": country_code,
+            service : "yBeM7buRXlNiV9UQ2TfMjVbTlpj9bg6h",
+            phonenumber: phoneNumber,
+            amount: amount,
+            operator: method,
+            currency: currency,
+            country: country_code,
         }
 
         var paymentRequest = await fetch(placePaymentUrl,{
             method: "POST",
-            body: paymentObject
+            body: JSON.stringify(paymentObject)
         })
         var paymentResult = await paymentRequest.json();
         const paymentID = paymentResult.paymentId;
@@ -110,7 +112,7 @@ async function createPayment(req,res)
             paymentID : paymentID
         }
 
-        if(status != "REQUEST ACCEPTED")
+        if(status == "REQUEST ACCEPTED")
         {
             if(crypto_type == "coin")
             {

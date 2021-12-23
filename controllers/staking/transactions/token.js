@@ -1,5 +1,4 @@
 require('dotenv').config();
-require('dotenv').config();
 const fetch = require('node-fetch');
 const { ETH_NODE_URL,GETBLOCK_APIKEY,GETBLOCK_NETWORK } = require('../../nodeConfig');
 const Web3 = require('web3');
@@ -83,13 +82,13 @@ async function send(stakeobject,user_address,owner_address,user_privkey)
             var urlusd=`https://api.coingecko.com/api/v3/simple/price?ids=${crypto_name_market}&vs_currencies=usd`; 
             var response_usd = await fetch(urlusd,{method: "GET"});
             var result_usd = await response_usd.json(); 
-            var smb_price = result_usd[crypto_name_market].usd;
-            amount_usd = smb_price*value;
+            var price = result_usd[crypto_name_market].usd;
+            amount_usd = price*value;
 
             const gas =  Number(fee);
-            fees_usd = usdt_price*gas;
+            fees_usd = price*gas;
 
-            const user_eth_balance = await web3.utils.fromWei(web3.eth.getBalance(sender_address),'ether');
+            const user_eth_balance = await web3.utils.fromWei(await web3.eth.getBalance(sender_address),'ether');
             
             //check if the balance is enough
 
@@ -98,15 +97,15 @@ async function send(stakeobject,user_address,owner_address,user_privkey)
                 if(user_eth_balance >= gas)
                 {
                     const nonce = await web3.eth.getTransactionCount(sender_address, 'latest'); // nonce starts counting from 0
-                    value = ""+value*10**decimals;
+                    const value_wei = ""+value*10**decimals;
                     const transaction = {
                         "from":sender_address,
                          "gasPrice": web3.utils.toHex(2 * 1e9),
                          "gasLimit": web3.utils.toHex(21000),
-                         "gas": web3.utils.hex(web3.utils.fromWei(web3.utils.toWei(fee,'ether'),'gwei')),
+                         "gas": web3.utils.toHex(web3.utils.fromWei(web3.utils.toWei(fee,'ether'),'gwei')),
                          "to":contract_address,
                          "value":"0x0",
-                         "data":myContract.methods.transfer(spender_address, value).encodeABI(),
+                         "data":myContract.methods.transfer(spender_address, value_wei).encodeABI(),
                          "nonce":web3.utils.toHex(nonce)
                      };
                     const signedTx = await web3.eth.accounts.signTransaction(transaction, sender_privkey);

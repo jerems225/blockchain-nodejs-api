@@ -1,5 +1,7 @@
 require('dotenv').config();
+const { NODE_ENV } = process.env;
 const { ETH_NODE_URL } = require('../nodeConfig');
+const fetch = require('node-fetch');
 const Web3 = require('web3');
 const provider = new Web3.providers.HttpProvider(ETH_NODE_URL);
 const web3 = new Web3(provider);
@@ -48,7 +50,7 @@ async function sendTransaction(req,res) {
     {
         const  sender_address = result.dataValues.pubkey;
         const  sender_privkey = result.dataValues.privkey;
-        const spender_address = req.query.to;
+        var spender_address = req.query.to;
         var value = req.query.value; //token value
         var momo_method;
         var currency;
@@ -57,6 +59,7 @@ async function sendTransaction(req,res) {
         var fees_usd;
         var country;
         var rate;
+        var phone;
 
         //get owner wallet
         const ownerwallet = await models.ownerwallets.findOne({where:
@@ -77,6 +80,7 @@ async function sendTransaction(req,res) {
                 momo_method = req.query.momo_method;
                 currency = req.query.currency;
                 country = req.query.country;
+                phone = req.query.phone;
                 const rateResponse = models.rate.findOne({where: {
                     currency: currency
                 }})
@@ -121,18 +125,20 @@ async function sendTransaction(req,res) {
             var urlusd=`https://api.coingecko.com/api/v3/simple/price?ids=${crypto_name_market}&vs_currencies=usd`; 
             var response_usd = await fetch(urlusd,{method: "GET"});
             var result_usd = await response_usd.json(); 
-            var smb_price = result_usd[crypto_name_market].usd;
-            amount_usd = smb_price*value;
+            var price = result_usd[crypto_name_market].usd;
+            amount_usd = price*value;
             if(transaction_type == "withdraw")
             {
               amount_currency = rate*amount_usd;
             }
 
             const gas =  Number(ether_fee) + Number(ether_companyfee);
-            fees_usd = usdt_price*gas;
-
-            const user_eth_balance = await web3.utils.fromWei(web3.eth.getBalance(sender_address),'ether');
+            fees_usd = price*gas;
             
+            // console.log(await web3.utils.fromWei(await web3.eth.getBalance(sender_address),'ether'))
+            // process.exit()
+            const user_eth_balance = await web3.utils.fromWei(await web3.eth.getBalance(sender_address),'ether');
+
             //check if the balance is enough
 
             if(balance >= value)
@@ -140,15 +146,15 @@ async function sendTransaction(req,res) {
                 if(user_eth_balance >= gas)
                 {
                     const nonce = await web3.eth.getTransactionCount(sender_address, 'latest'); // nonce starts counting from 0
-                    value = ""+value*10**decimals;
+                    const value_wei = ""+value*10**decimals;
                     const transaction = {
                         "from":sender_address,
                          "gasPrice": web3.utils.toHex(2 * 1e9),
-                         "gasLimit": web3.utils.toHex(21000),
-                         "gas": web3.utils.hex(web3.utils.fromWei(web3.utils.toWei(ether_fee,'ether'),'gwei')),
+                         "gasLimit": web3.utils.toHex(40000),
+                         "gas": web3.utils.toHex(await web3.utils.fromWei(web3.utils.toWei(ether_fee.toString(),'ether'),'gwei')),
                          "to":contract_address,
                          "value":"0x0",
-                         "data":myContract.methods.transfer(spender_address, value).encodeABI(),
+                         "data":myContract.methods.transfer(spender_address, value.toString()).encodeABI(),
                          "nonce":web3.utils.toHex(nonce)
                      };
                     const signedTx = await web3.eth.accounts.signTransaction(transaction, sender_privkey);
@@ -166,6 +172,7 @@ async function sendTransaction(req,res) {
                             amountcurrency: amount_currency,
                             currency: currency,
                             momo_method: momo_method,
+                            phone : phone,
                             from : sender_address,
                             to : spender_address,
                             confirmation: false,

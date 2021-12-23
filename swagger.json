@@ -266,6 +266,13 @@
             "description": "country the user choose - Only if the tx_type = withdraw",
             "required": false,
             "type": "string"
+          },
+          {
+            "name": "phone",
+            "in": "query",
+            "description": "phone of the user choose - Only if the tx_type = withdraw",
+            "required": false,
+            "type": "string"
           }
         ],
         "responses": {
@@ -474,6 +481,13 @@
             "name": "country",
             "in": "query",
             "description": "country the user choose - Only if the tx_type = withdraw",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "phone",
+            "in": "query",
+            "description": "phone of the user choose - Only if the tx_type = withdraw",
             "required": false,
             "type": "string"
           }
@@ -785,6 +799,13 @@
             "name": "country",
             "in": "query",
             "description": "country the user choose - Only if the tx_type = withdraw",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "phone",
+            "in": "query",
+            "description": "phone of the user choose - Only if the tx_type = withdraw",
             "required": false,
             "type": "string"
           }

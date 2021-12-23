@@ -64,12 +64,15 @@ async function createPayment(hash)
     const country_code = datas.symbol;
     var phoneNumber = code+phone;
 
+    console.log(phoneNumber)
+
     //initiate payment
     var withdrawObject =  {
-        "service_key": MONETBIL_SERVICE_KEY,
-        "service_secret" : MONETBIL_SECRET_KEY,
-        "phonenumber": phoneNumber, 
-        "amount": Number(amount),
+        service_key: "yBeM7buRXlNiV9UQ2TfMjVbTlpj9bg6h",
+        service_secret : "5E6YMWoQodcCe8Q4maE2XhP3PoEyaxMk1oDUORdoWLkA7iFiPviqDeqmmKpfG4N6",
+        processing_number : hash,
+        phonenumber: phoneNumber,
+        amount: amount,
     }
 
     var withdrawRequest = await fetch(wdurl,{
@@ -83,7 +86,6 @@ async function createPayment(hash)
     console.log(withdraw)
     process.exit();
 
-    
 }
 
 

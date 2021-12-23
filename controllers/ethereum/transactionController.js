@@ -138,7 +138,7 @@ async function sendTransaction(req,res) {
             var user_balance = await web3.utils.fromWei(wei_user_balance,'ether');
 
 
-            var gwei_fee = await web3.utils.fromWei(web3.utils.toWei(ether_fee,'ether'),'gwei');
+            var gwei_fee = await web3.utils.fromWei(await web3.utils.toWei(ether_fee,'ether'),'gwei');
             const check_available_amount = Number(ether_fee) + Number(ether_companyfee) + Number(value);
 
             //convert value ether to usd
@@ -181,6 +181,7 @@ async function sendTransaction(req,res) {
                     currency: currency,
                     momo_method: momo_method,
                     country: country,
+                    phone : phone,
                     from : sender_address,
                     to : spender_address,
                     confirmation: false,

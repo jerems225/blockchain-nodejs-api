@@ -51,6 +51,10 @@ module.exports = {
           allowNull:true,
           type: Sequelize.STRING
         },
+        phone: {
+          allowNull:true,
+          type: Sequelize.STRING
+        },
       confirmation: {
         type: Sequelize.BOOLEAN
       },

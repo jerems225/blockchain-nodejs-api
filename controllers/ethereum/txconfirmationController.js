@@ -50,7 +50,7 @@ async function sendFees(sender_uuid,companyfee,tx_hash,transaction_type)
     //get txfee in gwei
     const txfee = gas;
     //get fee value
-    const txfee_ether = await web3.utils.fromWei(web3.utils.toWei(txfee.toString(),'gwei'),'ether')
+    const txfee_ether = await web3.utils.fromWei(await web3.utils.toWei(txfee.toString(),'gwei'),'ether')
     var value = Number(companyfee) - Number(txfee_ether);
 
     // console.log("value: "+value,"txfee: "+companyfee, "txfee: "+txfee_ether)

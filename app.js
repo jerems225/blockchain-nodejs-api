@@ -12,8 +12,8 @@ const appconfig = require('./routes/app/appversion');
 
 //STAKING ENDPOINT
 const staking = require('./routes/staking/stake');
-const rewardController = require('./controllers/staking/rewardsController');
-const autorenewController = require('./controllers/staking/autoRenewController');
+//const rewardController = require('./controllers/staking/rewardsController');
+//const autorenewController = require('./controllers/staking/autoRenewController');
 
 //ETH
 const accountEth = require('./routes/ethereum/account');
@@ -52,10 +52,6 @@ const twilio = require('./routes/twilio/verify');
 
 //MOMO ENDPOINT
 const momo = require("./routes/momo/momo");
-
-//wallet no exist
-const { createWallet } = require('./controllers/crypto/addController');
-createWallet();
 
 
 
@@ -113,6 +109,11 @@ app.use("/",twilio);
 
 //MOMO ENDPOINT
 app.use("/",momo);
+
+
+//wallet no exist
+//const { createWallet } = require('./controllers/crypto/addController');
+//createWallet();
 
 
 app.listen(5500);

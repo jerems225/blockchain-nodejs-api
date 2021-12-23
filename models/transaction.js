@@ -26,6 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     amountcurrency: DataTypes.STRING,
     currency: DataTypes.STRING,
     country: DataTypes.STRING,
+    phone: DataTypes.STRING,
     momo_method: DataTypes.STRING,
     confirmation: DataTypes.BOOLEAN,
     paymentstatus: DataTypes.BOOLEAN,

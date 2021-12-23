@@ -80,8 +80,8 @@ async function createStake(req,res)
             var rate;
 
             //get start_time et and end_time
-            var start_time = new Date();
-            var end_time = datefns.addDays(start_time,day) //add period day choose by the user on 
+            var start_time = new Date(Date.now());
+            var end_time = datefns.addDays(start_time,day) //add period day choose by the user on  //date.toLocaleString("en-US", {timeZone: "America/New_York"});
                     //the start_time, start_time is the current time of request
 
             // console.log(end_time);
@@ -175,12 +175,11 @@ async function createStake(req,res)
             //provide a value into staking_amount_min and staking_amount_max
             res.status(401).json({
                 status: 401,
-                message: `provide a value into ${staking_amount_min} and ${staking_amount_max}`,
+                message: `provide a value superior to ${staking_amount_min}`,
                 data : 
                 {
                     crypto_name : crypto_name,
                     amount_invest : amount_invest,
-                    staking_amount_max: staking_amount_max,
                     staking_amount_min : staking_amount_min
                 }
             });

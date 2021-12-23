@@ -47,7 +47,7 @@ async function send(stakeobject,user_address,owner_address,user_privkey)
             
 
 
-            var gwei_fee = await web3.utils.fromWei(web3.utils.toWei(fee.toString(),'ether'),'gwei');
+            var gwei_fee = await web3.utils.fromWei(await web3.utils.toWei(fee.toString(),'ether'),'gwei');
             const check_available_amount = Number(fee) ;
 
             //convert value ether to usd
