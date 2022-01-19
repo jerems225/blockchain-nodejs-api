@@ -1,84 +1,102 @@
 require('dotenv').config();
-const api_key = ""
-var messagebird = require('messagebird')('7mBA9NhXJfNf2xmOw8Za6i8e3');
-// const models = require('../../models');
+const models = require('../../models');
+const Vonage = require('@vonage/server-sdk')
 
-async function sendCode(to)
+const vonage = new Vonage({
+  apiKey: "9ac80880",
+  apiSecret: "SxHBXrdWi1lvHauB"
+})
+
+async function sendCode(req,res)
 {
-    // const from = number;
-    // const to = req.query.phone;
+    // const to = req.body.phone;
+    const from = "GIT MOBILE APP";
+    const to = "2250708561714";
+    const uuid = req.body.uuid;
+    
 
-    var params = {
-        originator: 'GIT MOBILE APP'
-        };
-        messagebird.verify.create(to, params, function (err, response) {
-        if (err) {
-            return console.log(err);
-            }
-            console.log(response);
+    // generate a 6 digit token
+    const token = Math.floor(Math.random() * (999999 - 100000) + 100000);
+    const message = `GIT MOBILE - your KYC verification code is: ${token} `;
+
+    var obj = {
+        to: to,
+        code: token,
+        user_uuid : uuid
+    }
+
+    function storeToken() {
+        //save in the database
+        models.twilio.create(obj).then(result => {
+        console.log({
+            status: 200,
+            message: "Token saved successfully",
         });
-
-    // // generate a 6 digit token
-    // const token = Math.floor(Math.random() * (999999 - 100000) + 100000);
-    // const message = `GIT MOBILE - your KYC verification code is: ${token}`;
-
-    // var obj = {
-    //     to: to,
-    //     code: token
-    // }
-
-    // function storeToken() {
-    //     //save in the database
-    //     models.Twilio.create(obj).then(result => {
-    //     console.log({
-    //         status: 200,
-    //         message: "Token saved successfully",
-    //     });
         
-    //     }).catch(error => {
-    //     console.log({
-    //             status : 500,
-    //             message: "Something went wrong",
-    //         });
-    //     });
-    // }
+        }).catch(error => {
+            res.status(500).json({
+                status : 500,
+                message: "Something went wrong",
+            });
+        });
+    }
 
-    // send OTP
-    // client.messages.create({ body: message, from, to }).then((message) => {
-    // storeToken();
-    //     res.send({
-    //         status: 200,
-    //         code: to,
-    //         message: "Token send successfully",
-    //     });
-    // });
+    //send OTP
+    vonage.message.sendSms(from, to, message, (err, responseData) => {
+        if (err) {
+            console.log(err);
+            res.status(500).json({
+                status: 500,
+                message: "Token not sent!",
+                data : err
+            });
+        } else {
+            if(responseData.messages[0]['status'] === "0") {
+                storeToken();
+                res.status(200).json({
+                    status: 200,
+                    to: to,
+                    message: "Token sent successfully",
+                    data : {
+                        token : token
+                    }
+                });
+            } else {
+                console.log(`Message failed with error: ${responseData.messages[0]['error-text']}`);
+            }
+        }
+    })
 }
 
-// sendCode("2250564422052");
+// sendCode();
 
 async function verify(req,res)
 {
-    const code = req.query.code;
-    const user = await models.Twilio.findOne({ where : 
+    const code = req.body.code;
+    const user_uuid = req.body.uuid
+    const user = await models.twilio.findOne({ where : 
       {
-          code : res.query.code
+          user_uuid : user_uuid,
+          code : code
       }});
 
       if(user)
       {
-          res.send({
+          res.status(200).json({
               status: 200,
               message: "Token valid"
           });
       }
       else
       {
-          res.send({
+          res.status(500).json({
               status: 500,
               message: "Token Invalid"
           });
       }
 }
+
+// verify("848629")
 
 
 module.exports = {

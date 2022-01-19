@@ -15,7 +15,8 @@ module.exports = (sequelize, DataTypes) => {
   };
   twilio.init({
     to: DataTypes.STRING,
-    code: DataTypes.STRING
+    code: DataTypes.STRING,
+    user_uuid : DataTypes.STRING
   }, {
     sequelize,
     modelName: 'twilio',

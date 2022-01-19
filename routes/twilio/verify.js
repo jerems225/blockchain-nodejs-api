@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const TwilioController = require('../../controllers/twilio/verify');
+var bodyParser = require('body-parser');
+const { sendCode, verify } = require('../../controllers/twilio/verify');
+// create application/json parser
+var jsonParser = bodyParser.json();
 
-router.get("/twilio/otp/request", TwilioController.sendCode);
-router.get("/twilio/verify", TwilioController.verify);
+router.post("/twilio/otp/request", jsonParser,sendCode);
+router.post("/twilio/verify", jsonParser,verify);
 
 module.exports =  router;

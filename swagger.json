@@ -1733,9 +1733,9 @@
       }
     },
     "/twilio/otp/request": {
-      "get": {
+      "post": {
         "tags": [
-          "Twilio Endpoint"
+          "OTP Endpoint"
         ],
         "summary": "Request for send OTP NUMBER",
         "description": "",
@@ -1745,13 +1745,12 @@
         ],
         "parameters": [
           {
-            "name": "phone",
-            "in": "query",
-            "description": "You need to pass the phone number",
+            "name": "body",
+            "in": "body",
+            "description": "body",
             "required": true,
-            "type": "string",
-            "items": {
-              "type": "string"
+            "schema": {
+              "$ref": "#/definitions/twilioreq"
             }
           }
         ],
@@ -1776,9 +1775,9 @@
       }
     },
     "/twilio/verify": {
-      "get": {
+      "post": {
         "tags": [
-          "Twilio Endpoint"
+          "OTP Endpoint"
         ],
         "summary": "Request for verify number",
         "description": "",
@@ -1788,13 +1787,12 @@
         ],
         "parameters": [
           {
-            "name": "code",
-            "in": "query",
-            "description": "You needs to pass the OTP code the user type.",
+            "name": "body",
+            "in": "body",
+            "description": "body",
             "required": true,
-            "type": "string",
-            "items": {
-              "type": "string"
+            "schema": {
+              "$ref": "#/definitions/twilioverify"
             }
           }
         ],
@@ -3158,6 +3156,32 @@
           "type": "string",
           "example": "OTP code send successfully!"
         }
+      }
+    },
+    "twilioreq": {
+      "type": "object",
+      "properties": {
+          "to": {
+            "type": "string",
+            "example": "3434..."
+          },
+          "uuid": {
+            "type": "string",
+            "example": "dfhdbjgf ..."
+          }
+      }
+    },
+    "twilioverify": {
+      "type": "object",
+      "properties": {
+          "code": {
+            "type": "string",
+            "example": "3434..."
+          },
+          "uuid": {
+            "type": "string",
+            "example": "dfhdbjgf ..."
+          }
       }
     },
     "twilioeror1": {

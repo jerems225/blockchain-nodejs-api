@@ -11,7 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "@alch/alchemy-web3": "^1.1.1",
-    "axios": "^0.21.1",
+    "@vonage/server-sdk": "^2.10.10",
+    "axios": "^0.21.4",
     "bip32": "^2.0.6",
     "bip39": "^3.0.4",
     "bitcoinjs-lib": "^5.2.0",
@@ -28,6 +29,7 @@
     "mysql": "^2.18.1",
     "mysql2": "^2.2.5",
     "node-fetch": "^2.6.1",
+    "nodemailer": "^6.7.2",
     "nodemon": "^2.0.9",
     "pm2": "^5.1.2",
     "sequelize": "^6.6.5",
