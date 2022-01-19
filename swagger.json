@@ -2006,7 +2006,7 @@
         }
       }
     },
-    "/app/get/version": {
+    "/get/version": {
       "get": {
         "tags": [
           "APP CONFIG"
@@ -2082,10 +2082,297 @@
         }
       }
     },
+    "/app/settings": {
+      "get": {
+        "tags": [
+          "APP TERMS AND POLICY"
+        ],
+        "summary": "Get all information of the app policy",
+        "description": "",
+        "operationId": "policy1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/policy"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/#"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/app/settings/create": {
+      "post": {
+        "tags": [
+          "APP TERMS AND POLICY"
+        ],
+        "summary": "create terms,conditions and policy",
+        "description": "",
+        "operationId": "createpolicy1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "body for you query",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createpolicy"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/policy"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/app/settings/update": {
+      "put": {
+        "tags": [
+          "APP TERMS AND POLICY"
+        ],
+        "summary": "update terms,conditions or policy",
+        "description": "",
+        "operationId": "updatepolicy1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "body for you query",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createpolicy"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/policy"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/app/faq": {
+      "get": {
+        "tags": [
+          "APP FAQ"
+        ],
+        "summary": "Get all information of the app FAQ",
+        "description": "",
+        "operationId": "faq1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/faq"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/#"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/app/faq/create": {
+      "post": {
+        "tags": [
+          "APP FAQ"
+        ],
+        "summary": "create faq",
+        "description": "",
+        "operationId": "createfaq1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "body for you query",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createfaq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/faq"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/app/faq/update/{id_question}": {
+      "put": {
+        "tags": [
+          "APP FAQ"
+        ],
+        "summary": "update faq",
+        "description": "",
+        "operationId": "updatefaq1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "body for you query",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createfaq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/faq"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/app/support": {
+      "get": {
+        "tags": [
+          "APP SUPPORT"
+        ],
+        "summary": "Get all information of the app support",
+        "description": "",
+        "operationId": "suppport1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/support"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/#"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/app/support/create": {
+      "post": {
+        "tags": [
+          "APP SUPPORT"
+        ],
+        "summary": "create support",
+        "description": "",
+        "operationId": "support123",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "body for you query",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createsupport"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/support"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
     "/notification/user/create": {
       "post": {
         "tags": [
-          "APP CONFIG"
+          "APP NOTIFICATION"
         ],
         "summary": "create notification",
         "description": "",
@@ -2122,7 +2409,7 @@
     "/notification/all/create": {
       "post": {
         "tags": [
-          "APP CONFIG"
+          "APP NOTIFICATION"
         ],
         "summary": "create notification",
         "description": "",
@@ -2159,7 +2446,7 @@
     "/notification/user/getnotifs": {
       "get": {
         "tags": [
-          "APP CONFIG"
+          "APP NOTIFICATION"
         ],
         "summary": "get notification",
         "description": "",
@@ -2197,7 +2484,7 @@
     "/notification/read": {
       "put": {
         "tags": [
-          "APP CONFIG"
+          "APP NOTIFICATION"
         ],
         "summary": "read notification",
         "description": "",
@@ -2235,7 +2522,7 @@
     "/notification/all/getallnotifs": {
       "get": {
         "tags": [
-          "APP CONFIG"
+          "APP NOTIFICATION"
         ],
         "summary": "get notification",
         "description": "",
@@ -2958,6 +3245,133 @@
               "read": false,
               "notification_type": "withdraw",
               "user_uuid": "",
+              "createdAt": "2021-11-28T20:33:41.000Z",
+              "updatedAt": "2021-11-28T20:33:41.000Z"
+            }
+          ]
+        }
+      }
+    },
+    "createpolicy": {
+      "type": "object",
+      "properties": {
+          "terms": {
+            "type": "string",
+            "example": "lorem ..."
+          },
+          "conditions": {
+            "type": "string",
+            "example": "lorem ..."
+          },
+          "policy": {
+            "type": "string",
+            "example": "lorem ..."
+          }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "success"
+        },
+        "data": {
+          "type": "array",
+          "example":
+        [
+            {
+              "id": 2,
+              "terms": "lorem ...",
+              "conditions": "lorem ...",
+              "policy" : "lorem ...",
+              "createdAt": "2021-11-28T20:33:41.000Z",
+              "updatedAt": "2021-11-28T20:33:41.000Z"
+            }
+          ]
+        }
+      }
+    },
+    "createfaq": {
+      "type": "object",
+      "properties": {
+          "question": {
+            "type": "string",
+            "example": "lorem ..."
+          },
+          "answer": {
+            "type": "string",
+            "example": "lorem ..."
+          }
+      }
+    },
+    "faq": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "success"
+        },
+        "data": {
+          "type": "array",
+          "example":
+        [
+            {
+              "id": 2,
+              "question": "lorem ...",
+              "answer": "lorem ...",
+              "createdAt": "2021-11-28T20:33:41.000Z",
+              "updatedAt": "2021-11-28T20:33:41.000Z"
+            }
+          ]
+        }
+      }
+    },
+    "createsupport": {
+      "type": "object",
+      "properties": {
+          "title": {
+            "type": "string",
+            "example": "lorem ..."
+          },
+          "message": {
+            "type": "string",
+            "example": "lorem ..."
+          },
+          "user_uuid": {
+            "type": "string",
+            "example": "1132389348..."
+          }
+      }
+    },
+    "support": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "success"
+        },
+        "data": {
+          "type": "array",
+          "example":
+        [
+            {
+              "id": 2,
+              "title": "lorem ...",
+              "message": "lorem ...",
+              "user_uuid" : "dfghegrtb...",
               "createdAt": "2021-11-28T20:33:41.000Z",
               "updatedAt": "2021-11-28T20:33:41.000Z"
             }

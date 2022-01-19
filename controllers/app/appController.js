@@ -134,6 +134,121 @@ async function readNotif(req,res)
     })
 }
 
+async function getPolicy(req,res)
+{
+    const policy = await models.appsetting.findAll();
+    res.status(200).json({
+        status : 200,
+        message : "success",
+        data : policy
+    })
+}
+
+async function createPolicy(req,res)
+{
+    var policy = {
+        terms : req.body.terms,
+        conditions : req.body.conditions,
+        policy : req.body.policy
+    }
+    models.appsettings.create(policy).then(result => {
+        res.status(200).json({
+            status : 200,
+            message : "create terms,conditions and policy ok.",
+            data : result
+        });
+    })
+}
+
+async function updatePolicy(req,res)
+{
+    var policy = {
+        terms : req.body.terms,
+        conditions : req.body.conditions,
+        policy : req.body.policy
+    }
+    models.appsettings.update(policy,{where: {id : 1}}).then(result => {
+        res.status(200).json({
+            status : 200,
+            message : "update terms,conditions or policy ok.",
+            data : result
+        });
+    })
+}
+
+async function getFaq(req,res)
+{
+    const faq = await models.faq.findAll();
+    res.status(200).json({
+        status : 200,
+        message : "success",
+        data : faq
+    })
+}
+
+async function createFaq(req,res)
+{
+    var faq = {
+        question : req.body.question,
+        answer : req.body.answer,
+    }
+    models.faq.create(faq).then(result => {
+        res.status(200).json({
+            status : 200,
+            message : "question or answer add successfully.",
+            data : result
+        });
+    })
+}
+
+async function updateFaq(req,res)
+{
+    const id_question = req.params.id_question;
+    var faq = {
+        question : req.body.question,
+        answer : req.body.answer,
+    }
+    models.faq.update(faq,{where: {id:id_question}}).then(result => {
+        res.status(200).json({
+            status : 200,
+            message : "question or answer update successfully.",
+            data : result
+        });
+    })
+}
+
+async function getSupport(req,res)
+{
+    const support = await models.support.findAll();
+    res.status(200).json({
+        status : 200,
+        message : "success",
+        data : support
+    })
+}
+
+async function createSupport(req,res)
+{
+    var support = {
+        title : req.body.title,
+        message : req.body.message,
+        user_uuid : req.body.user_uuid
+    }
+
+    models.support.create(support).then(result => {
+        res.status(200).json({
+            status : 200,
+            message : "request sent successfully.",
+            data : result
+        })
+    })
+}
+
+
+
+
+
+
 module.exports = {
     getVersion  : getVersion,
     updateVersion : updateVersion,
@@ -141,5 +256,13 @@ module.exports = {
     user_createNotification : user_createNotification,
     get_user_Notification : get_user_Notification,
     get_all_notification : get_all_notification,
-    readNotif : readNotif
+    readNotif : readNotif,
+    getPolicy : getPolicy,
+    createPolicy :createPolicy,
+    updatePolicy : updatePolicy,
+    getFaq : getFaq,
+    createFaq : createFaq,
+    updateFaq : updateFaq,
+    getSupport : getSupport,
+    createSupport : createSupport,
 }

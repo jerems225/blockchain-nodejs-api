@@ -24,6 +24,7 @@
     "date-fns": "^2.26.0",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "messagebird": "^3.7.2",
     "mysql": "^2.18.1",
     "mysql2": "^2.2.5",
     "node-fetch": "^2.6.1",

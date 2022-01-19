@@ -1,53 +1,60 @@
 require('dotenv').config();
-const express = require('express');
-const router = express.Router();
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const serviceid = process.env.VERIFICATION_SERVICE_SID;
-const number = process.env.TWILIO_NUMBER
-const client = require('twilio')(accountSid, authToken);
-const models = require('../../models');
+const api_key = ""
+var messagebird = require('messagebird')('7mBA9NhXJfNf2xmOw8Za6i8e3');
+// const models = require('../../models');
 
-async function sendCode(req,res)
+async function sendCode(to)
 {
-    const from = number;
-    const to = req.query.phone;
+    // const from = number;
+    // const to = req.query.phone;
 
-    // generate a 6 digit token
-    const token = Math.floor(Math.random() * (999999 - 100000) + 100000);
-    const message = `GIT MOBILE - your KYC verification code is: ${token}`;
-
-    var obj = {
-        to: to,
-        code: token
-    }
-
-    function storeToken(to, token) {
-        //save in the database
-        models.Twilio.create(obj).then(result => {
-        console.log({
-            status: 200,
-            message: "Token saved successfully",
+    var params = {
+        originator: 'GIT MOBILE APP'
+        };
+        messagebird.verify.create(to, params, function (err, response) {
+        if (err) {
+            return console.log(err);
+            }
+            console.log(response);
         });
+
+    // // generate a 6 digit token
+    // const token = Math.floor(Math.random() * (999999 - 100000) + 100000);
+    // const message = `GIT MOBILE - your KYC verification code is: ${token}`;
+
+    // var obj = {
+    //     to: to,
+    //     code: token
+    // }
+
+    // function storeToken() {
+    //     //save in the database
+    //     models.Twilio.create(obj).then(result => {
+    //     console.log({
+    //         status: 200,
+    //         message: "Token saved successfully",
+    //     });
         
-        }).catch(error => {
-        console.log({
-                status : 500,
-                message: "Something went wrong",
-            });
-        });
-    }
+    //     }).catch(error => {
+    //     console.log({
+    //             status : 500,
+    //             message: "Something went wrong",
+    //         });
+    //     });
+    // }
 
     // send OTP
-    client.messages.create({ body: message, from, to }).then((message) => {
-    storeToken(to, token);
-        res.send({
-            status: 200,
-            code: to,
-            message: "Token send successfully",
-        });
-    });
+    // client.messages.create({ body: message, from, to }).then((message) => {
+    // storeToken();
+    //     res.send({
+    //         status: 200,
+    //         code: to,
+    //         message: "Token send successfully",
+    //     });
+    // });
 }
+
+// sendCode("2250564422052");
 
 async function verify(req,res)
 {
