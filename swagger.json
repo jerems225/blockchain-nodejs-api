@@ -2367,6 +2367,192 @@
         }
       }
     },
+    "/app/annonce": {
+      "get": {
+        "tags": [
+          "APP ANNONCE"
+        ],
+        "summary": "Get all information of the app annonce",
+        "description": "",
+        "operationId": "getannonce1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/annonce"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/#"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/app/annonce/{id_annonce}": {
+      "get": {
+        "tags": [
+          "APP ANNONCE"
+        ],
+        "summary": "Get all information of the app annonce",
+        "description": "",
+        "operationId": "getannonce1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id_annonce",
+            "in": "path",
+            "description": "You needs to pass the user id_annonce",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/annonce"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/#"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/app/annonce/update/{id_annonce}": {
+      "put": {
+        "tags": [
+          "APP ANNONCE"
+        ],
+        "summary": "update annonce",
+        "description": "",
+        "operationId": "updateannonce1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "body for you query",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createannonce"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/annonce"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/app/annonce/delete/{id_annonce}": {
+      "delete": {
+        "tags": [
+          "APP ANNONCE"
+        ],
+        "summary": "delete all information of the app annonce",
+        "description": "",
+        "operationId": "deleteannonce1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id_annonce",
+            "in": "path",
+            "description": "You needs to pass the user id_annonce",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/annoncedel"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/app/annonce/create": {
+      "post": {
+        "tags": [
+          "APP ANNONCE"
+        ],
+        "summary": "create annonce",
+        "description": "",
+        "operationId": "annonce123",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "body for you query",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createannonce"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/annonce"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
     "/notification/user/create": {
       "post": {
         "tags": [
@@ -2576,7 +2762,7 @@
       }
     }
   },
-  
+
   "definitions": {
     "createwallets": {
       "type": "object",
@@ -3400,6 +3586,68 @@
               "updatedAt": "2021-11-28T20:33:41.000Z"
             }
           ]
+        }
+      }
+    },
+    "createannonce": {
+      "type": "object",
+      "properties": {
+          "title": {
+            "type": "string",
+            "example": "lorem ..."
+          },
+          "description": {
+            "type": "string",
+            "example": "lorem ..."
+          },
+          "lien": {
+            "type": "string",
+            "example": "1132389348..."
+          },
+          "status": {
+            "type": "boolean",
+            "example": true
+          }
+      }
+    },
+    "annonce": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "success"
+        },
+        "data": {
+          "type": "array",
+          "example":
+        [
+            {
+              "id": 2,
+              "title": "lorem ...",
+              "description": "lorem ...",
+              "lien" : "https://dfgjdhgvf.dd",
+              "status" : true,
+              "createdAt": "2021-11-28T20:33:41.000Z",
+              "updatedAt": "2021-11-28T20:33:41.000Z"
+            }
+          ]
+        }
+      }
+    },
+    "annoncedel": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "success"
         }
       }
     },

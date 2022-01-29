@@ -50,6 +50,47 @@ async function getallcrypto(req,res)
       }
 }
 
+async function getCrypto(req,res)
+{
+    const admin_uuid = req.query.uuid;
+    const id_crypto = req.params.id_crypto;
+    // verification if uuid is exist and valid before run code
+     const user = await models.user.findOne({ where :
+      {
+        uuid : admin_uuid,
+      }});
+      if(user)
+      {
+        const crypto = await models.Crypto.findOne({where:{
+            id : id_crypto
+        }});
+        if(crypto)
+        {
+            res.status(200).json({
+                status: 200,
+                message: `success`,
+                data : crypto.dataValues
+            });
+        }
+        else
+        {
+            res.status(401).json({
+                status: 401,
+                message: `No crypto available`,
+                data : null
+            });
+        }
+      }
+      else
+      {
+        res.status(401).json({
+            status: 401,
+            message: `Unknown user.`,
+            data : null
+        });
+      }
+}
+
 async function getallcrypto_token(req,res)
 {
     const admin_uuid = req.query.uuid;
@@ -133,5 +174,6 @@ async function getallcrypto_coin(req,res)
 module.exports = {
     getallcrypto : getallcrypto,
     getallcrypto_token : getallcrypto_token,
-    getallcrypto_coin : getallcrypto_coin
+    getallcrypto_coin : getallcrypto_coin,
+    getCrypto
 }
