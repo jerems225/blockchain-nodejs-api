@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "description": "",
-    "version": "0.0.1",
+    "version": "0.1.2",
     "title": "GIT Blockchain Api"
   },
   "host": "127.0.0.1:5500",
@@ -896,6 +896,334 @@
         }
       }
     },
+    "/{token_symbol}/bsc/createwallet": {
+      "post": {
+        "tags": [
+          "BSC BINANCE TOKENS"
+        ],
+        "summary": "Create a new token wallet",
+        "description": "",
+        "operationId": "createsmbWallet",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "token_symbol",
+            "in": "path",
+            "description": "token symbol you need to be add in the path",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/createwallets"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/{token_symbol}/bsc/accountbalance/{uuid}": {
+      "get": {
+        "tags": [
+          "BSC BINANCE TOKENS"
+        ],
+        "summary": "Get a current token balance for a specific user",
+        "description": "",
+        "operationId": "getbsctokenBalance",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "token_symbol",
+            "in": "path",
+            "description": "token symbol you need to be add in the path",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/accountbalance"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/{token_symbol}/bsc/wallet/getaddress": {
+      "get": {
+        "tags": [
+          "BSC BINANCE TOKENS"
+        ],
+        "summary": "Get a current token address for a specific user",
+        "description": "",
+        "operationId": "getbscAddress",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "token_symbol",
+            "in": "path",
+            "description": "token symbol you need to be add in the path",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/walletaddress"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/{token_symbol}/bsc/sendtransaction/{txtype}": {
+      "post": {
+        "tags": [
+          "BSC BINANCE TOKENS"
+        ],
+        "summary": "send a transaction from a user to another user out or in the platform",
+        "description": "For this endpoint you need to give the token address of recipient",
+        "operationId": "sendbsctokenTransaction1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "token_symbol",
+            "in": "path",
+            "description": "token symbol you need to be add in the path",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "txtype",
+            "in": "path",
+            "description": "The transaction Type",
+            "required": true,
+            "type": "string",
+            "example": "3 possible values:'received','send','withdraw'"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "user wallet address",
+            "required": true,
+            "type": "string",
+            "example": "0x.."
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "description": "amount of transaction",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "txfee",
+            "in": "query",
+            "description": "fees of transaction",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "companyfee",
+            "in": "query",
+            "description": "company fees of transaction",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "momo_method",
+            "in": "query",
+            "description": "the mobile money method the user choose - Only if the tx_type = withdraw",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "description": "currency of country the user choose - Only if the tx_type = withdraw",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "description": "country the user choose - Only if the tx_type = withdraw",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "phone",
+            "in": "query",
+            "description": "phone of the user choose - Only if the tx_type = withdraw",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/transaction"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/{token_symbol}/bsc/estimatefees": {
+      "post": {
+        "tags": [
+          "BSC BINANCE TOKENS"
+        ],
+        "summary": "send a transaction for get the transaction fee",
+        "description": "For this endpoint you need to give the bsc token address of recipient",
+        "operationId": "estimategasbsc1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "token_symbol",
+            "in": "path",
+            "description": "token symbol you need to be add in the path",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "user wallet address",
+            "required": true,
+            "type": "string",
+            "example": "0x.."
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "description": "amount of transaction",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "fees_type",
+            "in": "query",
+            "description": "type of fees",
+            "required": true,
+            "type": "string",
+            "example": "Withdraw or send"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/estimatefees"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
     "/tx/getalltransaction": {
       "get": {
         "tags": [
@@ -1509,6 +1837,55 @@
         }
       }
     },
+    "/crypto/getcrypto/{id_crypto}": {
+      "get": {
+        "tags": [
+          "Dashboard Endpoint",
+          "Crypto Managment"
+        ],
+        "summary": "Get crypto by id available on this platform",
+        "description": "",
+        "operationId": "getcrypto0",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id_crypto",
+            "in": "path",
+            "description": "cryptoid need to be add",
+            "required": true,
+            "type": "integer",
+            "items": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/allcrypto"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
     "/crypto/add/crypto": {
       "post": {
         "tags": [
@@ -2004,7 +2381,7 @@
         }
       }
     },
-    "/get/version": {
+    "/app/get/version": {
       "get": {
         "tags": [
           "APP CONFIG"
@@ -2553,6 +2930,390 @@
         }
       }
     },
+    "/user/access": {
+      "get": {
+        "tags": [
+          "USER ACCESS"
+        ],
+        "summary": "Get all pages restrict",
+        "description": "",
+        "operationId": "getpages1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/getpage"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/#"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/access/{id_page}": {
+      "get": {
+        "tags": [
+          "USER ACCESS"
+        ],
+        "summary": "Get a page restrict",
+        "description": "",
+        "operationId": "getpage1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id_page",
+            "in": "path",
+            "description": "You needs to pass the id_page",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/createpage"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/#"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/access/update/{id_page}": {
+      "put": {
+        "tags": [
+          "USER ACCESS"
+        ],
+        "summary": "update page",
+        "description": "",
+        "operationId": "updatepage1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id_page",
+            "description": "pass the id of page you want to update in restrict zone",
+            "required": true,
+            "type": "integer",
+            "items": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "description": "set name ",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/createpage"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/user/access/delete/{id_page}": {
+      "delete": {
+        "tags": [
+          "USER ACCESS"
+        ],
+        "summary": "remove a page inside the restrict zone",
+        "description": "",
+        "operationId": "deletepage1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id_page",
+            "in": "path",
+            "description": "You needs to pass the id_page",
+            "required": true,
+            "type": "integer",
+            "items": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/annoncedel"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/access/create": {
+      "post": {
+        "tags": [
+          "USER ACCESS"
+        ],
+        "summary": "add page in restrict zone",
+        "description": "",
+        "operationId": "access1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "description": "pass the name of page you want to add in restrict zone",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/createpage"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/user/type": {
+      "get": {
+        "tags": [
+          "USER TYPE"
+        ],
+        "summary": "Get types",
+        "description": "",
+        "operationId": "gettypes1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/usertype"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/#"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/type/{id_type}": {
+      "get": {
+        "tags": [
+          "USER TYPE"
+        ],
+        "summary": "Get a user type",
+        "description": "",
+        "operationId": "gettype1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id_type",
+            "in": "path",
+            "description": "You needs to pass the id_type",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/createtype"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/#"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/type/update/{id_type}": {
+      "put": {
+        "tags": [
+          "USER TYPE"
+        ],
+        "summary": "update user type",
+        "description": "",
+        "operationId": "updatetype1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "body for your query",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createtype"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/createtype"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/user/type/delete/{id_type}": {
+      "delete": {
+        "tags": [
+          "USER TYPE"
+        ],
+        "summary": "remove a user type",
+        "description": "",
+        "operationId": "deletetype1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id_type",
+            "in": "path",
+            "description": "You needs to pass the id_type",
+            "required": true,
+            "type": "integer",
+            "items": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/annoncedel"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/type/create": {
+      "post": {
+        "tags": [
+          "USER TYPE"
+        ],
+        "summary": "create a user type",
+        "description": "",
+        "operationId": "createusertype1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "body for your query",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/createtype"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/usertype"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
     "/notification/user/create": {
       "post": {
         "tags": [
@@ -2757,6 +3518,112 @@
           },
           "500": {
             "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/admin/ownerwallet/{crypto_name}": {
+      "get": {
+        "tags": [
+          "OWNER WALLET"
+        ],
+        "summary": "Get all information about a specific owner wallet",
+        "description": "",
+        "operationId": "getownerwallet",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "crypto_name",
+            "in": "path",
+            "description": "You needs to pass the crypto_name",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "You needs to pass the uuid",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/ownerwallet"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/#"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/owner/balance": {
+      "get": {
+        "tags": [
+          "OWNER WALLET"
+        ],
+        "summary": "Get all information about a specific owner wallet",
+        "description": "",
+        "operationId": "getownerbalance",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "crypto_name",
+            "in": "query",
+            "description": "You needs to pass the crypto_name",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "You needs to pass the uuid",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/ownerwallet"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/#"
+              }
+            }
           }
         }
       }
@@ -3762,7 +4629,111 @@
           }
         }
       }
+    },
+    "createpage": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "successfully!"
+        },
+        "data" : {
+          "type": "object",
+          "example": {
+            "id": 1,
+            "name": "staking",
+            "updatedAt": "2022-02-03T10:50:39.167Z",
+            "createdAt": "2022-02-03T10:50:39.167Z"
+          }
+        }
+      }
+    },
+    "getpage": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "successfully!"
+        },
+        "data" : {
+          "type": "array",
+          "example": [{
+            "id": 1,
+            "name": "staking",
+            "updatedAt": "2022-02-03T10:50:39.167Z",
+            "createdAt": "2022-02-03T10:50:39.167Z"
+          }]
+        }
+      }
+    },
+    "createtype": {
+      "type": "object",
+      "properties": {
+          "name": {
+            "type": "string",
+            "example": "lorem ..."
+          },
+          "limittransfert": {
+            "type": "integer",
+            "example": 1000
+          }
+      }
+    },
+    "usertype": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "successfully!"
+        },
+        "data" : {
+          "type": "array",
+          "example": [{
+            "id": 1,
+            "name": "customer",
+            "limittransfert": 1000,
+            "updatedAt": "2022-02-03T10:50:39.167Z",
+            "createdAt": "2022-02-03T10:50:39.167Z"
+          }]
+        }
+      }
+    },
+    "ownerwallet": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "successfully!"
+        },
+        "data" : {
+          "type": "array",
+          "example": [{
+            "id": 1,
+            "name": "customer",
+            "limittransfert": 1000,
+            "updatedAt": "2022-02-03T10:50:39.167Z",
+            "createdAt": "2022-02-03T10:50:39.167Z"
+          }]
+        }
+      }
     }
+    
   },
   "externalDocs": {
     "description": "Find out more about Swagger",

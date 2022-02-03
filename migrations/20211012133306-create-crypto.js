@@ -51,6 +51,12 @@ module.exports = {
       crypto_name_market: {
         type: Sequelize.STRING
       },
+      blockchain: {
+        type: Sequelize.STRING
+      },
+      available: {
+        type: Sequelize.BOOLEAN
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

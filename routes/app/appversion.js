@@ -31,9 +31,9 @@ router.post("/app/support/create",jsonParser,createSupport);
 
 //app announce 
 router.get("/app/annonce",getAllAnnonce);
-router.get("/app/annonce/{id_annonce}",getAnnonce);
+router.get("/app/annonce/:id_annonce",getAnnonce);
 router.post("/app/annonce/create",jsonParser,createAnnonce);
 router.put("/app/annonce/update",jsonParser,updateAnnonce);
-router.delete("/app/annonce/delete/{id_annonce}",deleteAnnonce)
+router.delete("/app/annonce/delete/:id_annonce",deleteAnnonce)
 
 module.exports =  router;

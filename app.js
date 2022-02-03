@@ -30,12 +30,21 @@ const balanceBtc = require('./routes/bitcoin/balance');
 const transactionBtc = require('./routes/bitcoin/transaction');
 // const newtxBTC = require('./controllers/bitcoin/newtransactionController');
 
-//TOKENS
+//ETHEREUM TOKENS
 const account = require('./routes/tokens/account');
 const address = require('./routes/tokens/address');
 const balance = require('./routes/tokens/balance');
 const transaction = require('./routes/tokens/transaction');  
 const gas = require('./routes/tokens/estimateGas');
+
+//BSC TOKENS
+const accountBSC = require('./routes/bsctokens/account');
+const addressBSC = require('./routes/bsctokens/address');
+const balanceBSC = require('./routes/bsctokens/balance');
+const transactionBSC = require('./routes/bsctokens/transaction');  
+const gasBSC = require('./routes/bsctokens/estimateGas');
+
+//const newtxBSC = require('./controllers/binance/newtransactionController');
 
 
 //Universal Endpoint
@@ -52,6 +61,12 @@ const twilio = require('./routes/twilio/verify');
 
 //MOMO ENDPOINT
 const momo = require("./routes/momo/momo");
+
+//ADMIN
+const admin = require("./routes/admin/admin");
+
+//USER
+const user = require('./routes/user/user');
 
 
 
@@ -87,12 +102,22 @@ app.use("/", transactionBtc);
 //websocket listener for bitcoin new transaction
 // newtxBTC.get_btc_tx_new()
 
-//TOKENS
+//ETHEREUM TOKENS
 app.use("/", account);
 app.use("/", address);
 app.use("/", balance);
 app.use("/", transaction)
 app.use("/",gas);
+
+//BSC TOKENS
+app.use("/", accountBSC);
+app.use("/", addressBSC);
+app.use("/", balanceBSC);
+app.use("/", transactionBSC)
+app.use("/",gasBSC);
+
+//websocket listener for binance new transaction
+// newtxBSC.get_bsc_tx_new()
 
 
 //Universall call route
@@ -109,6 +134,12 @@ app.use("/",twilio);
 
 //MOMO ENDPOINT
 app.use("/",momo);
+
+//ADMIN
+app.use("/",admin); 
+
+//USER
+app.use("/",user);
 
 
 //wallet no exist

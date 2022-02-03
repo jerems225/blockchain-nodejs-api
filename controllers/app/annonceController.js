@@ -37,8 +37,8 @@ async function getAnnonce(req,res)
             data  : annonce
         })
     }else{
-        res.status(500).json({
-            status : 500,
+        res.status(401).json({
+            status : 401,
             message : "This pub doesn't exist in this system or the admin remove it!",
             data : null
         })
@@ -87,7 +87,7 @@ async function updateAnnonce(req,res)
 async function deleteAnnonce(req,res)
 {
     const id_annonce = req.params.id_annonce;
-    models.annonce.delete({where : {
+    models.annonce.destroy({where : {
         id : id_annonce
     }}).then(result => {
         res.status(200).json({

@@ -8,7 +8,7 @@ const { addCrypto } = require('../../controllers/crypto/addController');
 const { UpdateCrypto } = require('../../controllers/crypto/updateController');
 
 router.get("/crypto/allcrypto",getallcrypto);
-router.get("/crypto/getcrypto/{id_crypto}",getCrypto);
+router.get("/crypto/getcrypto/:id_crypto",getCrypto);
 router.get("/crypto/allcrypto/tokens",getallcrypto_token, );
 router.get("/crypto/allcrypto/coins",getallcrypto_coin );
 router.post("/crypto/add/crypto",jsonParser,addCrypto);

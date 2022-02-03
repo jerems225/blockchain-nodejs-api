@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const AccountController = require('../../controllers/bsctokens/accountController');
 
-router.post("/:token_symbol/createwallet", AccountController.createTokenAccount);
-router.get("/token/owner/createwallet/:name/:uuid", AccountController.create_owner_TokenAccount);
+router.get("/:token_symbol/bsc/wallet/getAddress", AccountController.get_token_Address);
 
 module.exports =  router;

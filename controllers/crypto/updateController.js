@@ -15,6 +15,8 @@ async function UpdateCrypto(req,res)
     const stakable = req.body.stakable;
     const crypto_type = req.body.crypto_type;
     const crypto_name_market = req.body.crypto_name_market;
+    const blockchain = req.body.blockchain;
+    const available = req.body.availbale;
     // verification if uuid is exist and valid before run code
      const user = await models.user.findOne({ where :
       {
@@ -36,7 +38,9 @@ async function UpdateCrypto(req,res)
                   staking_amount_max: staking_amount_max,
                   stakable: stakable,
                   crypto_type: crypto_type,
-                  crypto_name_market : crypto_name_market
+                  crypto_name_market : crypto_name_market,
+                  blockchain : blockchain,
+                  available : available
                 }
             //save in the database
             models.Crypto.update(obj,{where:{

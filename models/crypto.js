@@ -26,7 +26,9 @@ module.exports = (sequelize, DataTypes) => {
     rates: DataTypes.JSON,
     stakable: DataTypes.BOOLEAN,
     crypto_type: DataTypes.STRING,
-    crypto_name_market: DataTypes.STRING
+    crypto_name_market: DataTypes.STRING,
+    blockchain: DataTypes.STRING,
+    available: DataTypes.BOOLEAN
   }, {
     sequelize,
     modelName: 'Crypto',
