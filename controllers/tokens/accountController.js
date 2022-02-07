@@ -1,9 +1,9 @@
 require('dotenv').config();
 const { NODE_ENV} = process.env;
 const fetch = require('node-fetch');
-const { BSC_NODE_URL } = require('../nodeConfig');
+const { ETH_NODE_URL } = require('../nodeConfig');
 const Web3 = require('web3');
-const provider = new Web3.providers.HttpProvider(BSC_NODE_URL);
+const provider = new Web3.providers.HttpProvider(ETH_NODE_URL);
 const web3 = new Web3(provider);
 const models = require('../../models');
 

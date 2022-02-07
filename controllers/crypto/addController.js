@@ -80,6 +80,47 @@ async function addCrypto(req,res)
                     message: `${crypto_name} add successfully`,
                     datas: result
                 });
+
+                async function ownerwallet(crypto_name)
+                {
+                    //create eth account
+                    var account = await models.ownerwallet.findOne({ where : 
+                        {
+                            crypto_name : crypto_name
+                        }})
+            
+                        const walletObject = {
+                            crypto_name : obj.crypto_name,
+                            pubkey : account.dataValues.pubkey,
+                            privkey : account.dataValues.privkey,
+                            mnemonic : "N/A",
+                        }
+                    
+                        //save in the database
+                        models.ownerwallet.create(walletObject).then(result => {
+                        console.log({
+                            status: 200,
+                            message: "Wallet created successfully",
+                            wallet : result
+                        });
+                        
+                        }).catch(error => {
+                        console.log({
+                            status : 500,
+                            message: "Something went wrong",
+                            error : error
+                        });
+                        });
+                }
+                //create owner wallet associate
+                if(obj.blockchain == "ethereum" && obj.crypto_type == "token")
+                {
+                    ownerwallet("ethereum");
+                }
+                else if(obj.blockchain == "binance" && obj.crypto_type == "token")
+                {
+                    ownerwallet("binance");
+                }
             
             }).catch(error => {
                 res.status(500).json({

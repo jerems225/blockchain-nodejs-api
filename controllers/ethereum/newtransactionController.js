@@ -26,9 +26,7 @@ async function get_eth_tx_new()
 
   const result = await models.Wallet.findAll({ where :
       {
-        [Op.ne]: [
-          { crypto_name : 'bitcoin' },
-        ]
+        blockchain : 'binance'
       }});
 
 

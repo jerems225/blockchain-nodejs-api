@@ -22,6 +22,7 @@ async function countUser(req,res)
     })
 }
 
+
 module.exports = {
     getUsers,
     countUser

@@ -1,11 +1,10 @@
 require('dotenv').config();
 const { NODE_ENV} = process.env;
 const fetch = require('node-fetch');
-const bip32 = require('bip32')
-const bip39 = require('bip39')
+const bip32 = require('bip32');
+const bip39 = require('bip39');
 const models = require('../../models');
-const bitcoin = require('bitcoinjs-lib')
-const { Address, PublicKey } = require('bitcore-lib');
+const bitcoin = require('bitcoinjs-lib');
 const {BTC_NODE_NETWORK, BTC_NODE_NETWORK_CORE, BTC_NODE_PATH }= require('../nodeConfig');
 const crypto_name = "bitcoin";
 
@@ -13,7 +12,7 @@ async function create_Btc_Account(req,res){
 
  const owner_uuid = req.query.uuid;
 
-//verification if uuid is exist and valid before run code 
+//verification if uuid is exist and valid before run code
   const user = await models.user.findOne({ where : 
   {
     uuid : owner_uuid,
@@ -69,13 +68,12 @@ async function create_Btc_Account(req,res){
     }
     else
     {
-      res.status(401).json({
+      res.status(401).json(
+      {
         status : 401,
         message: "Unknown User",
-    });
+      });
     }
-    
-    
 }
 
 async function create_owner_Btc_Account(req,res){

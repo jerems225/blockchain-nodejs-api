@@ -27,7 +27,7 @@ async function create_Btc_Account(uuid){
     }})
 
 
-    if(user)
+    if(user && user.dataValues.roles[0] == "ROLE_ADMIN")
     {
         if(result)
         {
@@ -90,4 +90,6 @@ async function create_Btc_Account(uuid){
     
 }
 
-create_Btc_Account("22aba468-294b-4b17-82be-e046187ae7e2")
+module.exports = {
+  create_Btc_Account
+}

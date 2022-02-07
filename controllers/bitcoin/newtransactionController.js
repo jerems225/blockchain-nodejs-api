@@ -12,7 +12,7 @@ async function get_btc_tx_new()
       {
         const result = await models.Wallet.findAll({ where :
           {
-            crypto_name : crypto_name
+            blockchain : 'bitcoin'
           }});
 
       if(result.length != 0)

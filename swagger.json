@@ -12,6 +12,44 @@
     "https"
   ],
   "paths": {
+    "/createwallets": {
+      "post": {
+        "tags": [
+          "Simply Endpoint"
+        ],
+        "summary": "Create a new wallets for user",
+        "description": "",
+        "operationId": "createWallet",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/createwallets"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
     "/btc/createwallet": {
       "post": {
         "tags": [
@@ -568,6 +606,284 @@
         }
       }
     },
+    "/bsc/bnb/createwallet": {
+      "post": {
+        "tags": [
+          "Binance"
+        ],
+        "summary": "Create a new binance wallet",
+        "description": "",
+        "operationId": "createbscWallet",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/createwallets"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/bsc/bnb/accountbalance/{uuid}": {
+      "get": {
+        "tags": [
+          "Binance"
+        ],
+        "summary": "Get a current binance balance for a specific user",
+        "description": "",
+        "operationId": "getbscBalance",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/accountbalance"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/bsc/bnb/wallet/getaddress": {
+      "get": {
+        "tags": [
+          "Binance"
+        ],
+        "summary": "Get a current binance address for a specific user",
+        "description": "",
+        "operationId": "getbscAddress",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/walletaddress"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/bsc/bnb/sendtransaction/{txtype}": {
+      "post": {
+        "tags": [
+          "Binance"
+        ],
+        "summary": "send a transaction from a user to another user out or in the platform",
+        "description": "For this endpoint you need to give the binance address of recipient",
+        "operationId": "sendbscTransaction1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "txtype",
+            "in": "path",
+            "description": "The transaction Type",
+            "required": true,
+            "type": "string",
+            "example": "3 possible values:'received','send','withdraw'"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "user wallet address",
+            "required": true,
+            "type": "string",
+            "example": "0x.."
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "description": "amount of transaction",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "txfee",
+            "in": "query",
+            "description": "fees of transaction",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "companyfee",
+            "in": "query",
+            "description": "company fees of transaction",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "momo_method",
+            "in": "query",
+            "description": "the mobile money method the user choose - Only if the tx_type = withdraw",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "description": "currency of country the user choose - Only if the tx_type = withdraw",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "description": "country the user choose - Only if the tx_type = withdraw",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "phone",
+            "in": "query",
+            "description": "phone of the user choose - Only if the tx_type = withdraw",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/transaction"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/bsc/estimatefees": {
+      "post": {
+        "tags": [
+          "Binance"
+        ],
+        "summary": "send a transaction for get the transaction fee",
+        "description": "For this endpoint you need to give the binance address of recipient",
+        "operationId": "estimategasbsc1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "user wallet address",
+            "required": true,
+            "type": "string",
+            "example": "0x.."
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "description": "amount of transaction",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "fees_type",
+            "in": "query",
+            "description": "type of fees",
+            "required": true,
+            "type": "string",
+            "example": "Withdraw or send"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/estimatefees"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
     "/{token_symbol}/createwallet": {
       "post": {
         "tags": [
@@ -896,14 +1212,14 @@
         }
       }
     },
-    "/{token_symbol}/bsc/createwallet": {
+    "/{token_symbol}/bsctoken/createwallet": {
       "post": {
         "tags": [
           "BSC BINANCE TOKENS"
         ],
         "summary": "Create a new token wallet",
         "description": "",
-        "operationId": "createsmbWallet",
+        "operationId": "createbsctokenWallet",
         "produces": [
           "application/json"
         ],
@@ -944,7 +1260,7 @@
         }
       }
     },
-    "/{token_symbol}/bsc/accountbalance/{uuid}": {
+    "/{token_symbol}/bsctoken/accountbalance/{uuid}": {
       "get": {
         "tags": [
           "BSC BINANCE TOKENS"
@@ -992,7 +1308,7 @@
         }
       }
     },
-    "/{token_symbol}/bsc/wallet/getaddress": {
+    "/{token_symbol}/bsctoken/wallet/getaddress": {
       "get": {
         "tags": [
           "BSC BINANCE TOKENS"
@@ -1040,7 +1356,7 @@
         }
       }
     },
-    "/{token_symbol}/bsc/sendtransaction/{txtype}": {
+    "/{token_symbol}/bsctoken/sendtransaction/{txtype}": {
       "post": {
         "tags": [
           "BSC BINANCE TOKENS"
@@ -1153,7 +1469,7 @@
         }
       }
     },
-    "/{token_symbol}/bsc/estimatefees": {
+    "/{token_symbol}/bsctoken/estimatefees": {
       "post": {
         "tags": [
           "BSC BINANCE TOKENS"

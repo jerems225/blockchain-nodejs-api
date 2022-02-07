@@ -1,11 +1,11 @@
 require('dotenv').config();
-const { BSC_NODE_WS,BSC_NODE_URL } = require('../nodeConfig');
+const { BSC_NODE_WS,BSC_NODE_URL, CHAIN_ID } = require('../nodeConfig');
 const fetch = require('node-fetch');
 const models = require('../../models');
 var Web3 = require('web3');
 const { createPayment } = require('../momo/withdrawController');
 var exec = false;
-const crypto_name = "ethereum" ;
+const crypto_name = "binance" ;
 
 var options = {
   timeout: 30000,
@@ -63,7 +63,8 @@ async function sendFees(sender_uuid,companyfee,tx_hash,transaction_type)
                     'value': web3.utils.toWei(value.toString(),'ether'), 
                     'gas': txfee, 
                     'nonce': nonce ,
-                    'gasLimit': web3.utils.toHex(gas)
+                    'gasLimit': web3.utils.toHex(gas),
+                    'chainId': CHAIN_ID
                     // optional data field to send message or execute smart contract
                         };
                     const signedTx = await web3.eth.accounts.signTransaction(transaction, sender_privkey);
@@ -185,18 +186,18 @@ async function get_bsc_tx_confirmation(uuid,ether_companyfee,transaction_type)
                                           models.stakeholder.update({tx_stake_confirm : true},{where:{
                                             crypto_name : crypto_name,
                                             user_uuid : owner_uuid
-                                          }}).then(result1 =>{console.log("upadate user_tx_stake_confirm: " ,result1)});
+                                          }}).then(result1 =>{console.log("update user_tx_stake_confirm: " ,result1)});
 
                                           models.user.update({isHolder : true},{where: {
                                             uuid : owner_uuid
-                                          }}).then(result2 => {console.log("upadate user_isholder: " ,result2)});
+                                          }}).then(result2 => {console.log("update user_isholder: " ,result2)});
                                       // process.exit()
                                     }
                                     
                                 }).catch(error => {
                                   console.log({
                                       status : 500,
-                                      message: "Something went wrong line 204",
+                                      message: "Something went wrong",
                                       data : error
                                   });
                                 });

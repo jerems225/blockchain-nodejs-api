@@ -15,6 +15,9 @@ const staking = require('./routes/staking/stake');
 //const rewardController = require('./controllers/staking/rewardsController');
 //const autorenewController = require('./controllers/staking/autoRenewController');
 
+//create all wallet
+const wallets = require('./routes/simplyendpoint');
+
 //ETH
 const accountEth = require('./routes/ethereum/account');
 const addressEth = require('./routes/ethereum/address');
@@ -37,12 +40,20 @@ const balance = require('./routes/tokens/balance');
 const transaction = require('./routes/tokens/transaction');  
 const gas = require('./routes/tokens/estimateGas');
 
+//BSC
+const accountBsc = require('./routes/binance/account');
+const addressBsc = require('./routes/binance/address');
+const balanceBsc = require('./routes/binance/balance');
+const transactionBsc = require('./routes/binance/transaction');
+// const newtxBSC = require('./controllers/binance/newtransactionController');
+const gasBsc = require('./routes/binance/estimateGas');
+
 //BSC TOKENS
-const accountBSC = require('./routes/bsctokens/account');
-const addressBSC = require('./routes/bsctokens/address');
-const balanceBSC = require('./routes/bsctokens/balance');
-const transactionBSC = require('./routes/bsctokens/transaction');  
-const gasBSC = require('./routes/bsctokens/estimateGas');
+const accountBSCtoken = require('./routes/bsctokens/account');
+const addressBSCtoken = require('./routes/bsctokens/address');
+const balanceBSCtoken = require('./routes/bsctokens/balance');
+const transactionBSCtoken = require('./routes/bsctokens/transaction');  
+const gasBSCtoken = require('./routes/bsctokens/estimateGas');
 
 //const newtxBSC = require('./controllers/binance/newtransactionController');
 
@@ -83,6 +94,9 @@ app.use("/",staking);
 // rewardController.rewards();
 // autorenewController.run_auto_renew_stake();
 
+//create all wallet
+app.use("/",wallets);
+
 //ETH
 app.use("/", accountEth);
 app.use("/", addressEth);
@@ -109,12 +123,19 @@ app.use("/", balance);
 app.use("/", transaction)
 app.use("/",gas);
 
+//BINANCE
+app.use("/", accountBsc);
+app.use("/", addressBsc);
+app.use("/", balanceBsc);
+app.use("/", transactionBsc)
+app.use("/",gasBsc);
+
 //BSC TOKENS
-app.use("/", accountBSC);
-app.use("/", addressBSC);
-app.use("/", balanceBSC);
-app.use("/", transactionBSC)
-app.use("/",gasBSC);
+app.use("/", accountBSCtoken);
+app.use("/", addressBSCtoken);
+app.use("/", balanceBSCtoken);
+app.use("/", transactionBSCtoken)
+app.use("/",gasBSCtoken);
 
 //websocket listener for binance new transaction
 // newtxBSC.get_bsc_tx_new()

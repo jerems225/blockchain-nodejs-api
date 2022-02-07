@@ -3,7 +3,7 @@ const { Op } = require("sequelize");
 const { BSC_NODE_WS } = require('../nodeConfig');
 const models = require('../../models');
 var Web3 = require('web3');
-const crypto_name = "ethereum" ;
+const crypto_name = "binance" ;
 
 var options = {
   timeout: 50000,
@@ -26,9 +26,7 @@ async function get_bsc_tx_new()
 
   const result = await models.Wallet.findAll({ where :
       {
-        [Op.ne]: [
-          { crypto_name : 'bitcoin' },
-        ]
+        blockchain : 'binance'
       }});
 
 

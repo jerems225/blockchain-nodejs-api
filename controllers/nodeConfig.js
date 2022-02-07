@@ -39,8 +39,8 @@ if(NODE_ENV == 'test' || NODE_ENV == 'development')
 
     //BSC
 
-    BSC_NODE_URL = "https://bsc.getblock.io/${GETBLOCK_NETWORK}/?api_key=${GETBLOCK_APIKEY}";
-    BSC_NODE_WS = "wss://bsc.getblock.io/${GETBLOCK_NETWORK}/?api_key=${GETBLOCK_APIKEY}";
+    BSC_NODE_URL = `https://bsc.getblock.io/${GETBLOCK_NETWORK}/?api_key=${GETBLOCK_APIKEY}`;
+    BSC_NODE_WS = `wss://bsc.getblock.io/${GETBLOCK_NETWORK}/?api_key=${GETBLOCK_APIKEY}`;
     let CHAIN_ID = 97;
 }
 else if(NODE_ENV == 'devprod' || NODE_ENV == 'production' )
@@ -61,8 +61,8 @@ else if(NODE_ENV == 'devprod' || NODE_ENV == 'production' )
 
     //BSC
 
-    BSC_NODE_URL = "https://bsc.getblock.io/${GETBLOCK_NETWORK}/?api_key=${GETBLOCK_APIKEY}";
-    BSC_NODE_WS = "wss://bsc.getblock.io/${GETBLOCK_NETWORK}/?api_key=${GETBLOCK_APIKEY}";
+    BSC_NODE_URL = `https://bsc.getblock.io/${GETBLOCK_NETWORK}/?api_key=${GETBLOCK_APIKEY}`;
+    BSC_NODE_WS = `wss://bsc.getblock.io/${GETBLOCK_NETWORK}/?api_key=${GETBLOCK_APIKEY}`;
     let CHAIN_ID = 95;
 }
 
