@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "description": "",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "title": "GIT Blockchain Api"
   },
   "host": "127.0.0.1:5500",
@@ -4064,6 +4064,14 @@
         "crypto_name_market": {
           "type": "string",
           "example": "bitcoin"
+        },
+        "blockchain": {
+          "type": "string",
+          "example": "bitcoin"
+        },
+        "available": {
+          "type": "boolean",
+          "example": true
         }
       }
     },
@@ -4316,6 +4324,8 @@
             "stakable": false,
             "crypto_type": "token/coin",
             "crypto_name_market": "tether",
+            "blockchain": "ethereum",
+            "available" : true,
             "createdAt": "2021-11-22T16:30:07.000Z",
             "updatedAt": "2021-11-22T16:30:07.000Z"
           }
