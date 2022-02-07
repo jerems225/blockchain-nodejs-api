@@ -16,7 +16,7 @@ async function createTokenAccount(req,res)
     const cryptoRequest = await models.Crypto.findOne({where:{
       crypto_symbol: crypto_symbol
     }})
-    
+
     const crypto_name = cryptoRequest.dataValues.crypto_name;
     //verification if uuid is exist and valid before run code
     const user = await models.user.findOne({ where : 
@@ -44,7 +44,7 @@ async function createTokenAccount(req,res)
           var account = await models.Wallet.findOne({ where : 
             {
               user_uuid : owner_uuid,
-              crypto_name : "ethereum"
+              crypto_name : "binance"
             }})
 
           const walletObject = {
