@@ -11,31 +11,21 @@ async function getallcrypto(req,res)
       }});
       if(user)
       {
-        if(user.dataValues.roles[0] == "ROLE_ADMIN")
+        
+        const cryptos = await models.Crypto.findAll();
+        if(cryptos.length != 0)
         {
-            const cryptos = await models.Crypto.findAll();
-            if(cryptos.length != 0)
-            {
-                res.status(200).json({
-                    status: 200,
-                    message: `Total of crypto in this platform.`,
-                    data : cryptos
-                });
-            }
-            else
-            {
-                res.status(401).json({
-                    status: 401,
-                    message: `No crypto available`,
-                    data : null
-                });
-            }
+            res.status(200).json({
+                status: 200,
+                message: `Total of crypto in this platform.`,
+                data : cryptos
+            });
         }
         else
         {
             res.status(401).json({
                 status: 401,
-                message: `This user doesn't have access for that endpoint.`,
+                message: `No crypto available`,
                 data : null
             });
         }

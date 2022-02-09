@@ -3630,6 +3630,35 @@
         }
       }
     },
+    "/user/count": {
+      "post": {
+        "tags": [
+          "Simply Endpoint"
+        ],
+        "summary": "get user count",
+        "description": "",
+        "operationId": "countusertype1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/usercount"
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
     "/notification/user/create": {
       "post": {
         "tags": [
@@ -4922,6 +4951,48 @@
         }
       }
     },
+    "alluserstake": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "successfully!"
+        },
+        "data" : {
+          "type": "object",
+          "example": 
+          {
+                "count" : 4,
+                "holders" : [{
+                  "id": 27,
+                  "crypto_name": "ethereum",
+                  "start_time": "2021-11-26T13:34:43.000Z",
+                  "end_time": "2021-12-26T13:34:43.000Z",
+                  "fee_start": 0.000882,
+                  "fee_end": 0.000882,
+                  "amount_invest": 0.11,
+                  "amount_reward": 0.0275,
+                  "amount_reward_day": 0.0009166666666666666,
+                  "period": 30,
+                  "rate": 0.25,
+                  "start_status": true,
+                  "end_status": null,
+                  "amount_invest_return": null,
+                  "tx_stake_confirm": true,
+                  "auto_renew": true,
+                  "user_uuid": "22aba468-294b-4b17-82be-e046187ae7e2",
+                  "createdAt": "2021-11-26T13:34:44.000Z",
+                  "updatedAt": "2021-11-26T15:09:14.000Z"
+            }]
+          }
+            
+        }
+      }
+    },
     "stake": {
       "type": "object",
       "properties": {
@@ -5033,6 +5104,25 @@
             "updatedAt": "2022-02-03T10:50:39.167Z",
             "createdAt": "2022-02-03T10:50:39.167Z"
           }]
+        }
+      }
+    },
+    "usercount": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "successfully!"
+        },
+        "data" : {
+          "type": "objet",
+          "example": {
+            "users": 450
+          }
         }
       }
     },

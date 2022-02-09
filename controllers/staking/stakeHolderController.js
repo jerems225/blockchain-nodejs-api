@@ -13,13 +13,14 @@ async function getstakeholders(req,res)
         const userAdmin = userAdminRequest.dataValues;
         if(userAdmin.roles[0] == "ROLE_ADMIN")
         {
-            const userHolderRequest = models.user.findAll();
+            const userHolderRequest = models.stakeholder.findAll();
             const userHolders = userHolderRequest;
+            const count = userHolders.length
             res.status(200).json({
                 status: 200,
                 message: `All stake holder on this platform`,
                 data : {
-                    count: userHolders.length,
+                    count: count,
                     holders: userHolders
                 }
             })

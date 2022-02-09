@@ -297,10 +297,88 @@ async function createWallet(req,res)
         }
     }
 
+    //bsc tokens
+    async function bnbtokenwallet(uuid)
+    {
+        const cryptos = await models.Crypto.findAll({
+            where : {
+                crypto_type : "token",
+                blockchain : "binance"
+            }
+        })
+        cryptos.forEach(async (cr) => {
+            const owner_uuid = uuid;
+            const crypto_name = cr.crypto_name;
+            //verification if uuid is exist and valid before run code
+            const user = await models.user.findOne({ where : 
+              {
+                uuid : owner_uuid,
+              }})
+            const result = await models.Wallet.findOne({ where : 
+            {
+              user_uuid : owner_uuid,
+              crypto_name : crypto_name
+            }})
+        
+            if(user)
+            {
+                if(result)
+                {
+                  console.log({
+                    status : 401,
+                    message: `This user already have a ${crypto_name} account`
+                });
+                }
+                else
+                {
+                  //create eth account
+                  var account = await models.Wallet.findOne({ where : 
+                    {
+                      user_uuid : owner_uuid,
+                      crypto_name : "binance"
+                    }})
+        
+                  const walletObject = {
+                      crypto_name : crypto_name,
+                      pubkey : account.dataValues.pubkey,
+                      privkey : account.dataValues.privkey,
+                      mnemonic : "N/A",
+                      user_uuid : owner_uuid
+                  }
+                
+                  //save in the database
+                  models.Wallet.create(walletObject).then(result => {
+                    console.log({
+                        status: 200,
+                        message: "Wallet created successfully",
+                        wallet : result
+                    });
+                  }).catch(error => {
+                    console.log({
+                        status : 500,
+                        message: "Something went wrong",
+                        error : error
+                    });
+                  });
+                }
+            }
+            else
+            {
+                console.log({
+                  status : 401,
+                  message: `Unknown User`
+              });
+            }
+        });
+        send = results;
+    }
+
 
     btcwallet(uuid);
     ethwallet(uuid);
     ethtokenwallet(uuid);
+    bnbwallet(uuid);
+    bnbtokenwallet(uuid);
 
     res.status(200).json({
         status : 200,
