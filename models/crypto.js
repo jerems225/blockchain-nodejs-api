@@ -28,7 +28,8 @@ module.exports = (sequelize, DataTypes) => {
     crypto_type: DataTypes.STRING,
     crypto_name_market: DataTypes.STRING,
     blockchain: DataTypes.STRING,
-    available: DataTypes.BOOLEAN
+    available: DataTypes.BOOLEAN,
+    prefix: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Crypto',

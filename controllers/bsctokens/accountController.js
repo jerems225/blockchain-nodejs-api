@@ -205,7 +205,9 @@ async function get_token_balance(req,res)
     }})
 
     //crypto info
-    const crypto = cryptoRequest.dataValues;
+    if(cryptoRequest)
+    {
+      const crypto = cryptoRequest.dataValues;
 
     if(NODE_ENV == 'test' || NODE_ENV == 'development')
     {
@@ -263,6 +265,16 @@ async function get_token_balance(req,res)
           symbol: symbol
         });
       }
+    }
+    else
+    {
+      res.status(500).json({
+        status : 500,
+        message: `this token doesn't exist in the system`,
+        data : null
+      });
+    }
+    
 
 
 
