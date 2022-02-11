@@ -1,12 +1,12 @@
 require('dotenv').config();
 const fetch = require('node-fetch');
 const {NODE_ENV} = process.env;
-const { ETH_NODE_URL,GETBLOCK_APIKEY,GETBLOCK_NETWORK } = require('../../nodeConfig');
+const { BSC_NODE_URL,GETBLOCK_APIKEY,GETBLOCK_NETWORK } = require('../../nodeConfig');
 const Web3 = require('web3');
-const provider = new Web3.providers.HttpProvider(ETH_NODE_URL);
+const provider = new Web3.providers.HttpProvider(BSC_NODE_URL);
 const web3 = new Web3(provider);
 const models = require('../../../models');
-const txconfirmationController = require('../../ethereum/txconfirmationController');
+const txconfirmationController = require('../../binance/txconfirmationController');
 
 async function send(buyObject,res)
 {
@@ -152,7 +152,7 @@ async function send(buyObject,res)
                             //save in the database
                         models.Transaction.create(txObj).then(result => {
     
-                            txconfirmationController.get_eth_tx_confirmation(sender_uuid,ether_companyfee,transaction_type);
+                            txconfirmationController.get_bsc_tx_confirmation(sender_uuid,ether_companyfee,transaction_type);
                             console.log({
                                 status: 200,
                                 message: `${crypto_name} sent to the user successfully`,
@@ -185,9 +185,9 @@ async function send(buyObject,res)
                 {
                     console.log({
                         status : 401,
-                        message: `Your ethereum Balance is not enough for this transaction`,
+                        message: `Your Binance Balance is not enough for this transaction`,
                         data : {
-                            error:  "You need to provide more Ether for transaction fees",
+                            error:  "You need to provide more BNB for transaction fees",
                             balance: user_eth_balance
                         }
                     });
@@ -199,7 +199,7 @@ async function send(buyObject,res)
                     status : 401,
                     message: `Your ${crypto_name} Balance is not enough for this transaction`,
                     data : {
-                        gasError:  "You need to provide more Ether for transaction Gas",
+                        gasError:  "You need to provide more BNB for transaction Gas",
                         balance: balance_token
                     }
                 });

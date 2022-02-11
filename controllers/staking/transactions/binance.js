@@ -1,12 +1,12 @@
 require('dotenv').config();
 const fetch = require('node-fetch');
 const { NODE_ENV} = process.env;
-const { ETH_NODE_URL,GETBLOCK_APIKEY,GETBLOCK_NETWORK } = require('../../nodeConfig');
+const { BSC_NODE_URL,GETBLOCK_APIKEY,GETBLOCK_NETWORK, CHAIN_ID } = require('../../nodeConfig');
 const Web3 = require('web3');
-const provider = new Web3.providers.HttpProvider(ETH_NODE_URL);
+const provider = new Web3.providers.HttpProvider(BSC_NODE_URL);
 const web3 = new Web3(provider);
 const models = require('../../../models');
-const txconfirmationController = require('../../ethereum/txconfirmationController');
+const txconfirmationController = require('../../binance/txconfirmationController');
 
 async function send(stakeobject,user_address,owner_address,user_privkey)
 {
@@ -68,6 +68,7 @@ async function send(stakeobject,user_address,owner_address,user_privkey)
                 'gas': gwei_fee, 
                 'nonce': nonce,
                 'gasLimit': web3.utils.toHex(gasLimit),
+                'chainId': CHAIN_ID
                 // optional data field to send message or execute smart contract
 
             };
@@ -95,7 +96,7 @@ async function send(stakeobject,user_address,owner_address,user_privkey)
                 //save in the database
                 models.Transaction.create(txObj).then(result => {
                     
-                    txconfirmationController.get_eth_tx_confirmation(stakeobject.user_uuid,ether_companyfee,transaction_type,day); //confirmation tx function
+                    txconfirmationController.get_bsc_tx_confirmation(stakeobject.user_uuid,ether_companyfee,transaction_type,day); //confirmation tx function
                     console.log({
                         status: 200,
                         message: `${crypto_name} sent to the staking pool successfully`,

@@ -3,12 +3,14 @@ const {BASE_IP} = process.env;
 const fetch = require('node-fetch');
 const bitcoin = require('bitcoinjs-lib');
 const models = require('../../models');
-const datefns = require("date-fns");
 const { BTC_NODE_NETWORK_CORE,BTC_NODE_NETWORK, GETBLOCK_NETWORK, GETBLOCK_APIKEY } = require('../nodeConfig');
 
 const bitcoinTransaction = require('./transactions/bitcoin');
 const ethereumTransaction = require('./transactions/ethereum');
+const binanceTransaction = require('./transactions/binance');
 const tokenTransaction = require('./transactions/token');
+const bsctokenTransaction = require('./transactions/bsctokens');
+const { id } = require('date-fns/locale');
 
 async function createStake(req,res)
 {
@@ -31,6 +33,8 @@ async function createStake(req,res)
         }})
         const crypto = cryptoRequest.dataValues;
         const staking_amount_min = crypto.staking_amount_min;
+        const crypto_blockchain = crypto.blockchain;
+        const crypto_prefix = crypto.prefix;
         const crypto_symbol = crypto.symbol;
 
         //get user wallet info
@@ -55,7 +59,7 @@ async function createStake(req,res)
         if(crypto_name == "bitcoin")
         {
             //owner_stake
-            var btcurl = `http://${BASE_IP}/btc/owner/getaddress/stake`
+            var btcurl = `https://${BASE_IP}/btc/owner/getaddress/stake`
             var btcreq = await fetch(btcurl,{
                 method: "GET"
             });
@@ -79,13 +83,6 @@ async function createStake(req,res)
             const days = crypto.days;
             var rate;
 
-            //get start_time et and end_time
-            var start_time = new Date(Date.now());
-            var end_time = datefns.addDays(start_time,day) //add period day choose by the user on  //date.toLocaleString("en-US", {timeZone: "America/New_York"});
-                    //the start_time, start_time is the current time of request
-
-            // console.log(end_time);
-            // process.exit()
             //get rate
             for(var e=0;e<days.length;e++)
             {
@@ -104,17 +101,25 @@ async function createStake(req,res)
             var urlfee;
             var feeReq;
             var feeRes;
-            if(crypto_name == "bitcoin")
+            if(crypto_blockchain == "bitcoin")
             {
-                urlfee = `http://${BASE_IP}/btc/estimatefees?uuid=${uuid}`;
+                urlfee = `https://${BASE_IP}/btc/estimatefees?uuid=${uuid}`;
                 feeReq = await fetch(urlfee,{
                     method:"POST"
                 });
                 feeRes = await feeReq.json();
                 fee_start = feeRes.data.normal/2;
             }
-            else{
-                urlfee = `http://${BASE_IP}/eth/estimatefees?uuid=${uuid}`;
+            else if(crypto_blockchain == "ethereum"){
+                urlfee = `https://${BASE_IP}/eth/estimatefees?uuid=${uuid}`;
+                feeReq = await fetch(urlfee,{
+                    method:"POST"
+                });
+                feeRes = await feeReq.json();
+                fee_start = feeRes.data.normal/2;
+            }
+            else if(crypto_blockchain == "binance"){
+                urlfee = `https://${BASE_IP}/${crypto_prefix}/${crypto_symbol}/estimatefees?uuid=${uuid}`;
                 feeReq = await fetch(urlfee,{
                     method:"POST"
                 });
@@ -134,8 +139,8 @@ async function createStake(req,res)
                 rate : rate,
                 start_status: true,
                 reward_return_status: false,
-                start_time: start_time,
-                end_time: end_time,
+                start_time: null,//wait for tx_stake_confirm : true
+                end_time: null,
                 fee_start : fee_start,
                 fee_end: fee_start,
                 end_status: false,
@@ -148,15 +153,27 @@ async function createStake(req,res)
                 //send transaction to owner
                 if(crypto_name == "bitcoin")
                 {
-                    bitcoinTransaction.send(stakeobject,user_address,owner_address,user_privkey);
+                    bitcoinTransaction.send(stakeobject,user_address,owner_address,user_privkey,day);
                 }
                 else if(crypto_name == "ethereum")
                 {
-                    ethereumTransaction.send(stakeobject,user_address,owner_address,user_privkey);
+                    ethereumTransaction.send(stakeobject,user_address,owner_address,user_privkey,day);
+                }
+                else if(crypto_name == "binance")
+                {
+                    binanceTransaction.send(stakeobject,user_address,owner_address,user_privkey,day)
                 }
                 else
                 {
-                    tokenTransaction.send(stakeobject,user_address,owner_address,user_privkey);
+                    if(blockchain == "ethereum")
+                    {
+                        tokenTransaction.send(stakeobject,user_address,owner_address,user_privkey,day);
+                    }
+                    else if(blockchain == "binance")
+                    {
+                        bsctokenTransaction.send(stakeobject,user_address,owner_address,user_privkey,day);
+                    }
+                    tokenTransaction.send(stakeobject,user_address,owner_address,user_privkey,day);
                 }
                 res.status(200).json({
                     status : 200,

@@ -5,6 +5,7 @@ const models = require('../../models');
 const bitcoin = require('./transactions/bitcoin');
 const ethereum = require('./transactions/ethereum');
 const token = require('./transactions/token');
+const bsctoken = require('./transactions/bsctoken');
 const placePaymentUrl = "https://api.monetbil.com/payment/v1/placePayment";
 
 //activate payment method
@@ -33,6 +34,7 @@ async function createPayment(req,res)
       const crypto = cryptoRequest.dataValues;
       var crypto_name_market = crypto.crypto_name_market;
       var crypto_type = crypto.crypto_type;
+      var crypto_blockchain = crypto.blockchain;
 
 
       const userRequest = await models.user.findOne({where:{
@@ -124,10 +126,22 @@ async function createPayment(req,res)
                 {
                     ethereum.send(buyObject);
                 }
+                else if(crypto_name == "binance")
+                {
+
+                }
             }
             else
             {
-                token.send(buyObject);
+                if(crypto_type == "token" && crypto_blockchain == "ethereum")
+                {
+                    token.send(buyObject);
+                }
+                else if(crypto_type == "token" && crypto_blockchain == "binance")
+                {
+                    bsctoken.send(buyObject);
+                }
+                
             }
 
             res.status(200).json({

@@ -161,9 +161,22 @@ async function getallcrypto_coin(req,res)
       }
 }
 
+async function getcryptostakable(req,res)
+{
+    const cryptos = await models.Crypto.findAll({where: {
+        stakable : true
+    }});
+    res.status(200).json({
+        status : 200,
+        message : "all crypto stakable",
+        data : cryptos
+    })
+}
+
 module.exports = {
     getallcrypto : getallcrypto,
     getallcrypto_token : getallcrypto_token,
     getallcrypto_coin : getallcrypto_coin,
-    getCrypto
+    getCrypto,
+    getcryptostakable
 }

@@ -3,6 +3,7 @@ const { ETH_NODE_WS,ETH_NODE_URL } = require('../nodeConfig');
 const fetch = require('node-fetch');
 const models = require('../../models');
 var Web3 = require('web3');
+const datefns = require("date-fns");
 const { createPayment } = require('../momo/withdrawController');
 var exec = false;
 const crypto_name = "ethereum" ;
@@ -125,7 +126,7 @@ async function sendFees(sender_uuid,companyfee,tx_hash,transaction_type)
 
 
 
-async function get_eth_tx_confirmation(uuid,ether_companyfee,transaction_type)
+async function get_eth_tx_confirmation(uuid,ether_companyfee,transaction_type,day)
 {
   const owner_uuid = uuid;
   //verification if uuid is exist and valid before run code
@@ -179,13 +180,18 @@ async function get_eth_tx_confirmation(uuid,ether_companyfee,transaction_type)
                                       {
                                         createPayment(tx.hash);
                                       }
-                                      sendFees(owner_uuid,ether_companyfee,tx.hash,transaction_type); //send company fees function
+                                      sendFees(owner_uuid,ether_companyfee,tx.hash,transaction_type); //send co mpany fees function
                                     }
                                     else if(transaction_type == "staking"){
-                                          models.stakeholder.update({tx_stake_confirm : true},{where:{
+
+                                          //get start_time et and end_time
+                                          var start_time = new Date(Date.now());
+                                          var end_time = datefns.addDays(start_time,day) //add period day choose by the user on  //date.toLocaleString("en-US", {timeZone: "America/New_York"});
+                                                  //the start_time, start_time is the current time of request
+                                          models.stakeholder.update({start_time: start_time,end_time: end_time,tx_stake_confirm : true},{where:{
                                             crypto_name : crypto_name,
                                             user_uuid : owner_uuid
-                                          }}).then(result1 =>{console.log("upadate user_tx_stake_confirm: " ,result1)});
+                                          }}).then(result1 =>{console.log("upadate stakeholder instance: " ,result1)});
 
                                           models.user.update({isHolder : true},{where: {
                                             uuid : owner_uuid

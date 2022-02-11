@@ -149,7 +149,7 @@ async function send(stakeobject,user_address,owner_address,user_privkey)
               //save in the database
               models.Transaction.create(txObj).then(result => {
 
-                  txconfirmationController.get_btc_tx_confirmation(uuid,sendTx.result,btc_companyfee,transaction_type);
+                  txconfirmationController.get_btc_tx_confirmation(uuid,sendTx.result,btc_companyfee,transaction_type,day);
                     console.log({
                       status: 200,
                       message: `${crypto_name} sent to the staking pool successfully`,

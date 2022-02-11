@@ -38,6 +38,5 @@ async function create_Smb_Account()
   
 }
 
-create_Smb_Account();
 
 

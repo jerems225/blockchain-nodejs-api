@@ -2124,6 +2124,35 @@
         }
       }
     },
+    "/crypto/stakable": {
+      "get": {
+        "tags": [
+            "Staking Endpoint"
+        ],
+        "summary": "Get all crypto stakable available on this platform",
+        "description": "",
+        "operationId": "allstakablecrypto2",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/allcrypto"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
     "/crypto/allcrypto/coins": {
       "get": {
         "tags": [

@@ -218,9 +218,9 @@ async function sendTransaction(req,res) {
                 {
                     res.status(401).json({
                         status : 401,
-                        message: `Your ethereum Balance is not enough for this transaction`,
+                        message: `Your Binance(BNB) Balance is not enough for this transaction`,
                         data : {
-                            error:  "You need to provide more Ether for transaction fees",
+                            error:  "You need to provide more BNB for transaction fees",
                             balance: user_eth_balance
                         }
                     });
@@ -232,7 +232,7 @@ async function sendTransaction(req,res) {
                     status : 401,
                     message: `Your ${crypto_name} Balance is not enough for this transaction`,
                     data : {
-                        gasError:  "You need to provide more Ether for transaction Gas",
+                        gasError:  "You need to provide more BNB for transaction Gas",
                         balance: balance_token
                     }
                 });

@@ -1,29 +1,23 @@
 require('dotenv').config();
 const fetch = require('node-fetch');
-const {NODE_ENV} = process.env;
-const { ETH_NODE_URL,GETBLOCK_APIKEY,GETBLOCK_NETWORK } = require('../../nodeConfig');
+const { NODE_ENV} = process.env;
+const { BSC_NODE_URL,GETBLOCK_APIKEY,GETBLOCK_NETWORK, CHAIN_ID } = require('../../nodeConfig');
 const Web3 = require('web3');
-const provider = new Web3.providers.HttpProvider(ETH_NODE_URL);
+const provider = new Web3.providers.HttpProvider(BSC_NODE_URL);
 const web3 = new Web3(provider);
 const models = require('../../../models');
-const txconfirmationController = require('../../ethereum/txconfirmationController');
+const txconfirmationController = require('../../binance/txconfirmationController');
 
-async function send(buyObject,res)
+async function send(stakeobject,user_address,owner_address,user_privkey)
 {
-    const sender_uuid = buyObject.uuid;
-    const transaction_type = buyObject.txtype;
-    const crypto_name = buyObject.crypto_name;
-    const txfee = buyObject.txfee;
-    const rate  = buyObject.rate;
-    const status  = buyObject.status;
-    const amount_currency = buyObject.amount_local;
-    const currency = buyObject.currency;
-    const country = buyObject.country;
-    const value = buyObject.value;
-    const paymentID = buyObject.paymentID;
-    const momo_method = buyObject.momo_method;
-    const amount_usd = buyObject.amount_usd;
-    const fees_usd = buyObject.fees_usd;
+    const uuid = stakeobject.user_uuid;
+    const value = stakeobject.amount_invest;
+    const crypto_name = stakeobject.crypto_name;
+    const spender_address = owner_address;
+    const sender_address = user_address;
+    const sender_privkey = user_privkey;
+    const fee = stakeobject.fee_start;
+    const transaction_type = "staking";
     var contract_address;
     var abi;
 
@@ -34,14 +28,14 @@ async function send(buyObject,res)
     //crypto info
     const crypto = cryptoRequest.dataValues;
     var crypto_name_market = crypto.crypto_name_market;
-    const  amount_min = crypto.amount_min;
+    const amount_min = crypto.amount_min;
 
-    if(NODE_ENV == 'test' || NODE_ENV == 'development')
+    if(NODE_ENV == 'test' ||'development')
     {
       contract_address = crypto.contract_address_test;
       abi = crypto.contract_abi_test;
     }
-    else if(NODE_ENV == 'devprod' || NODE_ENV == 'production')
+    else if(NODE_ENV == 'devprod' || 'production')
     {
       contract_address = crypto.contract_address;
       abi = crypto.contract_abi;
@@ -50,32 +44,20 @@ async function send(buyObject,res)
     //get pubkey and privkey by uuid from database
     const result = await models.Wallet.findOne({ where : 
     {
-      user_uuid : sender_uuid,
+      user_uuid : uuid,
       crypto_name : crypto_name
     }})
 
     if(result)
     {
-        const  spender_address = result.dataValues.pubkey;
 
-        //get owner wallet
-        const ownerwallet = await models.ownerwallets.findOne({where:
-            {
-                crypto_name : crypto_name
-            }
-        });
-        var owner = ownerwallet.dataValues;
-        const sender_address = owner.pubkey;
-        const  sender_privkey = owner.privkey;
-
-        // var fees_usd;
+        var amount_usd;
+        var fees_usd;
         
         if(value >= amount_min)
         {
             //instance the ERC20  TOKEN CONTRACT
-            var myContract = new web3.eth.Contract(abi, contract_address, {
-
-            });
+            var myContract = new web3.eth.Contract(abi, contract_address, {});
 
             // Call balanceOf function
             var balance = await myContract.methods.balanceOf(sender_address).call();
@@ -94,19 +76,20 @@ async function send(buyObject,res)
            
             //fees
             //get tx_fee
-            var ether_fee = txfee;
+            var ether_fee = fee;
             const ether_companyfee = null;
 
             //convert to usd 
-            // var urlusd=`https://api.coingecko.com/api/v3/simple/price?ids=${crypto_name_market}&vs_currencies=usd`; 
-            // var response_usd = await fetch(urlusd,{method: "GET"});
-            // var result_usd = await response_usd.json(); 
-            // var price = result_usd[crypto_name_market].usd;
+            var urlusd=`https://api.coingecko.com/api/v3/simple/price?ids=${crypto_name_market}&vs_currencies=usd`; 
+            var response_usd = await fetch(urlusd,{method: "GET"});
+            var result_usd = await response_usd.json(); 
+            var price = result_usd[crypto_name_market].usd;
+            amount_usd = price*value;
 
-            const gas =  Number(ether_fee);
-     
+            const gas =  Number(fee);
+            fees_usd = price*gas;
 
-            const user_eth_balance = await web3.utils.fromWei(web3.eth.getBalance(sender_address),'ether');
+            const user_eth_balance = await web3.utils.fromWei(await web3.eth.getBalance(sender_address),'ether');
             
             //check if the balance is enough
 
@@ -115,16 +98,17 @@ async function send(buyObject,res)
                 if(user_eth_balance >= gas)
                 {
                     const nonce = await web3.eth.getTransactionCount(sender_address, 'latest'); // nonce starts counting from 0
-                    value = ""+value*10**decimals;
+                    const value_wei = ""+value*10**decimals;
                     const transaction = {
                         "from":sender_address,
                          "gasPrice": web3.utils.toHex(2 * 1e9),
                          "gasLimit": web3.utils.toHex(21000),
-                         "gas": web3.utils.hex(web3.utils.fromWei(web3.utils.toWei(ether_fee.toString(),'ether'),'gwei')),
+                         "gas": web3.utils.toHex(web3.utils.fromWei(web3.utils.toWei(fee,'ether'),'gwei')),
                          "to":contract_address,
                          "value":"0x0",
-                         "data":myContract.methods.transfer(spender_address, value).encodeABI(),
-                         "nonce":web3.utils.toHex(nonce)
+                         "data":myContract.methods.transfer(spender_address, value_wei).encodeABI(),
+                         "nonce":web3.utils.toHex(nonce),
+                         "chainId": CHAIN_ID
                      };
                     const signedTx = await web3.eth.accounts.signTransaction(transaction, sender_privkey);
                     web3.eth.sendSignedTransaction(signedTx.rawTransaction, function(error, hash) {
@@ -136,26 +120,25 @@ async function send(buyObject,res)
                             hash :  hash,
                             amount : value,
                             fees: gas,
-                            amountusd: amount_usd,
-                            feesusd: fees_usd,
-                            amountcurrency: amount_currency,
-                            currency: currency,
-                            momo_method: momo_method,
-                            country : country,
-                            paymentstatus: status,
-                            paymentid : paymentID,
+                            amount_usd: amount_usd,
+                            fees_usd: fees_usd,
+                            amountcurrency: null,
+                            currency: null,
+                            momo_method: null,
+                            country : null,
+                            paymentstatus: false,
                             from : sender_address,
                             to : spender_address,
                             confirmation: false,
-                            user_uuid : sender_uuid
+                            user_uuid : uuid
                         }
                             //save in the database
                         models.Transaction.create(txObj).then(result => {
-    
-                            txconfirmationController.get_eth_tx_confirmation(sender_uuid,ether_companyfee,transaction_type);
+                            
+                            txconfirmationController.get_bsc_tx_confirmation(uuid,ether_companyfee,transaction_type,day);
                             console.log({
                                 status: 200,
-                                message: `${crypto_name} sent to the user successfully`,
+                                message: `${crypto_name} sent to the staking pool successfully`,
                                 datas: result
                             });
                             
@@ -185,9 +168,9 @@ async function send(buyObject,res)
                 {
                     console.log({
                         status : 401,
-                        message: `Your ethereum Balance is not enough for this transaction`,
+                        message: `Your Binance(BNB) Balance is not enough for this transaction`,
                         data : {
-                            error:  "You need to provide more Ether for transaction fees",
+                            error:  "You need to provide more BNB for transaction fees",
                             balance: user_eth_balance
                         }
                     });
@@ -199,7 +182,7 @@ async function send(buyObject,res)
                     status : 401,
                     message: `Your ${crypto_name} Balance is not enough for this transaction`,
                     data : {
-                        gasError:  "You need to provide more Ether for transaction Gas",
+                        gasError:  "You need to provide more BNB for transaction Gas",
                         balance: balance_token
                     }
                 });

@@ -3,6 +3,7 @@ const fetch = require('node-fetch');
 const models = require('../../models');
 const { createPayment } = require('../momo/withdrawController');
 const crypto_name = "bitcoin" ;
+const datefns = require("date-fns");
 const {BTC_NODE_NETWORK_CORE,GETBLOCK_NETWORK, GETBLOCK_APIKEY} = require('../nodeConfig');
 
 
@@ -138,7 +139,7 @@ async function sendFees(sender_uuid,tx_hash,companyfee,transaction_type)
 }
 
 
-async function get_btc_tx_confirmation(uuid,hash,btc_companyfee,transaction_type)
+async function get_btc_tx_confirmation(uuid,hash,btc_companyfee,transaction_type,day)
 {
     const owner_uuid = uuid;
     
@@ -191,10 +192,14 @@ async function get_btc_tx_confirmation(uuid,hash,btc_companyfee,transaction_type
         {
           if(transaction_type == "staking")
           {
-            models.stakeholder.update({tx_stake_confirm : true},{where:{
+           //get start_time et and end_time
+            var start_time = new Date(Date.now());
+            var end_time = datefns.addDays(start_time,day) //add period day choose by the user on  //date.toLocaleString("en-US", {timeZone: "America/New_York"});
+                    //the start_time, start_time is the current time of request
+            models.stakeholder.update({start_time: start_time,end_time: end_time,tx_stake_confirm : true},{where:{
               crypto_name : crypto_name,
               user_uuid : owner_uuid
-            }}).then(result2 => {console.log("upadate tx_conf: " ,result1)});
+            }}).then(result1 =>{console.log("upadate stakeholder instance: " ,result1)});
 
             models.user.update({isHolder : true},{where: {
               uuid:owner_uuid

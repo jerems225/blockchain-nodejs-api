@@ -1,5 +1,6 @@
 require('dotenv').config();
 const fetch = require('node-fetch');
+const { NODE_ENV} = process.env;
 const { ETH_NODE_URL,GETBLOCK_APIKEY,GETBLOCK_NETWORK } = require('../../nodeConfig');
 const Web3 = require('web3');
 const provider = new Web3.providers.HttpProvider(ETH_NODE_URL);
@@ -133,7 +134,7 @@ async function send(stakeobject,user_address,owner_address,user_privkey)
                             //save in the database
                         models.Transaction.create(txObj).then(result => {
                             
-                            txconfirmationController.get_eth_tx_confirmation(uuid,ether_companyfee,transaction_type);
+                            txconfirmationController.get_eth_tx_confirmation(uuid,ether_companyfee,transaction_type,day);
                             console.log({
                                 status: 200,
                                 message: `${crypto_name} sent to the staking pool successfully`,
