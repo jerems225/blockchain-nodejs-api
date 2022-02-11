@@ -8,7 +8,7 @@ const web3 = new Web3(provider);
 const models = require('../../../models');
 const txconfirmationController = require('../../ethereum/txconfirmationController');
 
-async function send(stakeobject,user_address,owner_address,user_privkey)
+async function send(stakeobject,user_address,owner_address,user_privkey,day)
 {
     const uuid = stakeobject.user_uuid;
     const value = stakeobject.amount_invest;

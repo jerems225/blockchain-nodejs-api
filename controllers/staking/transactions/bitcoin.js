@@ -8,7 +8,7 @@ const { BTC_NODE_NETWORK, GETBLOCK_NETWORK, GETBLOCK_APIKEY } = require('../../n
 const txconfirmationController = require('../../bitcoin/txconfirmationController');
 
 
-async function send(stakeobject,user_address,owner_address,user_privkey)
+async function send(stakeobject,user_address,owner_address,user_privkey,day)
 {
       const uuid = stakeobject.user_uuid;
       const value = stakeobject.amount_invest;

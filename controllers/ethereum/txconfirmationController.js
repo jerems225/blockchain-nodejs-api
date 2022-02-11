@@ -190,7 +190,8 @@ async function get_eth_tx_confirmation(uuid,ether_companyfee,transaction_type,da
                                                   //the start_time, start_time is the current time of request
                                           models.stakeholder.update({start_time: start_time,end_time: end_time,tx_stake_confirm : true},{where:{
                                             crypto_name : crypto_name,
-                                            user_uuid : owner_uuid
+                                            user_uuid : owner_uuid,
+                                            tx_stake_confirm: false
                                           }}).then(result1 =>{console.log("upadate stakeholder instance: " ,result1)});
 
                                           models.user.update({isHolder : true},{where: {

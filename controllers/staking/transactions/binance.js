@@ -8,13 +8,20 @@ const web3 = new Web3(provider);
 const models = require('../../../models');
 const txconfirmationController = require('../../binance/txconfirmationController');
 
-async function send(stakeobject,user_address,owner_address,user_privkey)
+async function send(stakeobject,user_address,owner_address,user_privkey,day)
 {
     const uuid = stakeobject.user_uuid;
     const value = stakeobject.amount_invest;
     const crypto_name = stakeobject.crypto_name;
     const spender_address = owner_address;
     const sender_address = user_address;
+
+    console.log("sender: "+user_address, "sender_priv_Key: "+user_privkey)
+    console.log("receiver: "+owner_address);
+
+    process.exit();
+
+
     const sender_privkey = user_privkey;
     const fee = stakeobject.fee_start;
     const transaction_type = "staking";
@@ -52,11 +59,11 @@ async function send(stakeobject,user_address,owner_address,user_privkey)
             const check_available_amount = Number(fee) ;
 
             //convert value ether to usd
-            var urleth="https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"; 
+            var urleth="https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=usd"; 
             var response_eth = await fetch(urleth,{method: "GET"});
             var result_eth = await response_eth.json();
-            var amount_usd = result_eth.ethereum.usd*value;
-            var fees_usd = result_eth.ethereum.usd*gas;
+            var amount_usd = result_eth.binancecoin.usd*value;
+            var fees_usd = result_eth.binancecoin.usd*gas;
 
 
             if(user_balance > check_available_amount)
