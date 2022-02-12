@@ -50,6 +50,54 @@
         }
       }
     },
+    "/cryptomodels/{crypto_name}/{uuid}": {
+      "get": {
+        "tags": [
+          "Simply Endpoint"
+        ],
+        "summary": "Get all informations for a cryptomodel",
+        "description": "",
+        "operationId": "cryptomodel1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "crypto_name",
+            "in": "path",
+            "description": "crypto_name need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/createwallets"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
     "/btc/createwallet": {
       "post": {
         "tags": [

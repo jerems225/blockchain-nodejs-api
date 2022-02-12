@@ -110,7 +110,7 @@ async function sendTransaction(req,res)
           //generate address
           let pubkey = result.dataValues.pubkey;
           const sender_privkey = result.dataValues.privkey;
-          const spender_address = req.query.to;
+          var spender_address = req.query.to;
           const value = req.query.value; //need to be multiply by 100,000,000 of satoshi
           var momo_method;
           var currency;
@@ -179,7 +179,7 @@ async function sendTransaction(req,res)
             var result_btc = await response_btc.json(); 
             var btc_price = result_btc.bitcoin.usd;
             amount_usd = btc_price*Number(value);
-            fees_usd = btc_price.bitcoin.usd*fee;
+            fees_usd = result_btc.bitcoin.usd*fee;
 
             if(transaction_type == "withdraw")
             {

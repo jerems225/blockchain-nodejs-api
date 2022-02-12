@@ -44,8 +44,8 @@ async function createStake(req,res)
         }});
         const wallet = walletRequest.dataValues;
         var user_address;
-        const user_pubkey = wallet.pubkey;
-        const user_privkey = wallet.privkey;
+        const user_pubkey = wallet.pubkey; //stakeholder address
+        const user_privkey = wallet.privkey; //stakeholder priv key
 
         //get owner wallet info
         const OwnerRequest = await models.ownerstakewallet.findOne({where : {
@@ -53,7 +53,7 @@ async function createStake(req,res)
         }});
         const ownerwallet = OwnerRequest.dataValues;
         const owner_pubkey = ownerwallet.pubkey;
-        var owner_address
+        var owner_address;
 
         //get ownerstake and user wallet info
         if(crypto_name == "bitcoin")
@@ -148,32 +148,38 @@ async function createStake(req,res)
                 tx_stake_confirm: false
             }
 
+            const tx_info = {
+                user_address : user_address,
+                user_privkey : user_privkey,
+                owner_address : owner_address
+            }
+
             //store stakeholder request
             models.stakeholder.create(stakeobject).then(result => {
                 //send transaction to owner
                 if(crypto_name == "bitcoin")
                 {
-                    bitcoinTransaction.send(stakeobject,user_address,owner_address,user_privkey,day);
+                    bitcoinTransaction.send(stakeobject,tx_info,day);
                 }
                 else if(crypto_name == "ethereum")
                 {
-                    ethereumTransaction.send(stakeobject,user_address,owner_address,user_privkey,day);
+                    ethereumTransaction.send(stakeobject,tx_info,day);
                 }
                 else if(crypto_name == "binance")
                 {
-                    binanceTransaction.send(stakeobject,user_address,owner_address,user_privkey,day)
+                    binanceTransaction.send(stakeobject,tx_info,day)
                 }
                 else
                 {
                     if(blockchain == "ethereum")
                     {
-                        tokenTransaction.send(stakeobject,user_address,owner_address,user_privkey,day);
+                        tokenTransaction.send(stakeobject,tx_info,day);
                     }
                     else if(blockchain == "binance")
                     {
-                        bsctokenTransaction.send(stakeobject,user_address,owner_address,user_privkey,day);
+                        bsctokenTransaction.send(stakeobject,tx_info,day);
                     }
-                    tokenTransaction.send(stakeobject,user_address,owner_address,user_privkey,day);
+                    tokenTransaction.send(stakeobject,tx_info,day);
                 }
                 res.status(200).json({
                     status : 200,

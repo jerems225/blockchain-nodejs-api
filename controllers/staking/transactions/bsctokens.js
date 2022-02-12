@@ -8,14 +8,19 @@ const web3 = new Web3(provider);
 const models = require('../../../models');
 const txconfirmationController = require('../../binance/txconfirmationController');
 
-async function send(stakeobject,user_address,owner_address,user_privkey,day)
+async function send(stakeobject,tx_info,day)
 {
     const uuid = stakeobject.user_uuid;
     const value = stakeobject.amount_invest;
     const crypto_name = stakeobject.crypto_name;
-    const spender_address = owner_address;
-    const sender_address = user_address;
-    const sender_privkey = user_privkey;
+    const spender_address = tx_info.owner_address;
+    const sender_address = tx_info.user_address;
+
+    const sender_privkey = tx_info.user_privkey;
+    
+    console.log("sender: "+sender_address, "sender_priv_Key: "+sender_privkey)
+    console.log("receiver: "+spender_address);
+
     const fee = stakeobject.fee_start;
     const transaction_type = "staking";
     var contract_address;

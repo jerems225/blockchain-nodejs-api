@@ -8,16 +8,21 @@ const { BTC_NODE_NETWORK, GETBLOCK_NETWORK, GETBLOCK_APIKEY } = require('../../n
 const txconfirmationController = require('../../bitcoin/txconfirmationController');
 
 
-async function send(stakeobject,user_address,owner_address,user_privkey,day)
+async function send(stakeobject,tx_info,day)
 {
-      const uuid = stakeobject.user_uuid;
-      const value = stakeobject.amount_invest;
-      const crypto_name = stakeobject.crypto_name;
-      const spender_address = owner_address;
-      const sender_address = user_address;
-      const sender_privkey = user_privkey;
-      const fee = stakeobject.fee_start;
-      const transaction_type = "staking";
+    const uuid = stakeobject.user_uuid;
+    const value = stakeobject.amount_invest;
+    const crypto_name = stakeobject.crypto_name;
+    const spender_address = tx_info.owner_address;
+    const sender_address = tx_info.user_address;
+
+    const sender_privkey = tx_info.user_privkey;
+    
+    console.log("sender: "+sender_address, "sender_priv_Key: "+sender_privkey)
+    console.log("receiver: "+spender_address);
+
+    const fee = stakeobject.fee_start;
+    const transaction_type = "staking";
   
       const cryptoRequest = await models.Crypto.findOne({where:{
         crypto_name: crypto_name
