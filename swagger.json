@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "description": "",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "title": "GIT Blockchain Api"
   },
   "host": "127.0.0.1:5500",
@@ -88,7 +88,55 @@
             "description": "successful operation",
             "schema": {
               "items": {
-                "$ref": "#/definitions/createwallets"
+                "$ref": "#/definitions/cryptomodel"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/cryptomodels/stakable/{crypto_name}/{uuid}": {
+      "get": {
+        "tags": [
+          "Simply Endpoint"
+        ],
+        "summary": "Get all informations for a cryptomodel",
+        "description": "",
+        "operationId": "cryptomodel1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "crypto_name",
+            "in": "path",
+            "description": "crypto_name need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/cryptomodel"
               }
             }
           },
@@ -5200,6 +5248,38 @@
             "updatedAt": "2022-02-03T10:50:39.167Z",
             "createdAt": "2022-02-03T10:50:39.167Z"
           }]
+        }
+      }
+    },
+    "cryptomodel": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "successfully!"
+        },
+        "data" : {
+          "type": "array",
+          "example":{
+            "id": 1,
+            "prefix": "N/A",
+            "crypto_name": "bitcoin",
+            "crypto_symbol": "btc",
+            "crypto_type": "coin",
+            "crypto_name_market": "bitcoin",
+            "stakable": false,
+            "staking_amount_min": 0.001,
+            "available": true,
+            "amount_min": 0.001,
+            "sym_balance": "0.00117071",
+            "dollar_value": 49.59244631,
+            "wallet_address": "mxZeJnkVFcdd68GDCv551Vhs9Dp5rw8qBQ",
+            "image": "https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png?1547033579"
+          }
         }
       }
     },
