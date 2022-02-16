@@ -17,8 +17,19 @@ async function createWallet()
             }});
             if(!walletRequest)
             {
+                var prefix;
+                var prefix_url = "";
+                if(cr.prefix == null)
+                {
+                    prefix = "N/A";
+                }
+                else
+                {
+                    prefix_url = "/"+cr.prefix;
+                    prefix = cr.prefix;
+                }
                 //create wallet for the specific
-                const url = `http://${BASE_IP}/${c.crypto_symbol}/createwallet?uuid=${u.uuid}`;
+                const url = `https://${BASE_IP}/createwallets?uuid=${u.uuid}`;
                 const req = await fetch(url,{
                     method : "POST"
                 });
@@ -82,6 +93,8 @@ async function addCrypto(req,res)
                     message: `${crypto_name} add successfully`,
                     datas: result
                 });
+
+                createWallet();
 
                 async function ownerwallet(crypto_name)
                 {
