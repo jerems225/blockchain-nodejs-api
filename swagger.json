@@ -105,7 +105,7 @@
         ],
         "summary": "Get all informations for a cryptomodel",
         "description": "",
-        "operationId": "cryptomodel1",
+        "operationId": "cryptostakemodel1",
         "produces": [
           "application/json"
         ],

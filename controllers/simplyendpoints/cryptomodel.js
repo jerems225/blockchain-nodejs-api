@@ -60,7 +60,7 @@ async function cryptoModel(req,res)
             });
             var usdresponse = await usdrequest.json();
             var price_value = usdresponse[cr_info.crypto_name_market].usd; //usd price for crypto instance
-            const usd_value = Number(balance)*price_value; // balance in usd dollar
+            const usd_value = price_value; // balance in usd dollar
     
             //get user address for instance crypto
             var address_url = `http://${BASE_IP}${prefix_url}/${cr_info.crypto_symbol}/wallet/getaddress?uuid=${uuid}`;
@@ -187,7 +187,7 @@ async function cryptoModelStakable(req,res)
             });
             var usdresponse = await usdrequest.json();
             var price_value = usdresponse[cr_info.crypto_name_market].usd; //usd price for crypto instance
-            const usd_value = Number(balance)*price_value; // balance in usd dollar
+            const usd_value = price_value; // balance in usd dollar
     
             //get user address for instance crypto
             var address_url = `http://${BASE_IP}${prefix_url}/${cr_info.crypto_symbol}/wallet/getaddress?uuid=${uuid}`;
