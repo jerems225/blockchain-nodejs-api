@@ -2,9 +2,9 @@ require('dotenv').config();
 const { BASE_IP } = process.env;
 const models = require('../../models');
 const fetch = require('node-fetch');
-const { createOwnerStakeWallet } = require('../simplyendpoints/createownerwallet');
-const { create_bsctoken_Account } = require('../bsctokens/createOwnerWallet');
-const { create_token_Account } = require('../tokens/createOwnerWallet');
+// const { createOwnerStakeWallet } = require('../simplyendpoints/createownerwallet');
+// const { create_bsctoken_Account } = require('../bsctokens/createOwnerWallet');
+// const { create_token_Account } = require('../tokens/createOwnerWallet');
 
 async function createWallet()
 {
@@ -21,30 +21,33 @@ async function createWallet()
             if(!walletRequest)
             {
                 //create wallet for the specific
-                const url = `https://${BASE_IP}/createwallets?uuid=${u.uuid}`;
+                const url = `http://${BASE_IP}/createwallets?uuid=${u.uuid}`;
                 const req = await fetch(url,{
                     method : "POST"
                 });
-                const res = await req.json();
-                console.log(res);
+
+                console.log(u,c)
+                // const res = await req.json();
+
             }
         })
     });
-    },100)
+    })
+   
     
 }
 
-async function createOwnerWallet(crypto_name,blockchain)
-{
-    if(blockchain == "ethereum")
-    {
-        create_token_Account(crypto_name);
-    }
-    else if(blockchain == "binance")
-    {
-        create_bsctoken_Account(crypto_name);
-    }
-}
+// async function createOwnerWallet(crypto_name,blockchain)
+// {
+//     if(blockchain == "ethereum")
+//     {
+//         create_token_Account(crypto_name);
+//     }
+//     else if(blockchain == "binance")
+//     {
+//         create_bsctoken_Account(crypto_name);
+//     }
+// }
 
 
 async function addCrypto(req,res)
@@ -173,5 +176,4 @@ async function addCrypto(req,res)
 module.exports = {
     addCrypto : addCrypto,
     createWallet :createWallet,
-    createOwnerWallet
 }

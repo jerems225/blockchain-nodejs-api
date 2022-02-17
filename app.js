@@ -164,9 +164,9 @@ app.use("/",user);
 
 
 //wallet no exist
-//const { createWallet } = require('./controllers/crypto/addController');
-//createWallet();
+// const { createWallet } = require('./controllers/crypto/addController');
+// createWallet();
 
 
 app.listen(5500);
-console.log('Server started: 5500')
+console.log('********************************   Server started Port: 5500 ***************************************************************')
