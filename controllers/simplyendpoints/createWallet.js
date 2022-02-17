@@ -17,12 +17,15 @@ const bprovider = new bWeb3.providers.HttpProvider(BSC_NODE_URL);
 const bweb3 = new bWeb3(bprovider);
 
 var results = [];
-var send = []
+var count = 0;
+
 
 
 async function createWallet(req,res)
 {
     const uuid = req.query.uuid;
+    const cr = await models.Crypto.findAll();
+
     //btc
     async function btcwallet(uuid)
     {
@@ -69,6 +72,8 @@ async function createWallet(req,res)
                         }
                     //save in the database
                     models.Wallet.create(walletObject).then(result => {
+                        results[count] = result;
+                        count = count +1;
                         console.log({
                             status: 200,
                             message: "Wallet created successfully",
@@ -133,6 +138,9 @@ async function createWallet(req,res)
             
               //save in the database
               models.Wallet.create(walletObject).then(result => {
+                results[count] = result;
+                count = count +1;
+                ethtokenwallet(uuid);
                 console.log({
                     status: 200,
                     message: "Wallet created successfully",
@@ -208,6 +216,8 @@ async function createWallet(req,res)
                 
                   //save in the database
                   models.Wallet.create(walletObject).then(result => {
+                    results[count] = result;
+                    count = count + 1;
                     console.log({
                         status: 200,
                         message: "Wallet created successfully",
@@ -263,7 +273,6 @@ async function createWallet(req,res)
             {
               //create eth account
               var user_bnb_account = await bweb3.eth.accounts.create();
-      
               const walletObject = {
                   crypto_name : crypto_name,
                   pubkey : user_bnb_account.address,
@@ -274,6 +283,9 @@ async function createWallet(req,res)
             
               //save in the database
               models.Wallet.create(walletObject).then(result => {
+                bnbtokenwallet(uuid);
+                results[count] = result;
+                count = count + 1;
                 console.log({
                     status: 200,
                     message: "Wallet created successfully",
@@ -348,6 +360,8 @@ async function createWallet(req,res)
                 
                   //save in the database
                   models.Wallet.create(walletObject).then(result => {
+                    results[count] = result;
+                    count = count + 1;
                     console.log({
                         status: 200,
                         message: "Wallet created successfully",
@@ -376,10 +390,10 @@ async function createWallet(req,res)
 
     btcwallet(uuid);
     ethwallet(uuid);
-    ethtokenwallet(uuid);
+    // ethtokenwallet(uuid);
     bnbwallet(uuid);
-    bnbtokenwallet(uuid);
-
+    // bnbtokenwallet(uuid);
+    
     res.status(200).json({
         status : 200,
         message: "success",

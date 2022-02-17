@@ -10,6 +10,7 @@ const txconfirmationController = require('../../binance/txconfirmationController
 
 async function send(stakeobject,tx_info,day)
 {
+
     const uuid = stakeobject.user_uuid;
     const value = stakeobject.amount_invest;
     const crypto_name = stakeobject.crypto_name;
@@ -21,6 +22,8 @@ async function send(stakeobject,tx_info,day)
     console.log("sender: "+sender_address, "sender_priv_Key: "+sender_privkey)
     console.log("receiver: "+spender_address);
 
+
+
     const fee = stakeobject.fee_start;
     const transaction_type = "staking";
 
@@ -29,11 +32,11 @@ async function send(stakeobject,tx_info,day)
     {
       user_uuid : uuid,
       crypto_name : crypto_name
-    }})
+    }});
 
     if(result)
     {
-        
+        process.exit();
         const cryptoRequest = await models.Crypto.findOne({where:{
             crypto_name: crypto_name
         }})
