@@ -1,4 +1,5 @@
 const models = require('../../models');
+const fetch = require('node-fetch')
 
 async function getstakeholders(req,res)
 {
@@ -48,16 +49,56 @@ async function userStake(req,res)
     const userRequest = await models.user.findOne({where:{
         uuid : uuid
     }});
-
+    var responses = [];
+    var count = 0;
     if(userRequest)
     {
         const userStakes = await models.stakeholder.findAll({where:{
             user_uuid : uuid
         }});
-        res.status(200).json({
-            status: 200,
-            message: `stake holder informations`,
-            data : userStakes
+
+        userStakes.forEach(async (us) => {
+
+            const crypto = await models.Crypto.findOne({where: {
+                crypto_name: us.crypto_name
+                }
+            });
+            const symbol = crypto.dataValues.crypto_symbol;
+            //get icon for crypto instance
+            var icon_url = `https://api.coingecko.com/api/v3/coins/${crypto.dataValues.crypto_name_market}`;
+            var iconresquest = await fetch(icon_url,{
+                method: "GET"
+            }); 
+            var iconresponse = await iconresquest.json();
+            const icon = iconresponse.image.thumb;
+            const response = {
+                 id: us.id,
+                 crypto_name: us.crypto_name,
+                 start_time: us.start_time,
+                 end_time: us.end_time,
+                 fee_start: us.fee_start,
+                 fee_end: us.fee_end,
+                 amount_invest: us.amount_invest,
+                 amount_reward: us.amount_reward,
+                 amount_reward_day: us.amount_reward_day,
+                 period: us.period,
+                 rate: us.rate,
+                 end_status: us.end_status,
+                 auto_renew: us.auto_renew,
+                 symbol: symbol,
+                 image_url: icon
+            };
+
+            responses[count] = response;
+            count = count + 1;
+            if(count == userStakes.length)
+            {
+                res.status(200).json({
+                    status: 200,
+                    message: "stake holder informations",
+                    data: responses
+                })
+            }
         });
     }
     else

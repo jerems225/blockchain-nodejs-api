@@ -2,10 +2,10 @@
   "swagger": "2.0",
   "info": {
     "description": "",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "title": "GIT Blockchain Api"
   },
-  "host": "127.0.0.1:5500",
+  "host": "gitblockchain.uticgroupafrica.com",
   "basePath": "/",
   "schemes": [
     "https",
@@ -50,7 +50,7 @@
         }
       }
     },
-    "/cryptomodels/{crypto_name}/{uuid}": {
+    "/cryptomodels/{uuid}": {
       "get": {
         "tags": [
           "Simply Endpoint"
@@ -62,16 +62,6 @@
           "application/json"
         ],
         "parameters": [
-          {
-            "name": "crypto_name",
-            "in": "path",
-            "description": "crypto_name need to be add in the url request",
-            "required": true,
-            "type": "string",
-            "items": {
-              "type": "string"
-            }
-          },
           {
             "name": "uuid",
             "in": "path",
@@ -98,7 +88,7 @@
         }
       }
     },
-    "/cryptomodels/stakable/{crypto_name}/{uuid}": {
+    "/cryptomodels/stakable/{uuid}": {
       "get": {
         "tags": [
           "Simply Endpoint"
@@ -110,16 +100,6 @@
           "application/json"
         ],
         "parameters": [
-          {
-            "name": "crypto_name",
-            "in": "path",
-            "description": "crypto_name need to be add in the url request",
-            "required": true,
-            "type": "string",
-            "items": {
-              "type": "string"
-            }
-          },
           {
             "name": "uuid",
             "in": "path",
