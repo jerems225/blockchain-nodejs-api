@@ -44,16 +44,17 @@ async function createStake(req,res)
         }});
         const wallet = walletRequest.dataValues;
         var user_address;
-        const user_pubkey = wallet.pubkey; //stakeholder address
-        const user_privkey = wallet.privkey; //stakeholder priv key
+        const sender_pubkey = wallet.pubkey; //stakeholder address
+        const sender_privkey = wallet.privkey; //stakeholder priv key
 
         //get owner wallet info
         const OwnerRequest = await models.ownerstakewallet.findOne({where : {
             crypto_name :crypto_name
         }});
         const ownerwallet = OwnerRequest.dataValues;
-        const owner_pubkey = ownerwallet.pubkey;
-        var owner_address;
+        const spender_pubkey = ownerwallet.pubkey;
+        var spender_address;
+        var sender_address;
 
         //get ownerstake and user wallet info
         if(crypto_name == "bitcoin")
@@ -64,16 +65,16 @@ async function createStake(req,res)
                 method: "GET"
             });
             var btcres = await btcreq.json();
-            owner_address = btcres.address;
+            spender_address = btcres.address;
 
             //user_stake
-            var buffer = Buffer.from(user_pubkey,'hex');
+            var buffer = Buffer.from(sender_pubkey,'hex');
             const { address } = bitcoin.payments.p2pkh({ pubkey: buffer, network: BTC_NODE_NETWORK_CORE });
-            user_address = address
+            sender_address = address
         }
         else{
-            owner_address = owner_pubkey
-            user_address = user_pubkey
+            spender_address = spender_pubkey;
+            sender_address = sender_pubkey;
         }
 
         if(amount_invest > staking_amount_min)
@@ -149,9 +150,9 @@ async function createStake(req,res)
             }
 
             const tx_info = {
-                user_address : user_address,
-                user_privkey : user_privkey,
-                owner_address : owner_address
+                sender_address : sender_address,
+                sender_privkey : sender_privkey,
+                spender_address : spender_address
             }
 
             //store stakeholder request

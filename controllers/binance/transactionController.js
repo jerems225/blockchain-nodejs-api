@@ -29,7 +29,6 @@ async function estimategas(req,res)
         const transactionObject = {
             from: sender_address,
             to: spender_address,
-            value: web3.utils.toWei(String(value),'ether'),
         }
         const gasLimit = await web3.eth.estimateGas(transactionObject);
         const gasgwei = await web3.utils.fromWei((gasPrice.toString()).toString(),'gwei');
