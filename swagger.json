@@ -5,7 +5,7 @@
     "version": "0.1.6",
     "title": "GIT Blockchain Api"
   },
-  "host": "gitblockchain.uticgroupafrica.com",
+  "host": "127.0.0.1:5500",
   "basePath": "/",
   "schemes": [
     "https",
@@ -5104,6 +5104,8 @@
                 "amount_invest_return": null,
                 "tx_stake_confirm": true,
                 "auto_renew": true,
+                "symbol" : "eth",
+                "image_url": "https://...",
                 "user_uuid": "22aba468-294b-4b17-82be-e046187ae7e2",
                 "createdAt": "2021-11-26T13:34:44.000Z",
                 "updatedAt": "2021-11-26T15:09:14.000Z"
@@ -5244,7 +5246,7 @@
         },
         "data" : {
           "type": "array",
-          "example":{
+          "example":[{
             "id": 1,
             "prefix": "N/A",
             "crypto_name": "bitcoin",
@@ -5259,7 +5261,7 @@
             "dollar_value": 49.59244631,
             "wallet_address": "mxZeJnkVFcdd68GDCv551Vhs9Dp5rw8qBQ",
             "image": "https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png?1547033579"
-          }
+          }]
         }
       }
     },
