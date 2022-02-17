@@ -1,21 +1,18 @@
 require('dotenv').config();
-const { ETH_NODE_URL } = require('../nodeConfig');
-const Web3 = require('web3');
-const provider = new Web3.providers.HttpProvider(ETH_NODE_URL);
-const web3 = new Web3(provider);
 const models = require('../../models');
-const crypto_name = "simbcoin" ;
 
-async function create_Smb_Account()
+async function create_token_Account(crypto_name)
 {
-  
     //create eth account
-    var user_eth_account = await web3.eth.accounts.create();
-
+    const wallet = await models.ownerwallets.findOne({where:
+    {
+      crypto_name : "ethereum"
+    }});
+    const data = wallet.dataValues;
     const walletObject = {
         crypto_name : crypto_name,
-        pubkey : user_eth_account.address,
-        privkey : user_eth_account.privateKey,
+        pubkey : data.pubkey,
+        privkey : data.privkey,
         mnemonic : "N/A",
     }
   
@@ -38,6 +35,8 @@ async function create_Smb_Account()
   
 }
 
-create_Smb_Account();
+module.exports = {
+  create_token_Account
+}
 
 

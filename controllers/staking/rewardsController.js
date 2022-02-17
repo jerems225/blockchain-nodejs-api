@@ -2,6 +2,8 @@ const models = require('../../models');
 const bitcoin = require('./transactions/bitcoin');
 const ethereum = require('./transactions/ethereum');
 const token = require('./transactions/token');
+const binance = require('./transactions/binance');
+const bsctoken = require('./transactions/bsctokens');
 
 async function rewards()
 {
@@ -48,7 +50,7 @@ async function rewards()
                                 crypto_name :crypto_name
                             }});
                             const ownerwallet = OwnerRequest.dataValues;
-                            var btcurl = `http://${BASE_IP}/btc/owner/getaddress/stake`
+                            var btcurl = `https://${BASE_IP}/btc/owner/getaddress/stake`
                             var btcreq = await fetch(btcurl,{
                                 method: "GET"
                             });
@@ -57,7 +59,7 @@ async function rewards()
                             const user_privkey = ownerwallet.dataValues.privkey//owner_privkey
     
                             //user_stake
-                            const userUrl = `http://${BASE_IP}/btc/getaddress?uuid=${uuid}`;
+                            const userUrl = `https://${BASE_IP}/btc/getaddress?uuid=${uuid}`;
                             const userReq = await fetch(userUrl,{
                                 method : "GET"
                             })
@@ -91,11 +93,12 @@ async function rewards()
                             
                             
                         }
-                        else{
+                        else if(crypto_name == "binance")
+                        {
                             //owner_stake
                             //get owner wallet info
                             const OwnerRequest = await models.ownerstakewallet.findOne({where : {
-                                crypto_name : 'ethereum'
+                                crypto_name :crypto_name
                             }});
                             const ownerwallet = OwnerRequest.dataValues;
                             const user_address = ownerwallet.pubkey;//owner_address
@@ -109,7 +112,59 @@ async function rewards()
                             const wallet = walletRequest.dataValues;
                             const owner_address = wallet.pubkey;//user_address
     
-                            setTimeout(token.send(stakeobject,user_address,owner_address,user_privkey,stakeholder.id), 6000)
+                            setTimeout(binance.send(stakeobject,user_address,owner_address,user_privkey,stakeholder.id), 6000)
+                        }
+                        else{
+                            //get crypto info
+                            const crypto =  await models.Crypto.findOne({where: 
+                                {
+                                    crypto_name : crypto_name
+                                }
+                            })
+                            const data = crypto.dataValues;
+                            if(data.blockchain == "ethereum")
+                            {
+                                //owner_stake
+                                //get owner wallet info
+                                const OwnerRequest = await models.ownerstakewallet.findOne({where : {
+                                    crypto_name : 'ethereum'
+                                }});
+                                const ownerwallet = OwnerRequest.dataValues;
+                                const user_address = ownerwallet.pubkey;//owner_address
+                                const user_privkey = ownerwallet.privkey;//owner_address
+        
+                                const walletRequest = await models.Wallet.findOne({where : {
+                                    user_uuid : uuid,
+                                    crypto_name : crypto_name
+                                }});
+        
+                                const wallet = walletRequest.dataValues;
+                                const owner_address = wallet.pubkey;//user_address
+        
+                                setTimeout(token.send(stakeobject,user_address,owner_address,user_privkey,stakeholder.id), 6000)
+                            }
+                            else if(data.blockchain == "binance")
+                            {
+                                //owner_stake
+                                //get owner wallet info
+                                const OwnerRequest = await models.ownerstakewallet.findOne({where : {
+                                    crypto_name : 'binance'
+                                }});
+                                const ownerwallet = OwnerRequest.dataValues;
+                                const user_address = ownerwallet.pubkey;//owner_address
+                                const user_privkey = ownerwallet.privkey;//owner_address
+        
+                                const walletRequest = await models.Wallet.findOne({where : {
+                                    user_uuid : uuid,
+                                    crypto_name : crypto_name
+                                }});
+        
+                                const wallet = walletRequest.dataValues;
+                                const owner_address = wallet.pubkey;//user_address
+        
+                                setTimeout(bsctoken.send(stakeobject,user_address,owner_address,user_privkey,stakeholder.id), 6000)
+                            }
+                            
                         }
                     }
                 }

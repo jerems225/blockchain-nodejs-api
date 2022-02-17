@@ -43,7 +43,6 @@ async function createStake(req,res)
             crypto_name :crypto_name
         }});
         const wallet = walletRequest.dataValues;
-        var user_address;
         const sender_pubkey = wallet.pubkey; //stakeholder address
         const sender_privkey = wallet.privkey; //stakeholder priv key
 

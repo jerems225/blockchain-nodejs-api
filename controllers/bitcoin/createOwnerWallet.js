@@ -14,21 +14,13 @@ const path = BTC_NODE_PATH
 
 async function create_Btc_Account(uuid){
 
- const owner_uuid = uuid
 
 //verification if uuid is exist and valid before run code 
-  const user = await models.user.findOne({ where : 
-  {
-    uuid : owner_uuid,
-  }})
  const result = await models.ownerstakewallet.findOne({ where : 
     {
       crypto_name : crypto_name
     }})
 
-
-    if(user && user.dataValues.roles[0] == "ROLE_ADMIN")
-    {
         if(result)
         {
           console.log({
@@ -78,14 +70,6 @@ async function create_Btc_Account(uuid){
             });
           });
         }
-    }
-    else
-    {
-      res.status(401).json({
-        status : 401,
-        message: "Unknown User",
-    });
-    }
     
     
 }

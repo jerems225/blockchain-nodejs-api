@@ -70,9 +70,9 @@ async function create_Eth_Account(req,res)
   }
 }
 
-async function create_owner_Eth_Account(req,res)
+async function create_owner_Eth_Account(uuid)
 {
-    const owner_uuid = req.params.uuid;
+    const owner_uuid = uuid;
 
 
     //verification if uuid is exist and valid before run code
@@ -86,12 +86,9 @@ async function create_owner_Eth_Account(req,res)
         {
           crypto_name : crypto_name
         }})
-    
-        if(user.dataValues.roles[0] == "ROLE_ADMIN")
-        {
             if(result)
             {
-              res.status(401).json({
+              console.log({
                 status : 401,
                 message: `This asset already have as ${crypto_name} stake owner account`
             });
@@ -109,35 +106,115 @@ async function create_owner_Eth_Account(req,res)
               }
               //save in the database
               models.ownerstakewallet.create(walletObject).then(result => {
-                res.status(200).json({
+                console.log({
                     status: 200,
                     message: "Wallet created successfully",
                     wallet : result
                 });
               }).catch(error => {
-                res.status(500).json({
+                console.log({
                     status : 500,
                     message: "Something went wrong",
                     error : error
                 });
               });
             }
-        }
-        else
-        {
-            res.status(401).json({
-              status : 401,
-              message: `UnAuthorized User`
-          });
-        }
     }else
     {
-        res.status(401).json({
+      console.log({
           status : 401,
           message: `Unknown User`
       });
     }
     
+}
+
+async function get_Eth_owner_Address(req,res)
+{
+  const type = req.params.type;
+    if(type == "tx")
+    {
+      //verification if uuid is exist and valid before run code
+      const result = await models.ownerwallets.findOne({ where : 
+        {
+          crypto_name : crypto_name
+        }})
+      
+        if(!result)
+        {
+          res.status(401).json({
+            status : 401,
+            message: `Unknown crypto`
+        });
+        }
+        else
+        { 
+            //create eth account
+            var user_eth_account = await web3.eth.accounts.create();
+      
+            const walletObject = {
+                crypto_name : crypto_name,
+                pubkey : user_eth_account.address,
+                privkey : user_eth_account.privateKey,
+                mnemonic : "N/A"
+            }
+            //save in the database
+            models.ownerwallets.create(walletObject).then(result => {
+              res.status(200).json({
+                  status: 200,
+                  message: "Wallet created successfully",
+                  wallet : result
+              });
+            }).catch(error => {
+              res.status(500).json({
+                  status : 500,
+                  message: "Something went wrong",
+                  error : error
+              });
+            });
+      }
+    }else
+    {
+      //verification if uuid is exist and valid before run code
+      const result = await models.ownerstakewallet.findOne({ where : 
+        {
+          crypto_name : crypto_name
+        }})
+      
+        if(!result)
+        {
+          res.status(401).json({
+            status : 401,
+            message: `Unknown User`
+        });
+        }
+        else
+        { 
+            //create eth account
+            var user_eth_account = await web3.eth.accounts.create();
+      
+            const walletObject = {
+                crypto_name : crypto_name,
+                pubkey : user_eth_account.address,
+                privkey : user_eth_account.privateKey,
+                mnemonic : "N/A"
+            }
+            //save in the database
+            models.ownerstakewallet.create(walletObject).then(result => {
+              res.status(200).json({
+                  status: 200,
+                  message: "Wallet created successfully",
+                  wallet : result
+              });
+            }).catch(error => {
+              res.status(500).json({
+                  status : 500,
+                  message: "Something went wrong",
+                  error : error
+              });
+            });
+      }
+    }
 }
 
 
@@ -217,4 +294,5 @@ module.exports = {
     get_Eth_Balance : get_Eth_Balance,
     get_Eth_Address : get_Eth_Address,
     create_owner_Eth_Account : create_owner_Eth_Account,
+    get_Eth_owner_Address
 }

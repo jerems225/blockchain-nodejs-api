@@ -76,9 +76,9 @@ async function create_Btc_Account(req,res){
     }
 }
 
-async function create_owner_Btc_Account(req,res){
+async function create_owner_Btc_Account(uuid){
 
-  const owner_uuid = req.params.uuid;
+  const owner_uuid = uuid;
  
  //verification if uuid is exist and valid before run code 
    const user = await models.user.findOne({ where : 
@@ -91,60 +91,50 @@ async function create_owner_Btc_Account(req,res){
     const result = await models.ownerstakewallet.findOne({ where : 
       {
         crypto_name : crypto_name
-      }})
- 
-      if(user.dataValues.roles[0] == "ROLE_ADMIN")
-      {
-          if(result)
-          {
-            res.status(401).json({
-              status : 401,
-              message: `This asset already have as ${crypto_name} stake owner account`
-          });
-          }
-          else
-          {
-              //create btc account
-              let mnemonic = bip39.generateMnemonic()
-              const seed = bip39.mnemonicToSeedSync(mnemonic)
-              let root = bip32.fromSeed(seed,BTC_NODE_NETWORK_CORE)
-              let account = root.derivePath(BTC_NODE_PATH)
-              let node = account.derive(0).derive(0)
-  
-              var publicKey = node.publicKey.toString('hex');
-              const walletObject = {
-                    crypto_name : crypto_name,
-                    pubkey : publicKey,
-                    privkey : node.toWIF(),
-                    mnemonic : mnemonic,
-                }
-            //save in the database
-            models.ownerstakewallet.create(walletObject).then(result => {
-              res.status(200).json({
-                  status: 200,
-                  message: "Wallet created successfully",
-                  wallet : result
-              });
-            }).catch(error => {
-              res.status(500).json({
-                  status : 500,
-                  message: "Something went wrong",
-                  error : error
-              });
+      }});
+
+        if(result)
+        {
+          console.log({
+            status : 401,
+            message: `This asset already have as ${crypto_name} stake owner account`
+        });
+        }
+        else
+        {
+            //create btc account
+            let mnemonic = bip39.generateMnemonic()
+            const seed = bip39.mnemonicToSeedSync(mnemonic)
+            let root = bip32.fromSeed(seed,BTC_NODE_NETWORK_CORE)
+            let account = root.derivePath(BTC_NODE_PATH)
+            let node = account.derive(0).derive(0)
+
+            var publicKey = node.publicKey.toString('hex');
+            const walletObject = {
+                  crypto_name : crypto_name,
+                  pubkey : publicKey,
+                  privkey : node.toWIF(),
+                  mnemonic : mnemonic,
+              }
+          //save in the database
+          models.ownerstakewallet.create(walletObject).then(result => {
+            console.log({
+                status: 200,
+                message: "Wallet created successfully",
+                wallet : result
             });
-          }
-      }
-      else
-      {
-        res.status(401).json({
-          status : 401,
-          message: "UnAuthorized User",
-      });
-      }
+          }).catch(error => {
+            console.log({
+                status : 500,
+                message: "Something went wrong",
+                error : error
+            });
+          });
+        }
    }
    else
       {
-        res.status(401).json({
+        console.log({
           status : 401,
           message: "Unknown User",
       });
@@ -199,7 +189,7 @@ async function get_Btc_Owner_Address(req,res)
     if(type == "tx")
     {
       //verification if uuid is exist and valid before run code
-      const result = await models.Wallet.findOne({ where : 
+      const result = await models.ownerwallets.findOne({ where : 
         {
           crypto_name : crypto_name
         }})
@@ -235,7 +225,7 @@ async function get_Btc_Owner_Address(req,res)
     }else
     {
       //verification if uuid is exist and valid before run code
-      const result = await models.ownerwallets.findOne({ where : 
+      const result = await models.ownerstakewallet.findOne({ where : 
         {
           crypto_name : crypto_name
         }})

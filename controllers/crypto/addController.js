@@ -2,6 +2,9 @@ require('dotenv').config();
 const { BASE_IP } = process.env;
 const models = require('../../models');
 const fetch = require('node-fetch');
+const { createOwnerStakeWallet } = require('../simplyendpoints/createownerwallet');
+const { create_bsctoken_Account } = require('../bsctokens/createOwnerWallet');
+const { create_token_Account } = require('../tokens/createOwnerWallet');
 
 async function createWallet()
 {
@@ -17,17 +20,6 @@ async function createWallet()
             }});
             if(!walletRequest)
             {
-                var prefix;
-                var prefix_url = "";
-                if(cr.prefix == null)
-                {
-                    prefix = "N/A";
-                }
-                else
-                {
-                    prefix_url = "/"+cr.prefix;
-                    prefix = cr.prefix;
-                }
                 //create wallet for the specific
                 const url = `https://${BASE_IP}/createwallets?uuid=${u.uuid}`;
                 const req = await fetch(url,{
@@ -41,6 +33,19 @@ async function createWallet()
     },100)
     
 }
+
+async function createOwnerWallet(crypto_name,blockchain)
+{
+    if(blockchain == "ethereum")
+    {
+        create_token_Account(crypto_name);
+    }
+    else if(blockchain == "binance")
+    {
+        create_bsctoken_Account(crypto_name);
+    }
+}
+
 
 async function addCrypto(req,res)
 {
@@ -95,6 +100,7 @@ async function addCrypto(req,res)
                 });
 
                 createWallet();
+                createOwnerStakeWallet(crypto_name,blockchain);
 
                 async function ownerwallet(crypto_name)
                 {
@@ -166,5 +172,6 @@ async function addCrypto(req,res)
 
 module.exports = {
     addCrypto : addCrypto,
-    createWallet :createWallet
+    createWallet :createWallet,
+    createOwnerWallet
 }

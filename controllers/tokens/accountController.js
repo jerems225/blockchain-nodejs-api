@@ -81,14 +81,8 @@ async function createTokenAccount(req,res)
     //save account in the database
 }
 
-async function create_owner_TokenAccount(req,res)
+async function create_owner_TokenAccount(name)
 {
-    const owner_uuid = req.params.uuid;
-    const name = req.params.name;
-
-    const user = await models.user.findOne({where : {
-      uuid: owner_uuid
-    }})
 
     const result = await models.ownerstakewallet.findOne({ where : 
     {
@@ -97,8 +91,6 @@ async function create_owner_TokenAccount(req,res)
 
     if(user)
     {
-      if(user.dataValues.roles[0] == "ROLE_ADMIN")
-      {
         if(result)
         {
           res.status(401).json({
@@ -137,13 +129,6 @@ async function create_owner_TokenAccount(req,res)
             });
           });
         }
-      }else
-      {
-          res.status(401).json({
-            status : 401,
-            message: `UnAuthorized User`
-        });
-      }
     }
     else
     {
@@ -188,6 +173,65 @@ async function get_token_Address(req,res)
             address : result.dataValues.pubkey
         });
       }
+}
+
+async function get_token_owner_Address(req,res)
+{
+    const type = req.params.type;
+    const crypto_symbol = req.params.token_symbol;
+    const cryptoRequest = await models.Crypto.findOne({where:{
+      crypto_symbol: crypto_symbol
+    }})
+    const crypto_name = cryptoRequest.dataValues.crypto_name;
+
+    if(type == "tx")
+    {
+      //verification if uuid is exist and valid before run code
+      const result = await models.ownerwallets.findOne({ where : 
+        {
+          crypto_name : crypto_name
+        }})
+
+        if(!result)
+        {
+          res.status(401).json({
+            status : 401,
+            message: `Unknown crypto`
+        });
+        }
+        else
+        {
+          //save in the database
+            res.status(200).json({
+                status: 200,
+                address : result.dataValues.pubkey
+            });
+          }
+    }
+    else
+    {
+      //verification if uuid is exist and valid before run code
+      const result = await models.ownerstakewallet.findOne({ where : 
+        {
+          crypto_name : crypto_name
+        }})
+
+        if(!result)
+        {
+          res.status(401).json({
+            status : 401,
+            message: `unknown crypto`
+        });
+        }
+        else
+        {
+          //save in the database
+            res.status(200).json({
+                status: 200,
+                address : result.dataValues.pubkey
+            });
+          }
+    }
 }
 
 async function get_token_balance(req,res)
@@ -275,5 +319,6 @@ module.exports = {
     createTokenAccount : createTokenAccount,
     get_token_balance : get_token_balance,
     get_token_Address : get_token_Address,
-    create_owner_TokenAccount : create_owner_TokenAccount
+    create_owner_TokenAccount : create_owner_TokenAccount,
+    get_token_owner_Address
 }
