@@ -2,7 +2,7 @@ const models = require("../../models");
 const fetch = require('node-fetch');
 const {BASE_IP} = process.env;
 
-async function cryptoModel(req,res)
+async function oldcryptoModel(req,res)
 {
     const uuid = req.params.uuid;
     const crypto_name = req.params.crypto_name;
@@ -42,7 +42,7 @@ async function cryptoModel(req,res)
             };
     
             //get crypto instance balance
-            var bal_url = `https://${BASE_IP}${prefix_url}/${cr_info.crypto_symbol}/accountbalance/${uuid}`;
+            var bal_url = `http://${BASE_IP}${prefix_url}/${cr_info.crypto_symbol}/accountbalance/${uuid}`;
     
             // console.log(bal_url);
             // process.exit()
@@ -63,7 +63,7 @@ async function cryptoModel(req,res)
             const usd_value = Number(balance)*price_value; // balance in usd dollar
     
             //get user address for instance crypto
-            var address_url = `https://${BASE_IP}${prefix_url}/${cr_info.crypto_symbol}/wallet/getaddress?uuid=${uuid}`;
+            var address_url = `http://${BASE_IP}${prefix_url}/${cr_info.crypto_symbol}/wallet/getaddress?uuid=${uuid}`;
             var addressRequest = await fetch(address_url,{
                 method: "GET"
             });
@@ -124,7 +124,7 @@ async function cryptoModel(req,res)
     }
 }
 
-async function cryptoModelStakable(req,res)
+async function oldcryptoModelStakable(req,res)
 {
     const uuid = req.params.uuid;
     const crypto_name = req.params.crypto_name;
@@ -253,6 +253,6 @@ async function cryptoModelStakable(req,res)
 }
 
 module.exports = {
-    cryptoModel,
-    cryptoModelStakable
+    oldcryptoModel,
+    oldcryptoModelStakable
 }

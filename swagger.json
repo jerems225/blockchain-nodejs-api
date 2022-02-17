@@ -5,7 +5,7 @@
     "version": "0.1.6",
     "title": "GIT Blockchain Api"
   },
-  "host": "gitblockchain.uticgroupafrica.com",
+  "host": "127.0.0.1:5500",
   "basePath": "/",
   "schemes": [
     "https",
@@ -100,6 +100,102 @@
           "application/json"
         ],
         "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/cryptomodel"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/cryptomodels/{crypto_name}/{uuid}": {
+      "get": {
+        "tags": [
+          "Simply Endpoint"
+        ],
+        "summary": "Get all informations for a cryptomodel",
+        "description": "",
+        "operationId": "oldcryptomodel1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "crypto_name",
+            "in": "path",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "in": "path",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/cryptomodel"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/cryptomodels/stakable/{crypto_name}/{uuid}": {
+      "get": {
+        "tags": [
+          "Simply Endpoint"
+        ],
+        "summary": "Get all informations for a cryptomodel",
+        "description": "",
+        "operationId": "oldcryptostakemodel1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "crypto_name",
+            "in": "path",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
           {
             "name": "uuid",
             "in": "path",
