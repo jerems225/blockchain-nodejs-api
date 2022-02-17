@@ -10,17 +10,13 @@ const txconfirmationController = require('../../bitcoin/txconfirmationController
 
 async function send(stakeobject,tx_info,day)
 {
+
     const uuid = stakeobject.user_uuid;
     const value = stakeobject.amount_invest;
     const crypto_name = stakeobject.crypto_name;
-    const spender_address = tx_info.owner_address;
-    const sender_address = tx_info.user_address;
-
-    const sender_privkey = tx_info.user_privkey;
-    
-    console.log("sender: "+sender_address, "sender_priv_Key: "+sender_privkey)
-    console.log("receiver: "+spender_address);
-
+    const spender_address = tx_info.spender_address;
+    const sender_address = tx_info.sender_address;
+    const sender_privkey = tx_info.sender_privkey;
     const fee = stakeobject.fee_start;
     const transaction_type = "staking";
   

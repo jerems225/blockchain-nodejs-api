@@ -16,14 +16,7 @@ async function send(stakeobject,tx_info,day)
     const crypto_name = stakeobject.crypto_name;
     const spender_address = tx_info.spender_address;
     const sender_address = tx_info.sender_address;
-
     const sender_privkey = tx_info.sender_privkey;
-    
-    console.log("sender: "+sender_address, "sender_priv_Key: "+sender_privkey)
-    console.log("receiver: "+spender_address);
-
-
-
     const fee = stakeobject.fee_start;
     const transaction_type = "staking";
 
@@ -36,7 +29,6 @@ async function send(stakeobject,tx_info,day)
 
     if(result)
     {
-        process.exit();
         const cryptoRequest = await models.Crypto.findOne({where:{
             crypto_name: crypto_name
         }})
