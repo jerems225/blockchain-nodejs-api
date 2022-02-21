@@ -5,7 +5,6 @@ const {BASE_IP} = process.env;
 async function cryptoModel(req,res)
 {
     const uuid = req.params.uuid;
-    const crypto_name = req.params.crypto_name;
     const user = await models.user.findOne({where : {
         uuid : uuid
     }});
@@ -20,9 +19,9 @@ async function cryptoModel(req,res)
         });
         var arrayResponse = [];
         var count = 0;
+        var userBalance = 0;
         if(cryptos)
         {
-            // const cr = cryptos.dataValues;
             //get instance crypto information
 
             cryptos.forEach(async (cr) => {
@@ -51,16 +50,13 @@ async function cryptoModel(req,res)
                 };
         
                 //get crypto instance balance
-                var bal_url = `http://${BASE_IP}${prefix_url}/${cr_info.crypto_symbol}/accountbalance/${uuid}`;
-        
-                // console.log(bal_url);
-                // process.exit()
+                var bal_url = `https://${BASE_IP}${prefix_url}/${cr_info.crypto_symbol}/accountbalance/${uuid}`;
         
                 var balanceRequest = await fetch(bal_url,{
                     method: "GET"
                 });
                 var balanceResponse = await balanceRequest.json();
-                const balance = balanceResponse.balance; //user wallet balance for crypto instance
+                const balance = Number(balanceResponse.balance); //user wallet balance for crypto instance
         
                 //get wallet balance for crypto instance in usd dollar value
                 var usd_value_url = `https://api.coingecko.com/api/v3/simple/price?ids=${cr_info.crypto_name_market}&vs_currencies=usd`
@@ -72,7 +68,7 @@ async function cryptoModel(req,res)
                 const usd_value = price_value; // balance in usd dollar
         
                 //get user address for instance crypto
-                var address_url = `http://${BASE_IP}${prefix_url}/${cr_info.crypto_symbol}/wallet/getaddress?uuid=${uuid}`;
+                var address_url = `https://${BASE_IP}${prefix_url}/${cr_info.crypto_symbol}/wallet/getaddress?uuid=${uuid}`;
                 var addressRequest = await fetch(address_url,{
                     method: "GET"
                 });
@@ -106,6 +102,7 @@ async function cryptoModel(req,res)
                 }
 
                 arrayResponse[count] = response;
+                userBalance = userBalance + response.sym_balance*response.dollar_value; // accumulate user balance in usd dollar
 
                 count = count + 1;
                 //return response
@@ -114,7 +111,10 @@ async function cryptoModel(req,res)
                         res.status(200).json({
                             status: 200,
                             message: "crypto model get successfully!",
-                            data : arrayResponse
+                            data :  {
+                                    balance: userBalance,
+                                    cryptomodel: arrayResponse
+                                }
                         });
                     }
                 });
@@ -143,7 +143,6 @@ async function cryptoModel(req,res)
 async function cryptoModelStakable(req,res)
 {
     const uuid = req.params.uuid;
-    const crypto_name = req.params.crypto_name;
     const user = await models.user.findOne({where : {
         uuid : uuid
     }});
@@ -152,7 +151,6 @@ async function cryptoModelStakable(req,res)
     {
         const cryptos = await models.Crypto.findAll({where:
              {
-                //  crypto_name : crypto_name,
                  available: true,
                  stakable: true
              }
@@ -161,7 +159,6 @@ async function cryptoModelStakable(req,res)
         var count = 0;
         if(cryptos)
         {
-            // const cr = cryptos.dataValues;
             //get instance crypto information
 
             cryptos.forEach(async (cr) => {
@@ -190,7 +187,7 @@ async function cryptoModelStakable(req,res)
                 };
         
                 //get crypto instance balance
-                var bal_url = `http://${BASE_IP}${prefix_url}/${cr_info.crypto_symbol}/accountbalance/${uuid}`;
+                var bal_url = `https://${BASE_IP}${prefix_url}/${cr_info.crypto_symbol}/accountbalance/${uuid}`;
         
                 // console.log(bal_url);
                 // process.exit()
@@ -211,7 +208,7 @@ async function cryptoModelStakable(req,res)
                 const usd_value = price_value; // balance in usd dollar
         
                 //get user address for instance crypto
-                var address_url = `http://${BASE_IP}${prefix_url}/${cr_info.crypto_symbol}/wallet/getaddress?uuid=${uuid}`;
+                var address_url = `https://${BASE_IP}${prefix_url}/${cr_info.crypto_symbol}/wallet/getaddress?uuid=${uuid}`;
                 var addressRequest = await fetch(address_url,{
                     method: "GET"
                 });

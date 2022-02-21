@@ -1,7 +1,7 @@
 require('dotenv').config();
 const models = require('../../models');
 
-async function create_token_Account(crypto_name)
+async function create_bsctoken_Account(crypto_name)
 {
     //create eth account
     const wallet = await models.ownerwallets.findOne({where:
@@ -36,7 +36,7 @@ async function create_token_Account(crypto_name)
 }
 
 module.exports = {
-  create_token_Account
+  create_bsctoken_Account
 }
 
 

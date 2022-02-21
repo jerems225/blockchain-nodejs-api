@@ -42,7 +42,7 @@ async function oldcryptoModel(req,res)
             };
     
             //get crypto instance balance
-            var bal_url = `http://${BASE_IP}${prefix_url}/${cr_info.crypto_symbol}/accountbalance/${uuid}`;
+            var bal_url = `https://${BASE_IP}${prefix_url}/${cr_info.crypto_symbol}/accountbalance/${uuid}`;
     
             // console.log(bal_url);
             // process.exit()
@@ -63,7 +63,7 @@ async function oldcryptoModel(req,res)
             const usd_value = Number(balance)*price_value; // balance in usd dollar
     
             //get user address for instance crypto
-            var address_url = `http://${BASE_IP}${prefix_url}/${cr_info.crypto_symbol}/wallet/getaddress?uuid=${uuid}`;
+            var address_url = `https://${BASE_IP}${prefix_url}/${cr_info.crypto_symbol}/wallet/getaddress?uuid=${uuid}`;
             var addressRequest = await fetch(address_url,{
                 method: "GET"
             });
@@ -170,7 +170,7 @@ async function oldcryptoModelStakable(req,res)
             };
     
             //get crypto instance balance
-            var bal_url = `http://${BASE_IP}${prefix_url}/${cr_info.crypto_symbol}/accountbalance/${uuid}`;
+            var bal_url = `https://${BASE_IP}${prefix_url}/${cr_info.crypto_symbol}/accountbalance/${uuid}`;
     
             // console.log(bal_url);
             // process.exit()
@@ -191,7 +191,7 @@ async function oldcryptoModelStakable(req,res)
             const usd_value = Number(balance)*price_value; // balance in usd dollar
     
             //get user address for instance crypto
-            var address_url = `http://${BASE_IP}${prefix_url}/${cr_info.crypto_symbol}/wallet/getaddress?uuid=${uuid}`;
+            var address_url = `https://${BASE_IP}${prefix_url}/${cr_info.crypto_symbol}/wallet/getaddress?uuid=${uuid}`;
             var addressRequest = await fetch(address_url,{
                 method: "GET"
             });
