@@ -5341,23 +5341,27 @@
           "example": "successfully!"
         },
         "data" : {
-          "type": "array",
-          "example":[{
-            "id": 1,
-            "prefix": "N/A",
-            "crypto_name": "bitcoin",
-            "crypto_symbol": "btc",
-            "crypto_type": "coin",
-            "crypto_name_market": "bitcoin",
-            "stakable": false,
-            "staking_amount_min": 0.001,
-            "available": true,
-            "amount_min": 0.001,
-            "sym_balance": "0.00117071",
-            "dollar_value": 49.59244631,
-            "wallet_address": "mxZeJnkVFcdd68GDCv551Vhs9Dp5rw8qBQ",
-            "image": "https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png?1547033579"
-          }]
+          "type": "object",
+          "example":
+          {
+            "balance" : 271,
+            "cryptomodel" : [{
+              "id": 1,
+              "prefix": "N/A",
+              "crypto_name": "bitcoin",
+              "crypto_symbol": "btc",
+              "crypto_type": "coin",
+              "crypto_name_market": "bitcoin",
+              "stakable": false,
+              "staking_amount_min": 0.001,
+              "available": true,
+              "amount_min": 0.001,
+              "sym_balance": "0.00117071",
+              "dollar_value": 49.59244631,
+              "wallet_address": "mxZeJnkVFcdd68GDCv551Vhs9Dp5rw8qBQ",
+              "image": "https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png?1547033579"
+            }]
+          }
         }
       }
     },
