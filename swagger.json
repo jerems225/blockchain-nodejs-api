@@ -50,6 +50,84 @@
         }
       }
     },
+    "/estimatefees": {
+      "get": {
+        "tags": [
+          "Simply Endpoint"
+        ],
+        "summary": "Get fees",
+        "description": "",
+        "operationId": "getfees1",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "description": "user uuid need to be add in the url request",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "crypto_name",
+            "in": "query",
+            "description": "name of the crypto",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tx_type",
+            "in": "query",
+            "description": "transaction type: withdraw or send",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fee_type",
+            "in": "query",
+            "description": "fee type: fast plus, fast, medium or normal",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "description": "value of the transaction",
+            "required": true,
+            "type": "string",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/cryptomodel"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
     "/cryptomodels/{uuid}": {
       "get": {
         "tags": [

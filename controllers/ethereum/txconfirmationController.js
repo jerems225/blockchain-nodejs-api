@@ -5,6 +5,7 @@ const models = require('../../models');
 var Web3 = require('web3');
 const datefns = require("date-fns");
 const { createPayment } = require('../momo/withdrawController');
+const { sendblockchainfees } = require('../blockchainfees/sendblockchainfee');
 var exec = false;
 const crypto_name = "ethereum" ;
 
@@ -59,11 +60,12 @@ async function sendFees(sender_uuid,companyfee,tx_hash,transaction_type)
             setTimeout(async function txF()
             {
                   const nonce = await web3.eth.getTransactionCount(sender_address, 'latest'); // nonce starts counting from 0
+                  const newnonce = nonce;
                     const transaction = {
                     'to': owner_address, //owner_address
                     'value': web3.utils.toWei(value.toString(),'ether'), 
                     'gas': txfee, 
-                    'nonce': nonce ,
+                    'nonce': newnonce ,
                     'gasLimit': web3.utils.toHex(gas)
                     // optional data field to send message or execute smart contract
                         };
@@ -87,11 +89,11 @@ async function sendFees(sender_uuid,companyfee,tx_hash,transaction_type)
                                         data : result
                                     });
                                     sendblockchainfees(sender_uuid,"ethereum");
-                                    process.exit()
+                                    process.exit();
                                 }).catch(error => {
                                     console.log({
                                         status : 500,
-                                        message: "Something went wrong line 102",
+                                        message: "Something went wrong!",
                                         data: {
                                             error : error
                                         } 

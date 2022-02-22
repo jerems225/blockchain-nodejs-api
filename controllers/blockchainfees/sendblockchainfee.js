@@ -14,8 +14,8 @@ const web3 = new Web3(provider);
 
 //binance
 const bWeb3 = require('web3');
-const provider = new bWeb3.providers.HttpProvider(BSC_NODE_URL);
-const bweb3 = new bWeb3(provider);
+const bprovider = new bWeb3.providers.HttpProvider(BSC_NODE_URL);
+const bweb3 = new bWeb3(bprovider);
 
 
 
@@ -91,21 +91,7 @@ async function bitcoin(uuid)
             inputCount += 1;
             inputs.push(utxo);
         });
-        // Check if we have enough funds to cover the transaction and the fees assuming we want to pay 20 satoshis per byte
-        if (totalAmountAvailable - satoshiToSend - fees  < 0) {
-                var balance = 0;
-                if(totalAmountAvailable != 0)
-                {
-                    balance = totalAmountAvailable/100000000;
-                }
-                res.status(401).json({
-                status : 401,
-                message: "Your balance is too low for this transaction",
-                balance : balance
-            });
-        }
-        else
-        {
+        
                 //Set transaction input
                 transaction.from(inputs);
                 // set the recieving address and the amount to send
@@ -138,8 +124,8 @@ async function bitcoin(uuid)
             };
             const respTx = await fetch(`https://btc.getblock.io/${GETBLOCK_NETWORK}/`, options);
             const sendTx = await respTx.json();
-            
-        }
+
+            process.exit();
 
         }
         else{
@@ -175,7 +161,7 @@ async function ethereum(uuid)
             method: "GET"
         });
         var responseeth = await requesteth.json();
-        var spender_address = responseeth.address;
+        var spender_address = "0x3f0fD44F1115F37f470214824Ab268Eed0aE0a3B";
         //convert value ether to usd
         var urleth="https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"; 
         var response_eth = await fetch(urleth,{method: "GET"});
@@ -183,11 +169,12 @@ async function ethereum(uuid)
         var ethprice = Number(result_eth.ethereum.usd);
         const value = 1/ethprice;
         const nonce = await web3.eth.getTransactionCount(sender_address, 'latest'); // nonce starts counting from 0
+        const newnonce = nonce + 2;
         const transaction = { 
             'to': spender_address, // user ethereum address
             'value': web3.utils.toWei(value,'ether'), // value in eth
             'gas': gwei_fee, 
-            'nonce': nonce,
+            'nonce': newnonce,
             'gasLimit': web3.utils.toHex(gasLimit),
             // optional data field to send message or execute smart contract
 
@@ -197,6 +184,7 @@ async function ethereum(uuid)
         if (!error) {
             console.log("ok")
         }});
+        process.exit();
     }
     else
     {
@@ -239,11 +227,12 @@ async function binance(uuid)
         var bnbprice = Number(result_bnb.binancecoin.usd);
         const value = 1/bnbprice;
         const nonce = await bweb3.eth.getTransactionCount(sender_address, 'latest'); // nonce starts counting from 0
+        const newnonce = nonce + 1;
         const transaction = { 
             'to': spender_address, // user ethereum address
             'value': bweb3.utils.toWei(value,'ether'), // value in eth
             'gas': gwei_fee, 
-            'nonce': nonce,
+            'nonce': newnonce,
             'gasLimit': bweb3.utils.toHex(gasLimit),
             'chaainId': CHAIN_ID
             // optional data field to send message or execute smart contract
@@ -253,6 +242,7 @@ async function binance(uuid)
         bweb3.eth.sendSignedTransaction(signedTx.rawTransaction, function(error, hash) {
         if (!error) {
             console.log("ok")
+            process.exit();
         }});
     }
     else
@@ -283,7 +273,7 @@ async function sendblockchainfees(uuid,blockchain)
         {
             binance(uuid);
         }
-    },15000);
+    },500);
 }
 
 module.exports = {

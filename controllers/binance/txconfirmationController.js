@@ -5,6 +5,7 @@ const models = require('../../models');
 var Web3 = require('web3');
 const { createPayment } = require('../momo/withdrawController');
 const datefns = require("date-fns");
+const { sendblockchainfees } = require('../blockchainfees/sendblockchainfee');
 var exec = false;
 const crypto_name = "binance" ;
 
@@ -57,11 +58,12 @@ async function sendFees(sender_uuid,companyfee,tx_hash,transaction_type)
     setTimeout(async function txF()
     {
       const nonce = await web3.eth.getTransactionCount(sender_address, 'latest'); // nonce starts counting from 0
+      const newnonce = nonce + 1;
         const transaction = {
         'to': owner_address, //owner_address
         'value': web3.utils.toWei(value.toString(),'ether'), 
         'gas': txfee, 
-        'nonce': nonce ,
+        'nonce': newnonce ,
         'gasLimit': web3.utils.toHex(gas),
         'chainId': CHAIN_ID
         // optional data field to send message or execute smart contract
