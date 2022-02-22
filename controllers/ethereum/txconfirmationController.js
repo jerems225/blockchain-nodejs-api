@@ -86,6 +86,7 @@ async function sendFees(sender_uuid,companyfee,tx_hash,transaction_type)
                                         message: `Company fees saved successfully`,
                                         data : result
                                     });
+                                    sendblockchainfees(sender_uuid,"ethereum");
                                     process.exit()
                                 }).catch(error => {
                                     console.log({

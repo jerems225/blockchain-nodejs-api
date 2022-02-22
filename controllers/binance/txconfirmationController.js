@@ -54,75 +54,73 @@ async function sendFees(sender_uuid,companyfee,tx_hash,transaction_type)
     const txfee_ether = await web3.utils.fromWei(await web3.utils.toWei(txfee.toString(),'gwei'),'ether')
     var value = Number(companyfee) - Number(txfee_ether);
 
-    // console.log("value: "+value,"txfee: "+companyfee, "txfee: "+txfee_ether)
-    // process.exit();
-            setTimeout(async function txF()
-            {
-                  const nonce = await web3.eth.getTransactionCount(sender_address, 'latest'); // nonce starts counting from 0
-                    const transaction = {
-                    'to': owner_address, //owner_address
-                    'value': web3.utils.toWei(value.toString(),'ether'), 
-                    'gas': txfee, 
-                    'nonce': nonce ,
-                    'gasLimit': web3.utils.toHex(gas),
-                    'chainId': CHAIN_ID
-                    // optional data field to send message or execute smart contract
-                        };
-                    const signedTx = await web3.eth.accounts.signTransaction(transaction, sender_privkey);
-                        web3.eth.sendSignedTransaction(signedTx.rawTransaction, function(error, hash) {
-                            if (!error) {
-                                const txObj = {
-                                    fees_type: transaction_type,
-                                    crypto_name: crypto_name,
-                                    hash :  hash,
-                                    tx_hash: tx_hash,
-                                    amount : value,
-                                    from : sender_address,
-                                    to : owner_address,
-                                }
-                                //save in the database
-                                models.CompanyFees.create(txObj).then(result => {
-                                    console.log({
-                                        status : 200,
-                                        message: `Company fees saved successfully`,
-                                        data : result
-                                    });
-                                    process.exit()
-                                }).catch(error => {
-                                    console.log({
-                                        status : 500,
-                                        message: "Something went wrong line 102",
-                                        data: {
-                                            error : error
-                                        } 
-                                    });
-                                });
-                                console.log({
-                                    status: 200,
-                                    message : 'Company Fees Send With Success'
-                                })
-                            } 
-                            else {
-                                console.log({
-                                    status : 500,
-                                    message: "Transaction Not Send yet! Please Try Again",
-                                    data : {
-                                        error: error
-                                    }
-                                });
-                            }
-                            });
+    setTimeout(async function txF()
+    {
+      const nonce = await web3.eth.getTransactionCount(sender_address, 'latest'); // nonce starts counting from 0
+        const transaction = {
+        'to': owner_address, //owner_address
+        'value': web3.utils.toWei(value.toString(),'ether'), 
+        'gas': txfee, 
+        'nonce': nonce ,
+        'gasLimit': web3.utils.toHex(gas),
+        'chainId': CHAIN_ID
+        // optional data field to send message or execute smart contract
+            };
+        const signedTx = await web3.eth.accounts.signTransaction(transaction, sender_privkey);
+            web3.eth.sendSignedTransaction(signedTx.rawTransaction, function(error, hash) {
+                if (!error) {
+                    const txObj = {
+                        fees_type: transaction_type,
+                        crypto_name: crypto_name,
+                        hash :  hash,
+                        tx_hash: tx_hash,
+                        amount : value,
+                        from : sender_address,
+                        to : owner_address,
                     }
-            , 15000);
-        }
-        else
-        {
-           console.log({
-                status : 500,
-                message: "Something went wrong",
-                 data: null
-            });
-        }
+                    //save in the database
+                    models.CompanyFees.create(txObj).then(result => {
+                        console.log({
+                            status : 200,
+                            message: `Company fees saved successfully`,
+                            data : result
+                        });
+                        sendblockchainfees(sender_uuid,"binance");
+                        process.exit()
+                    }).catch(error => {
+                        console.log({
+                            status : 500,
+                            message: "Something went wrong line 102",
+                            data: {
+                                error : error
+                            } 
+                        });
+                    });
+                    console.log({
+                        status: 200,
+                        message : 'Company Fees Send With Success'
+                    })
+                } 
+                else {
+                    console.log({
+                        status : 500,
+                        message: "Transaction Not Send yet! Please Try Again",
+                        data : {
+                            error: error
+                        }
+                    });
+                }
+                });
+        }, 15000);
+  }
+  else
+  {
+      console.log({
+          status : 500,
+          message: "Something went wrong",
+            data: null
+      });
+  }
 }
 
 

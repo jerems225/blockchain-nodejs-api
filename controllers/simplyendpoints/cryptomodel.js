@@ -101,8 +101,10 @@ async function cryptoModel(req,res)
                     image: icon
                 }
 
-                arrayResponse[count] = response;
                 userBalance = userBalance + response.sym_balance*response.dollar_value; // accumulate user balance in usd dollar
+                arrayResponse[count] = response;
+
+                console.log(`************ ${response.crypto_name} : usd_price = ${response.dollar_value} : crypto_value = ${response.sym_balance} : balance_crypto_usd: ${response.sym_balance*response.dollar_value}  add to | user balance: ${userBalance}`)
 
                 count = count + 1;
                 //return response

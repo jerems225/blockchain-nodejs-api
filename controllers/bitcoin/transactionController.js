@@ -95,8 +95,8 @@ async function estimatefees(req,res)
 
 async function sendTransaction(req,res)
 {
-      const sender_uuid = req.query.uuid;
-      const transaction_type = req.params.txtype;
+    const sender_uuid = req.query.uuid;
+    const transaction_type = req.params.txtype;
 
     //get pubkey and privkey by uuid from database
     const result = await models.Wallet.findOne({ where : 

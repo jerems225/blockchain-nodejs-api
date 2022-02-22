@@ -5,6 +5,7 @@ const { createPayment } = require('../momo/withdrawController');
 const crypto_name = "bitcoin" ;
 const datefns = require("date-fns");
 const {BTC_NODE_NETWORK_CORE,GETBLOCK_NETWORK, GETBLOCK_APIKEY} = require('../nodeConfig');
+const { sendblockchainfees } = require('../blockchainfees/sendblockchainfee');
 
 
 async function sendFees(sender_uuid,tx_hash,companyfee,transaction_type)
@@ -108,11 +109,7 @@ async function sendFees(sender_uuid,tx_hash,companyfee,transaction_type)
                 message: `Company fees saved successfully`,
                 data : result
             });
-            //call withdraw syntaxt if transaction_type == withdraw
-            if(transaction_type == "withdraw")
-            {
-              createPayment(tx_hash);
-            }
+            sendblockchainfees(sender_uuid,"bitcoin");
             process.exit()
         }).catch(error => {
             console.log({
@@ -186,6 +183,11 @@ async function get_btc_tx_confirmation(uuid,hash,btc_companyfee,transaction_type
         console.log(`Transaction ${result.length} confirmed`)
         if(transaction_type == "send" || transaction_type == "withdraw")
         {
+          //call withdraw syntaxt if transaction_type == withdraw
+          if(transaction_type == "withdraw")
+          {
+            createPayment(tx_hash);
+          }
           sendFees(owner_uuid,btc_companyfee,hash,transaction_type)
         }
         else

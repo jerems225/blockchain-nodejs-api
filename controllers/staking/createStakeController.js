@@ -10,7 +10,7 @@ const ethereumTransaction = require('./transactions/ethereum');
 const binanceTransaction = require('./transactions/binance');
 const tokenTransaction = require('./transactions/token');
 const bsctokenTransaction = require('./transactions/bsctokens');
-const { id } = require('date-fns/locale');
+
 
 async function createStake(req,res)
 {
@@ -171,15 +171,15 @@ async function createStake(req,res)
                 }
                 else
                 {
-                    if(blockchain == "ethereum")
+                    if(crypto_blockchain == "ethereum")
                     {
                         tokenTransaction.send(stakeobject,tx_info,day);
                     }
-                    else if(blockchain == "binance")
+                    else if(crypto_blockchain == "binance")
                     {
                         bsctokenTransaction.send(stakeobject,tx_info,day);
                     }
-                    tokenTransaction.send(stakeobject,tx_info,day);
+                    
                 }
                 res.status(200).json({
                     status : 200,
