@@ -118,7 +118,7 @@
             "description": "successful operation",
             "schema": {
               "items": {
-                "$ref": "#/definitions/cryptomodel"
+                "$ref": "#/definitions/estimate"
               }
             }
           },
