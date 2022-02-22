@@ -5520,7 +5520,30 @@
           }]
         }
       }
+    },
+    "estimate": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "successfully!"
+        },
+        "data" : {
+          "type": "object",
+          "example": {
+            "tx_fee": 0.00327952,
+            "company_fee": 0.08,
+            "fees_crypto": 0.08327952,
+            "fees_usd": 3172.0336372799998
+          }
+        }
+      }
     }
+    
     
   },
   "externalDocs": {
