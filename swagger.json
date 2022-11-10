@@ -5,7 +5,7 @@
     "version": "0.1.6",
     "title": "GIT Blockchain Api"
   },
-  "host": "gitblockchain.uticgroupafrica.com",
+  "host": "gitblockchain1.uticgroupafrica.com",
   "basePath": "/",
   "schemes": [
     "https",
